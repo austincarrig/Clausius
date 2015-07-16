@@ -544,7 +544,7 @@
 	}
 	
 	if (entropy) {
-		[self.entropyTextField setText:[NSString stringWithFormat:@"%.1f", [entropy floatValue]]];
+		[self.entropyTextField setText:[NSString stringWithFormat:@"%.2f", [entropy floatValue]]];
 	}
 	
 	if ([quality floatValue]) {
