@@ -1,15 +1,18 @@
 //
 //  ViewController.h
-//  Clausius
+//  Mvuke
 //
-//  Created by Austin Carrig on 7/15/15.
-//  Copyright (c) 2015 RowanApps. All rights reserved.
+//  Created by Austin Carrig on 5/10/15.
+//  Copyright (c) 2015 Austin. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "LocationIndicatorImageView.h"
+#import "DisplayView.h"
 
-@interface ViewController : UIViewController
-
+@interface ViewController : UIViewController <LocationIndicatorImageViewDataSource,DisplayViewDataSource,LocationIndicatorImageViewDelegate> {
+	float priorX;
+	float priorY;
+}
 
 @end
-
