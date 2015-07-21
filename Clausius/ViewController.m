@@ -290,96 +290,85 @@ const static CGFloat T_SAT_MIN = 1.0;
 {
 	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
+	// Get the scales (units/pixel)for both axes based on graph
 	CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
 	CGFloat secondaryScale = ([self secondaryAxisEndingValue] - [self secondaryAxisStartingValue])/locationIndicatorImageView.frame.size.height;
 	
 	float temperature = [self secondaryAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
+	// If temperature is below the minimum temp, reset the minimum temp
 	if (temperature < T_SAT_MIN) {
 		temperature = T_SAT_MIN;
 	}
 	
-	BOOL shouldCalculate = YES;
-	CGFloat distance = sqrtf(powf(location.x - priorX,2.0f) + powf(location.y - priorY,2));
-	
-	if (distance >= MAX_MOVEMENT && [eventType isEqualToString:@"Moved"]) {
-		//shouldCalculate = NO;
-	}
-	
-	//NSLog(@"%f",distance);
-	//NSLog(@"%d",shouldCalculate);
-	
 	float entropy = location.x*primaryScale;
 	float __block pressure, specVolume, intEnergy, enthalpy, quality;
+	
 	quality = 0.0;
 	
 	// Check if finger is above or below critical temperature (379.3 C)
 	if (temperature > T_CRITICAL) {
-		if (shouldCalculate) {
-			NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
-			
-			int location = 0;
-			BOOL locationReached = NO;
-			for (int i = 0; i < array.count; i++) {
-				if ([(NSNumber *)array[i] floatValue] <= entropy) {
-					continue;
-				} else {
-					locationReached = YES;
-					location = i;
-				}
-			}
-			
-			if (location != array.count - 1 && locationReached) {
-				float highEnt = [(NSNumber *)array[location] floatValue];
-				float lowEnt = [(NSNumber *)array[location + 1] floatValue];
-				
-				float weight = (entropy - lowEnt)/(highEnt - lowEnt);
-				
-				float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
-				float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
-				
-				pressure = lowPres + weight*(highPres - lowPres);
+		// Find list of entropies for specific temperature
+		NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
+		
+		int location = 0;
+		BOOL locationReached = NO;
+		
+		// Find index of first entropy value in array which is less than chosen entropy value
+		for (int i = 0; i < array.count; i++) {
+			if ([(NSNumber *)array[i] floatValue] <= entropy) {
+				continue;
 			} else {
-				pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+				locationReached = YES;
+				location = i;
 			}
-			
-			double kTemperature = temperature + 273.15;
-			double mPressure = pressure/1000;
-			
-			NSLog(@"density1");
-			double density = [self.wagPruss rhoWithTemperature:kTemperature
-												   andPressure:mPressure];
-			specVolume = 1/density;
-			
-			//					specVolume = [((SuperheatedPlotPoint *)[[SuperheatedPlotPoint fetchSuperheatedPlotValueWithTemperature:temperature
-			//																												  pressure:pressure
-			//																												 inContext:appDelegate.managedObjectContext] firstObject]).value floatValue];
-			//					double density = 1/specVolume;
-			NSLog(@"density2");
-			
-			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
-																   andDensity:density]/1000.0;
-			enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-															andDensity:density]/1000.0;
-			
-			[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-													 pressure:[NSNumber numberWithFloat:pressure]
-											   specificVolume:[NSNumber numberWithFloat:specVolume]
-											   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-													 enthalpy:[NSNumber numberWithFloat:enthalpy]
-													  entropy:[NSNumber numberWithFloat:entropy]
-													  quality:[NSNumber numberWithFloat:quality*100]];
 		}
+		
+		if (location != array.count - 1 && locationReached) {
+			float highEnt = [(NSNumber *)array[location] floatValue];
+			float lowEnt = [(NSNumber *)array[location + 1] floatValue];
+			
+			float weight = (entropy - lowEnt)/(highEnt - lowEnt);
+			
+			float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+			float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
+			
+			pressure = lowPres + weight*(highPres - lowPres);
+		} else {
+			pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+		}
+		
+		double kTemperature = temperature + 273.15;
+		double mPressure = pressure/1000;
+		
+		NSLog(@"density1");
+		double density = [self.wagPruss rhoWithTemperature:kTemperature
+											   andPressure:mPressure];
+		specVolume = 1/density;
+		
+		NSLog(@"density2");
+		
+		intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+															   andDensity:density]/1000.0;
+		enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+														andDensity:density]/1000.0;
+		
+		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+												 pressure:[NSNumber numberWithFloat:pressure]
+										   specificVolume:[NSNumber numberWithFloat:specVolume]
+										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+												 enthalpy:[NSNumber numberWithFloat:enthalpy]
+												  entropy:[NSNumber numberWithFloat:entropy]
+												  quality:[NSNumber numberWithFloat:quality*100]];
+		
 		
 		if (!self.displayView.qualityIsHidden) {
 			[self.displayView hideQuality];
 		}
 	} else if (temperature <= T_CRITICAL) {
 		if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
-			SaturatedPlotPoint *saturatedPoint;
-			if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
-				saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
-																			  inContext:appDelegate.managedObjectContext];
-			}
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
+																							  inContext:appDelegate.managedObjectContext];
+			
 			
 			pressure = [saturatedPoint.p floatValue];
 			quality = (entropy - [saturatedPoint.s_f floatValue])/([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
@@ -435,64 +424,55 @@ const static CGFloat T_SAT_MIN = 1.0;
 					[self.displayView showQuality];
 				}
 			} else if (entropy > [saturatedPoint.s_g floatValue]) {
-				if (shouldCalculate) {
-					NSLog(@"1");
-					NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
-					
-					int location = 0;
-					BOOL locationReached = NO;
-					for (int i = 0; i < array.count; i++) {
-						if ([(NSNumber *)array[i] floatValue] <= entropy) {
-							continue;
-						} else {
-							locationReached = YES;
-							location = i;
-						}
-					}
-					
-					if (location != array.count - 1 && locationReached) {
-						float highEnt = [(NSNumber *)array[location] floatValue];
-						float lowEnt = [(NSNumber *)array[location + 1] floatValue];
-						
-						float weight = (entropy - lowEnt)/(highEnt - lowEnt);
-						
-						float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
-						float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
-						
-						pressure = lowPres + weight*(highPres - lowPres);
+				NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
+				
+				int location = 0;
+				BOOL locationReached = NO;
+				for (int i = 0; i < array.count; i++) {
+					if ([(NSNumber *)array[i] floatValue] <= entropy) {
+						continue;
 					} else {
-						pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+						locationReached = YES;
+						location = i;
 					}
-					
-					double kTemperature = temperature + 273.15;
-					double mPressure = pressure/1000;
-					
-					NSLog(@"density1");
-					double density = [self.wagPruss rhoWithTemperature:kTemperature
-														   andPressure:mPressure];
-					specVolume = 1/density;
-					
-					//					specVolume = [((SuperheatedPlotPoint *)[[SuperheatedPlotPoint fetchSuperheatedPlotValueWithTemperature:temperature
-					//																												  pressure:pressure
-					//																												 inContext:appDelegate.managedObjectContext] firstObject]).value floatValue];
-					//					double density = 1/specVolume;
-					NSLog(@"density2");
-					
-					//NSLog(@"entropy: %f",[self.wagPruss calculateEntropyWithTemperature:273.15 andDensity:([self.wagPruss rhoWithTemperature:273.15 andPressure:0.0000984378128])]);
-					
-					intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
-																		   andDensity:density]/1000.0;
-					enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-																	andDensity:density]/1000.0;
-					
-					[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-															 pressure:[NSNumber numberWithFloat:pressure]
-													   specificVolume:[NSNumber numberWithFloat:specVolume]
-													   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-															 enthalpy:[NSNumber numberWithFloat:enthalpy]
-															  entropy:[NSNumber numberWithFloat:entropy]
-															  quality:[NSNumber numberWithFloat:quality*100]];
 				}
+				
+				if (location != array.count - 1 && locationReached) {
+					float highEnt = [(NSNumber *)array[location] floatValue];
+					float lowEnt = [(NSNumber *)array[location + 1] floatValue];
+					
+					float weight = (entropy - lowEnt)/(highEnt - lowEnt);
+					
+					float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+					float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
+					
+					pressure = lowPres + weight*(highPres - lowPres);
+				} else {
+					pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+				}
+				
+				double kTemperature = temperature + 273.15;
+				double mPressure = pressure/1000;
+				
+				NSLog(@"density1");
+				double density = [self.wagPruss rhoWithTemperature:kTemperature
+													   andPressure:mPressure];
+				specVolume = 1/density;
+				NSLog(@"density2");
+				
+				intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+																	   andDensity:density]/1000.0;
+				enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+																andDensity:density]/1000.0;
+				
+				[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+														 pressure:[NSNumber numberWithFloat:pressure]
+												   specificVolume:[NSNumber numberWithFloat:specVolume]
+												   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+														 enthalpy:[NSNumber numberWithFloat:enthalpy]
+														  entropy:[NSNumber numberWithFloat:entropy]
+														  quality:[NSNumber numberWithFloat:quality*100]];
+				
 				
 				if (!self.displayView.qualityIsHidden) {
 					[self.displayView hideQuality];
@@ -592,7 +572,8 @@ const static CGFloat T_SAT_MIN = 1.0;
 			}
 			count ++;
 		}
-
+		
+		// Add the corresponding entropy array to the end of the array of entropy arrays
 		[self.superheatedEntropies addObject:tempArray];
 	}
 }

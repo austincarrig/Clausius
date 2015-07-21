@@ -15,8 +15,6 @@ static const CGFloat outerLineWidth = 0.75f;
 unsigned char *rawData;
 
 @interface LocationIndicatorImageView ()
-@property (nonatomic, strong) CAShapeLayer *horizontalIndicatorLayer;
-@property (nonatomic, strong) CAShapeLayer *verticalIndicatorLayer;
 @property (nonatomic, strong) UIBezierPath *locationIndicatorRing;
 @property (nonatomic, strong) UIBezierPath *locationIndicatorCircle;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorRingLayer;
@@ -37,9 +35,9 @@ unsigned char *rawData;
 		[self setBackgroundColor:[UIColor clearColor]];
 		[self setImage:image];
 		if ([self.dataSource respondsToSelector:@selector(primaryColorForLocationView:)]) {
-			[self setPrimaryColor:[self.dataSource primaryColorForLocationView:self]];
+			_primaryColor = [self.dataSource primaryColorForLocationView:self];
 		} else {
-			[self setPrimaryColor:[UIColor primaryColor]];
+			_primaryColor = [UIColor primaryColor];
 		}
 		
 		rawData = [self getRGBAsFromImage:self.image
@@ -49,26 +47,6 @@ unsigned char *rawData;
 }
 
 #pragma mark - Lazy Init
-
--(UIBezierPath *)horizontalIndicator
-{
-	if (!_horizontalIndicator) {
-		_horizontalIndicator = [UIBezierPath bezierPath];
-		[_horizontalIndicator moveToPoint:CGPointZero];
-		[_horizontalIndicator addLineToPoint:CGPointZero];
-	}
-	return _horizontalIndicator;
-}
-
--(UIBezierPath *)verticalIndicator
-{
-	if (!_horizontalIndicator) {
-		_verticalIndicator = [UIBezierPath bezierPath];
-		[_verticalIndicator moveToPoint:CGPointZero];
-		[_verticalIndicator addLineToPoint:CGPointZero];
-	}
-	return _verticalIndicator;
-}
 
 -(UIBezierPath *)locationIndicatorRing
 {
@@ -119,28 +97,6 @@ unsigned char *rawData;
 		_locationIndicatorCircleLayer.shouldRasterize = YES;
 	}
 	return _locationIndicatorCircleLayer;
-}
-
--(CAShapeLayer *)horizontalIndicatorLayer
-{
-	if (!_horizontalIndicatorLayer) {
-		_horizontalIndicatorLayer = [CAShapeLayer layer];
-		_horizontalIndicatorLayer.path = [self.horizontalIndicator CGPath];
-		_horizontalIndicatorLayer.strokeColor = [self.primaryColor CGColor];
-		_horizontalIndicatorLayer.lineWidth = 2.0;
-	}
-	return _horizontalIndicatorLayer;
-}
-
--(CAShapeLayer *)verticalIndicatorLayer
-{
-	if (!_verticalIndicatorLayer) {
-		_verticalIndicatorLayer = [CAShapeLayer layer];
-		_verticalIndicatorLayer.path = [self.verticalIndicator CGPath];
-		_verticalIndicatorLayer.strokeColor = [self.primaryColor CGColor];
-		_verticalIndicatorLayer.lineWidth = 2.0;
-	}
-	return _verticalIndicatorLayer;
 }
 
 #pragma mark - Responder Methods

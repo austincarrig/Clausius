@@ -42,6 +42,10 @@
 @property id <DisplayViewDataSource> dataSource;
 
 -(instancetype)initWithFrame:(CGRect)frame;
+
+/**
+ *  Used to update all the number fields in the display
+ */
 -(void)updateTextFieldsWithTemperature:(NSNumber *)temperature
 							  pressure:(NSNumber *)pressure
 						specificVolume:(NSNumber *)specificVolume
@@ -49,6 +53,10 @@
 							  enthalpy:(NSNumber *)enthalpy
 							   entropy:(NSNumber *)entropy
 							   quality:(NSNumber *)quality;
+
+/**
+ *  Used to update the title if the graph type chanegs
+ */
 -(void)updateTitle:(NSString *)title;
 -(void)showQuality;
 -(void)hideQuality;
