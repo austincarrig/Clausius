@@ -13,7 +13,6 @@
 #import "CoreData.h"
 #import "H2O_Wagner_Pruss.h"
 
-const static CGFloat MAX_MOVEMENT = 5.0f;
 const static CGFloat T_CRITICAL = 373.9;
 const static CGFloat T_SAT_MIN = 1.0;
 
