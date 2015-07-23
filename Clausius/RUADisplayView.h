@@ -1,5 +1,5 @@
 //
-//  DisplayView.h
+//  RUADisplayView.h
 //  Mvuke
 //
 //  Created by Austin Carrig on 5/24/15.
@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol DisplayViewDataSource;
+@protocol RUADisplayViewDataSource;
 
-@interface DisplayView : UIView
+@interface RUADisplayView : UIView
 @property (strong, nonatomic) UILabel *title;
 
 @property (strong, nonatomic) UILabel *temperatureLabel;
@@ -39,7 +39,7 @@
 
 @property BOOL qualityIsHidden;
 
-@property id <DisplayViewDataSource> dataSource;
+@property id <RUADisplayViewDataSource> dataSource;
 
 -(instancetype)initWithFrame:(CGRect)frame;
 
@@ -62,9 +62,9 @@
 -(void)hideQuality;
 @end
 
-@protocol DisplayViewDataSource <NSObject>
+@protocol RUADisplayViewDataSource <NSObject>
 
--(NSString *)nameForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView;
--(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView;
+-(NSString *)nameForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView;
+-(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView;
 
 @end

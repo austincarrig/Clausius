@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LocationIndicatorImageView.h"
-#import "DisplayView.h"
+#import "RUALocationIndicatorImageView.h"
+#import "RUADisplayView.h"
 
-@interface ViewController : UIViewController <LocationIndicatorImageViewDataSource,DisplayViewDataSource,LocationIndicatorImageViewDelegate> {
+@interface ViewController : UIViewController <RUALocationIndicatorImageViewDataSource,RUADisplayViewDataSource,RUALocationIndicatorImageViewDelegate> {
 	float priorX;
 	float priorY;
 }

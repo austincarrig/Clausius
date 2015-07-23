@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		492A984D1B574BCC00F061E8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A984C1B574BCC00F061E8 /* main.m */; };
 		492A98671B574BCC00F061E8 /* ClausiusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98661B574BCC00F061E8 /* ClausiusTests.m */; };
-		492A98751B574BEA00F061E8 /* LocationIndicatorImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */; };
-		492A98761B574BEA00F061E8 /* DisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98731B574BEA00F061E8 /* DisplayView.m */; };
+		492A98751B574BEA00F061E8 /* RUALocationIndicatorImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98711B574BEA00F061E8 /* RUALocationIndicatorImageView.m */; };
+		492A98761B574BEA00F061E8 /* RUADisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98731B574BEA00F061E8 /* RUADisplayView.m */; };
 		492A98771B574BEA00F061E8 /* Data Files in Resources */ = {isa = PBXBuildFile; fileRef = 492A98741B574BEA00F061E8 /* Data Files */; };
 		492A98841B574CAC00F061E8 /* ClausiusIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A987B1B574CAC00F061E8 /* ClausiusIcon.png */; };
 		492A98851B574CAC00F061E8 /* ClausiusiPadApp@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A987C1B574CAC00F061E8 /* ClausiusiPadApp@1x.png */; };
@@ -65,10 +65,10 @@
 		492A98601B574BCC00F061E8 /* ClausiusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClausiusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		492A98651B574BCC00F061E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		492A98661B574BCC00F061E8 /* ClausiusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClausiusTests.m; sourceTree = "<group>"; };
-		492A98701B574BEA00F061E8 /* LocationIndicatorImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationIndicatorImageView.h; sourceTree = "<group>"; };
-		492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationIndicatorImageView.m; sourceTree = "<group>"; };
-		492A98721B574BEA00F061E8 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayView.h; sourceTree = "<group>"; };
-		492A98731B574BEA00F061E8 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayView.m; sourceTree = "<group>"; };
+		492A98701B574BEA00F061E8 /* RUALocationIndicatorImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUALocationIndicatorImageView.h; sourceTree = "<group>"; };
+		492A98711B574BEA00F061E8 /* RUALocationIndicatorImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUALocationIndicatorImageView.m; sourceTree = "<group>"; };
+		492A98721B574BEA00F061E8 /* RUADisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUADisplayView.h; sourceTree = "<group>"; };
+		492A98731B574BEA00F061E8 /* RUADisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUADisplayView.m; sourceTree = "<group>"; };
 		492A98741B574BEA00F061E8 /* Data Files */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Data Files"; sourceTree = "<group>"; };
 		492A987B1B574CAC00F061E8 /* ClausiusIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClausiusIcon.png; sourceTree = "<group>"; };
 		492A987C1B574CAC00F061E8 /* ClausiusiPadApp@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadApp@1x.png"; sourceTree = "<group>"; };
@@ -222,10 +222,10 @@
 		492A98781B574C3700F061E8 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
-				492A98701B574BEA00F061E8 /* LocationIndicatorImageView.h */,
-				492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */,
-				492A98721B574BEA00F061E8 /* DisplayView.h */,
-				492A98731B574BEA00F061E8 /* DisplayView.m */,
+				492A98701B574BEA00F061E8 /* RUALocationIndicatorImageView.h */,
+				492A98711B574BEA00F061E8 /* RUALocationIndicatorImageView.m */,
+				492A98721B574BEA00F061E8 /* RUADisplayView.h */,
+				492A98731B574BEA00F061E8 /* RUADisplayView.m */,
 				499813791B6015400044987E /* RUAAdjusterView.h */,
 				4998137A1B6015400044987E /* RUAAdjusterView.m */,
 			);
@@ -457,7 +457,7 @@
 				492A98D81B574DC700F061E8 /* AppDelegate.m in Sources */,
 				492A984D1B574BCC00F061E8 /* main.m in Sources */,
 				4941C5061B6075BA00E163C8 /* ViewController+MASAdditions.m in Sources */,
-				492A98751B574BEA00F061E8 /* LocationIndicatorImageView.m in Sources */,
+				492A98751B574BEA00F061E8 /* RUALocationIndicatorImageView.m in Sources */,
 				492A98D01B574D5600F061E8 /* SaturatedPlotPoint.m in Sources */,
 				492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */,
 				492A98CA1B574D5600F061E8 /* ImportedFile+Fetch.m in Sources */,
@@ -465,7 +465,7 @@
 				4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */,
 				4941C5031B6075BA00E163C8 /* NSArray+MASAdditions.m in Sources */,
 				492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */,
-				492A98761B574BEA00F061E8 /* DisplayView.m in Sources */,
+				492A98761B574BEA00F061E8 /* RUADisplayView.m in Sources */,
 				4941C5051B6075BA00E163C8 /* View+MASAdditions.m in Sources */,
 				4941C5021B6075BA00E163C8 /* MASViewConstraint.m in Sources */,
 				4941C4FE1B6075BA00E163C8 /* MASConstraint.m in Sources */,

@@ -1,12 +1,12 @@
  //
-//  LocationIndicatorImageView.m
+//  RUALocationIndicatorImageView.m
 //  Mvuke
 //
 //  Created by Austin Carrig on 5/18/15.
 //  Copyright (c) 2015 Austin. All rights reserved.
 //
 
-#import "LocationIndicatorImageView.h"
+#import "RUALocationIndicatorImageView.h"
 #import "UIColor+Mvuke.h"
 
 static const CGFloat outerRadius = 9.0f;
@@ -14,14 +14,14 @@ static const CGFloat innerRadius = 6.5f;
 static const CGFloat outerLineWidth = 0.75f;
 unsigned char *rawData;
 
-@interface LocationIndicatorImageView ()
+@interface RUALocationIndicatorImageView ()
 @property (nonatomic, strong) UIBezierPath *locationIndicatorRing;
 @property (nonatomic, strong) UIBezierPath *locationIndicatorCircle;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorRingLayer;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorCircleLayer;
 @end
 
-@implementation LocationIndicatorImageView
+@implementation RUALocationIndicatorImageView
 
 #pragma mark - Custom Init Methods
 

@@ -1,16 +1,16 @@
 //
-//  DisplayView.m
+//  RUADisplayView.m
 //  Mvuke
 //
 //  Created by Austin Carrig on 5/24/15.
 //  Copyright (c) 2015 Austin. All rights reserved.
 //
 
-#import "DisplayView.h"
+#import "RUADisplayView.h"
 #import "Masonry.h"
 #import "UIColor+Mvuke.h"
 
-@interface DisplayView ()
+@interface RUADisplayView ()
 @property (strong, nonatomic) UIView *containerView;
 @property (strong, nonatomic) UIView *labelsContainer;
 @property (strong, nonatomic) UIView *textFieldsContainer;
@@ -20,7 +20,7 @@
 @property CGFloat width;
 @end
 
-@implementation DisplayView
+@implementation RUADisplayView
 
 -(instancetype)initWithFrame:(CGRect)frame
 {

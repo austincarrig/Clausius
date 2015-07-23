@@ -1,5 +1,5 @@
 //
-//  LocationIndicatorImageView.h
+//  RUALocationIndicatorImageView.h
 //  Mvuke
 //
 //  Created by Austin Carrig on 5/18/15.
@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol LocationIndicatorImageViewDataSource;
-@protocol LocationIndicatorImageViewDelegate;
+@protocol RUALocationIndicatorImageViewDataSource;
+@protocol RUALocationIndicatorImageViewDelegate;
 
-@interface LocationIndicatorImageView : UIImageView
+@interface RUALocationIndicatorImageView : UIImageView
 
 @property (strong, nonatomic, readonly) UIColor *primaryColor;
 
-@property (strong, nonatomic) id <LocationIndicatorImageViewDataSource> dataSource;
-@property (strong, nonatomic) id <LocationIndicatorImageViewDelegate> delegate;
+@property (strong, nonatomic) id <RUALocationIndicatorImageViewDataSource> dataSource;
+@property (strong, nonatomic) id <RUALocationIndicatorImageViewDelegate> delegate;
 
 @property (strong, nonatomic) NSNumber *xMin;
 @property (strong, nonatomic) NSNumber *xMax;
@@ -27,7 +27,7 @@
 
 @end
 
-@protocol LocationIndicatorImageViewDataSource <NSObject>
+@protocol RUALocationIndicatorImageViewDataSource <NSObject>
 @optional
 /**
  *  Used to provide the color of the location indicator circle.
@@ -36,7 +36,7 @@
  *
  *  @return The color of the location indicator circle.
  */
-- (UIColor *)primaryColorForLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
+- (UIColor *)primaryColorForLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView;
 
 /**
  *  Provides the raw pixel data for processing to the location indicator image view. This is used to determine the left border of the graph, so that the indicator stops if the user's finger goes outside the bounds of the graph.
@@ -45,7 +45,7 @@
  *
  *  @return The raw pixel data for the image.
  */
-- (unsigned char *)pixelDataForCurrentImageInLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
+- (unsigned char *)pixelDataForCurrentImageInLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView;
 - (CGFloat)primaryAxisEndingValue;
 - (CGFloat)secondaryAxisEndingValue;
 - (CGFloat)primaryAxisStartingValue;
@@ -53,7 +53,7 @@
 - (CGFloat)minimumSecondaryAxisValue;
 @end
 
-@protocol LocationIndicatorImageViewDelegate <NSObject>
+@protocol RUALocationIndicatorImageViewDelegate <NSObject>
 @optional
 /**
  *  Calls when a touch begins in the location indicator view.
@@ -61,7 +61,7 @@
  *  @param location					  The touch location returned as a CGPoint (xy coords).
  *  @param locationIndicatorImageView The location indicator image view in which the touch occurred.
  */
-- (void)touchDidBeginAtLocation:(CGPoint)location inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
+- (void)touchDidBeginAtLocation:(CGPoint)location inLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView;
 
 /**
  *  Calls when a touch moves in the location indicator view.
@@ -69,5 +69,5 @@
  *  @param location                   The touch location returned as a CGPoint (xy coords).
  *  @param locationIndicatorImageView The location indicator image view in which the touch occurred.
  */
-- (void)touchDidMoveToLocation:(CGPoint)location inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
+- (void)touchDidMoveToLocation:(CGPoint)location inLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView;
 @end

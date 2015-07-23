@@ -20,10 +20,10 @@ const static CGFloat T_SAT_MIN = 1.0;
 @property (strong, nonatomic) UIImageView *infoView;
 @property (weak, nonatomic) IBOutlet UIButton *infoButton;
 
-@property (strong, nonatomic) LocationIndicatorImageView *chartView;
+@property (strong, nonatomic) RUALocationIndicatorImageView *chartView;
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIView *secondContainerView;
-@property (strong, nonatomic) DisplayView *displayView;
+@property (strong, nonatomic) RUADisplayView *displayView;
 
 @property (strong, nonatomic) H2O_Wagner_Pruss *wagPruss;
 
@@ -97,7 +97,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 - (UIImageView *)chartView
 {
 	if (!_chartView) {
-		_chartView = [[LocationIndicatorImageView alloc] initWithFrame:self.containerView.frame
+		_chartView = [[RUALocationIndicatorImageView alloc] initWithFrame:self.containerView.frame
 																 image:[UIImage imageNamed:@"Water_ts_chart.jpeg"]
 																sender:self];
 	}
@@ -107,7 +107,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 -(UIView *)displayView
 {
 	if (!_displayView) {
-		_displayView = [[DisplayView alloc] initWithFrame:self.secondContainerView.frame];
+		_displayView = [[RUADisplayView alloc] initWithFrame:self.secondContainerView.frame];
 		[_displayView setDataSource:self];
 	}
 	return _displayView;
@@ -191,7 +191,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 
 #pragma mark - Location Indication Image View Datasource
 
-- (UIColor *)primaryColorForLocationView:(LocationIndicatorImageView *)locationView
+- (UIColor *)primaryColorForLocationView:(RUALocationIndicatorImageView *)locationView
 {
 	return [UIColor primaryColor];
 }
@@ -223,7 +223,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 
 #pragma mark - Display View Datasource
 
--(NSString *)nameForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView
+-(NSString *)nameForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView
 {
 	if (label.tag == 1) {
 		return @"T";
@@ -244,7 +244,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 	}
 }
 
--(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView
+-(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView
 {
 	if (label.tag == 1) {
 		return @"℃";
@@ -268,7 +268,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 #pragma mark - Location Indicator Image View Delegate
 
 - (void)touchDidBeginAtLocation:(CGPoint)location
-				 inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+				 inLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView
 {
 	[self touchDidRegisterAtLocation:location
 					   withEventType:@"Began"
@@ -276,7 +276,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 }
 
 - (void)touchDidMoveToLocation:(CGPoint)location
-				inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+				inLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView
 {
 	[self touchDidRegisterAtLocation:location
 					   withEventType:@"Moved"
@@ -285,7 +285,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 
 - (void)touchDidRegisterAtLocation:(CGPoint)location
 					 withEventType:(NSString *)eventType
-					inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+					inLocationView:(RUALocationIndicatorImageView *)locationIndicatorImageView
 {
 	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
