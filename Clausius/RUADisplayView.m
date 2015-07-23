@@ -16,8 +16,6 @@
 @property (strong, nonatomic) UIView *textFieldsContainer;
 @property (strong, nonatomic) UIView *unitsContainer;
 @property (strong, nonatomic) UIView *hideShowQualityView;
-@property CGFloat height;
-@property CGFloat width;
 @end
 
 @implementation RUADisplayView
@@ -25,10 +23,7 @@
 -(instancetype)initWithFrame:(CGRect)frame
 {
 	self = [super initWithFrame:frame];
-	if (self) {
-		self.height = frame.size.height;
-		self.width = frame.size.width;
-		
+	if (self) {		
 		[self addSubview:self.title];
 		[self addSubview:self.containerView];
 		
@@ -164,6 +159,30 @@
 		make.left.equalTo(self.labelsContainer.mas_right).with.offset(15.0f);
 		make.right.equalTo(self.unitsContainer.mas_left).with.offset(-20.0f);
 	}];
+	
+	// Add Adjuster Views
+	if ([self.dataSource respondsToSelector:@selector(tagsForAdjusterViewsInDisplayView:)]) {
+		NSSet *tags = [self.dataSource tagsForAdjusterViewsInDisplayView:self];
+		
+		CGFloat containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
+		CGFloat height = containerViewHeight/self.labelsContainer.subviews.count;
+		
+		for (id tag in tags) {
+			RUAAdjusterView *adjusterView = [[RUAAdjusterView alloc] initWithFrame:CGRectZero
+																			   tag:[(NSNumber *)tag integerValue]];
+			adjusterView.delegate = self;
+			[adjusterView setBackgroundColor:[UIColor clearColor]];
+			[self.containerView addSubview:adjusterView];
+			[self.containerView bringSubviewToFront:adjusterView];
+			
+			[adjusterView mas_makeConstraints:^(MASConstraintMaker *make) {
+				make.left.equalTo(self.containerView);
+				make.right.equalTo(self.containerView);
+				make.top.equalTo([NSNumber numberWithFloat:height*([(NSNumber *)tag floatValue] - 1)]);
+				make.height.equalTo([NSNumber numberWithFloat:height]);
+			}];
+		}
+	}
 	
 	// Set Autolayout for Labels
 	for (UILabel *label in self.labelsContainer.subviews) {
@@ -560,6 +579,18 @@
 - (void)showQuality {
 	[self.hideShowQualityView setHidden:YES];
 	self.qualityIsHidden = NO;
+}
+
+#pragma mark - Adjuster View Delegate
+
+- (void)adjusterView:(RUAAdjusterView *)adjusterView didBeginTouchAtLocation:(CGPoint)location
+{
+	NSLog(@"Location: %@",NSStringFromCGPoint(location));
+}
+
+- (void)adjusterView:(RUAAdjusterView *)adjusterView didAdjustFromLocation:(CGPoint)fromLocation toLocation:(CGPoint)toLocation
+{
+	NSLog(@"From Location: %@\nTo Location: %@",NSStringFromCGPoint(fromLocation),NSStringFromCGPoint(toLocation));
 }
 
 @end

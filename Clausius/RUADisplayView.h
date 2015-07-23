@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RUAAdjusterView.h"
 
 @protocol RUADisplayViewDataSource;
+@protocol RUADisplayViewDelegate;
 
-@interface RUADisplayView : UIView
+@interface RUADisplayView : UIView <RUAAdjusterViewDelegate>
 @property (strong, nonatomic) UILabel *title;
 
 @property (strong, nonatomic) UILabel *temperatureLabel;
@@ -40,6 +42,7 @@
 @property BOOL qualityIsHidden;
 
 @property id <RUADisplayViewDataSource> dataSource;
+@property id <RUADisplayViewDelegate> delegate;
 
 -(instancetype)initWithFrame:(CGRect)frame;
 
@@ -62,9 +65,19 @@
 -(void)hideQuality;
 @end
 
+@protocol RUADisplayViewDelegate <NSObject>
+
+-(void)
+
+@end
+
 @protocol RUADisplayViewDataSource <NSObject>
 
 -(NSString *)nameForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView;
 -(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView;
+
+@optional
+
+-(NSSet *)tagsForAdjusterViewsInDisplayView:(RUADisplayView *)displayView;
 
 @end

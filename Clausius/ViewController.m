@@ -108,6 +108,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 {
 	if (!_displayView) {
 		_displayView = [[RUADisplayView alloc] initWithFrame:self.secondContainerView.frame];
+		_displayView.qualityIsHidden = YES;
 		[_displayView setDataSource:self];
 	}
 	return _displayView;
@@ -222,6 +223,11 @@ const static CGFloat T_SAT_MIN = 1.0;
 }
 
 #pragma mark - Display View Datasource
+
+-(NSSet *)tagsForAdjusterViewsInDisplayView:(RUADisplayView *)displayView
+{
+	return [NSSet setWithObjects:@1, nil];
+}
 
 -(NSString *)nameForLabel:(UILabel *)label InDisplayView:(RUADisplayView *)displayView
 {

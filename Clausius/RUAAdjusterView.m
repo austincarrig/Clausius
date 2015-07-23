@@ -14,11 +14,12 @@
 
 @implementation RUAAdjusterView
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame tag:(NSUInteger)tag
 {
 	self = [super initWithFrame:frame];
 	if (self) {
 		[self setUserInteractionEnabled:YES];
+		[self setTag:tag];
 	}
 	
 	return self;
