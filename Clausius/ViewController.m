@@ -597,24 +597,6 @@ const static float X_TOTAL_CHANGE = 0.03;
 
 #pragma mark - Adjuster View Delegate
 
-- (void)adjusterView:(RUAAdjusterView *)adjusterView didBeginTouchAtLocation:(CGPoint)location
-{
-	switch (adjusterView.tag) {
-		case 1:
-			NSLog(@"Temperature");
-			
-			break;
-		case 6:
-			NSLog(@"Entropy");
-			// Adjust entropy accordingly
-			break;
-			
-		default:
-			NSLog(@"Default Case");
-			break;
-	}
-}
-
 - (void)adjusterView:(RUAAdjusterView *)adjusterView didAdjustFromLocation:(CGPoint)fromLocation toLocation:(CGPoint)toLocation
 {
 	if (touchHasRegistered) {
