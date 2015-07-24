@@ -17,6 +17,7 @@ const static float T_CRITICAL = 373.9;
 const static float T_SAT_MIN = 1.0;
 const static float T_TOTAL_CHANGE = 10.0;
 const static float S_TOTAL_CHANGE = 0.1;
+const static float X_TOTAL_CHANGE = 0.03;
 
 @interface ViewController ()
 @property (strong, nonatomic) UIImageView *infoView;
@@ -53,6 +54,7 @@ const static float S_TOTAL_CHANGE = 0.1;
 	*/
 	
 	touchHasRegistered = NO;
+	allowQualityScrubbing = NO;
 	
 	priorX = 0;
 	priorY = 0;
@@ -224,7 +226,7 @@ const static float S_TOTAL_CHANGE = 0.1;
 
 -(NSSet *)tagsForAdjusterViews
 {
-	return [NSSet setWithObjects:@1, @6, nil];
+	return [NSSet setWithObjects:@1, @6, @7, nil];
 }
 
 #pragma mark - Location Indication Image View Datasource
@@ -356,37 +358,37 @@ const static float S_TOTAL_CHANGE = 0.1;
 	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	// Check if finger is above or below critical temperature (379.3 C)
-	if (currentTemp > T_CRITICAL) {
+	if (temperature > T_CRITICAL) {
 		// Superheated above 379.3 C
-		[self calculateSuperheatedWithTemperature:currentTemp
-										  entropy:currentEntropy];
-	} else if (currentTemp <= T_CRITICAL) {
-		if ([[NSString stringWithFormat:@"%.1f",currentTemp] floatValue] == T_CRITICAL) {
+		[self calculateSuperheatedWithTemperature:temperature
+										  entropy:entropy];
+	} else if (temperature <= T_CRITICAL) {
+		if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
 			// Saturated at 379.3 C
-			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",currentTemp] floatValue]
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
 																							  inContext:appDelegate.managedObjectContext];
 			
 			
 			[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
-											   temperature:currentTemp
-												   entropy:currentEntropy];
+											   temperature:temperature
+												   entropy:entropy];
 		} else {
-			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)currentTemp
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)temperature
 																							  inContext:appDelegate.managedObjectContext];
-			if (currentEntropy < [saturatedPoint.s_f floatValue]) {
+			if (entropy < [saturatedPoint.s_f floatValue]) {
 				// Compressed Liquid
 				[self calculateCompressedLiquidWithSaturatedPlotPoint:saturatedPoint
-														  temperature:currentTemp
-															  entropy:currentEntropy];
-			} else if (currentEntropy > [saturatedPoint.s_f floatValue] && currentEntropy < [saturatedPoint.s_g floatValue]) {
+														  temperature:temperature
+															  entropy:entropy];
+			} else if (entropy > [saturatedPoint.s_f floatValue] && entropy < [saturatedPoint.s_g floatValue]) {
 				// Saturated
 				[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
-												   temperature:currentTemp
-													   entropy:currentEntropy];
-			} else if (currentEntropy > [saturatedPoint.s_g floatValue]) {
+												   temperature:temperature
+													   entropy:entropy];
+			} else if (entropy > [saturatedPoint.s_g floatValue]) {
 				// Superheated below 379.3 C
-				[self calculateSuperheatedWithTemperature:currentTemp
-												  entropy:currentEntropy];
+				[self calculateSuperheatedWithTemperature:temperature
+												  entropy:entropy];
 			}
 		}
 	}
@@ -419,6 +421,8 @@ const static float S_TOTAL_CHANGE = 0.1;
 	specVolume = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
 	intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
 	enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+	
+	currentQuality = quality;
 	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
 											 pressure:[NSNumber numberWithFloat:[saturatedPoint.p floatValue]]
@@ -632,6 +636,25 @@ const static float S_TOTAL_CHANGE = 0.1;
 			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:newEntropy
 													secondaryAxisValue:currentTemp]) {
 				currentEntropy = newEntropy;
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:currentEntropy];
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+										  secondaryAxisValue:currentTemp];
+			}
+		} else if (adjusterView.tag == 7) {
+			float dx = (toLocation.x - fromLocation.x)*X_TOTAL_CHANGE/adjusterView.frame.size.width;
+			float newQuality = currentQuality + dx;
+			if (newQuality <= 100.0 && newQuality >= 0.0) {
+				AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+				currentQuality = newQuality;
+				
+				SaturatedPlotPoint *plotPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)currentTemp
+																							 inContext:appDel.managedObjectContext];
+				float s_f = plotPoint.s_f.floatValue;
+				float s_g = plotPoint.s_g.floatValue;
+				
+				currentEntropy = s_f + currentQuality*(s_g - s_f);
+				
 				[self calculateNewValuesWithTemperature:currentTemp
 												entropy:currentEntropy];
 				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy

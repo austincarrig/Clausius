@@ -9,5 +9,5 @@
 #import "SaturatedPlotPoint.h"
 
 @interface SaturatedPlotPoint (Fetch)
-+ (SaturatedPlotPoint *)fetchSaturatedPointWithTemperature:(float)temperature inContext:(NSManagedObjectContext *)context;
++ (SaturatedPlotPoint *)fetchSaturatedPointWithTemperature:(int)temperature inContext:(NSManagedObjectContext *)context;
 @end

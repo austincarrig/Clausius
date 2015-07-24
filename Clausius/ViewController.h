@@ -16,7 +16,9 @@
 	float priorY;
 	float currentTemp;
 	float currentEntropy;
+	float currentQuality;
 	BOOL touchHasRegistered;
+	BOOL allowQualityScrubbing;
 }
 
 @end

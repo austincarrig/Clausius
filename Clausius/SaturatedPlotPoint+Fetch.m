@@ -9,10 +9,10 @@
 #import "SaturatedPlotPoint+Fetch.h"
 
 @implementation SaturatedPlotPoint (Fetch)
-+ (SaturatedPlotPoint *)fetchSaturatedPointWithTemperature:(float)temperature inContext:(NSManagedObjectContext *)context
++ (SaturatedPlotPoint *)fetchSaturatedPointWithTemperature:(int)temperature inContext:(NSManagedObjectContext *)context
 {
 	NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"SaturatedPlotPoint"];
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"t == %f",temperature];
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"t == %d",temperature];
 	[fetchRequest setPredicate:predicate];
 	NSError *error;
 	NSArray *values = [context executeFetchRequest:fetchRequest
