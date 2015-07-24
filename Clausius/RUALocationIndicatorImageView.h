@@ -23,7 +23,9 @@
 @property (strong, nonatomic) NSNumber *yMin;
 @property (strong, nonatomic) NSNumber *yMax;
 
--(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
+- (BOOL)pointIsWithinBoundsForPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue;
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
+- (void)moveMarkerToPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue;
 
 @end
 

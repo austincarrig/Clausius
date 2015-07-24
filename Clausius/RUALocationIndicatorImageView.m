@@ -19,6 +19,9 @@ unsigned char *rawData;
 @property (nonatomic, strong) UIBezierPath *locationIndicatorCircle;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorRingLayer;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorCircleLayer;
+
+@property CGFloat primaryAxisRange;
+@property CGFloat secondaryAxisRange;
 @end
 
 @implementation RUALocationIndicatorImageView
@@ -42,6 +45,11 @@ unsigned char *rawData;
 		
 		rawData = [self getRGBAsFromImage:self.image
 							  inImageView:self];
+		
+		if ([self respondsToAllProperSelectors]) {
+			self.primaryAxisRange = [self.dataSource primaryAxisEndingValue] - [self.dataSource primaryAxisStartingValue];
+			self.secondaryAxisRange = [self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue];
+		}
 	}
 	return self;
 }
@@ -99,6 +107,11 @@ unsigned char *rawData;
 	return _locationIndicatorCircleLayer;
 }
 
+- (BOOL)respondsToAllProperSelectors
+{
+	return [self.dataSource respondsToSelector:@selector(primaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(primaryAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisEndingValue)];
+}
+
 #pragma mark - Responder Methods
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -119,7 +132,7 @@ unsigned char *rawData;
 		
 		float secondaryAxisValue;
 		
-		if ([self.dataSource respondsToSelector:@selector(primaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(primaryAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisEndingValue)]) {
+		if ([self respondsToAllProperSelectors]) {
 			secondaryAxisValue = [self.dataSource secondaryAxisStartingValue] + ([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
 			
 			if ([self.dataSource respondsToSelector:@selector(minimumSecondaryAxisValue)]) {
@@ -172,7 +185,7 @@ unsigned char *rawData;
 		
 		float secondaryAxisValue;
 		
-		if ([self.dataSource respondsToSelector:@selector(primaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(primaryAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisEndingValue)]) {
+		if ([self respondsToAllProperSelectors]) {
 			secondaryAxisValue = [self.dataSource secondaryAxisStartingValue] + ([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
 			
 			if ([self.dataSource respondsToSelector:@selector(minimumSecondaryAxisValue)]) {
@@ -302,6 +315,51 @@ unsigned char *rawData;
 	CGContextRelease(context);
 	
 	return rawData;
+}
+
+#pragma mark - User Movement Methods
+
+- (BOOL)pointIsWithinBoundsForPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue
+{
+	CGFloat xValue = ((primValue - [self.dataSource primaryAxisStartingValue])*self.frame.size.width/self.primaryAxisRange);
+	CGFloat yValue = self.frame.size.height - ((secValue - [self.dataSource secondaryAxisStartingValue])*self.frame.size.height/self.secondaryAxisRange);
+	
+	UIColor *color = (UIColor *)[[self getRGBAsFromImage:self.image inImageView:self atX:xValue andY:yValue count:1] lastObject];
+	
+	if (CGColorGetAlpha(color.CGColor) != 0.0) {
+		return YES;
+	} else {
+		return NO;
+	}
+}
+
+- (void)moveMarkerToPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue
+{
+	if ([self respondsToAllProperSelectors]) {
+		CGFloat xValue = ((primValue - [self.dataSource primaryAxisStartingValue])*self.frame.size.width/self.primaryAxisRange);
+		CGFloat yValue = self.frame.size.height - ((secValue - [self.dataSource secondaryAxisStartingValue])*self.frame.size.height/self.secondaryAxisRange);
+		
+		CGPoint pointerLocation = CGPointMake(xValue, yValue);
+		
+		[self.locationIndicatorRing removeAllPoints];
+		[self.locationIndicatorCircle removeAllPoints];
+		
+		self.locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																	radius:outerRadius
+																startAngle:0.0f
+																  endAngle:360.0f
+																 clockwise:YES];
+		[self.locationIndicatorRingLayer setPath:[self.locationIndicatorRing CGPath]];
+		[self.layer addSublayer:self.locationIndicatorRingLayer];
+		
+		self.locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																	  radius:innerRadius
+																  startAngle:0.0f
+																	endAngle:360.0f
+																   clockwise:YES];
+		[self.locationIndicatorCircleLayer setPath:[self.locationIndicatorCircle CGPath]];
+		[self.layer addSublayer:self.locationIndicatorCircleLayer];
+	}
 }
 
 @end

@@ -7,12 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RUAAdjusterView.h"
 #import "RUALocationIndicatorImageView.h"
 #import "RUADisplayView.h"
 
-@interface ViewController : UIViewController <RUALocationIndicatorImageViewDataSource,RUADisplayViewDataSource,RUALocationIndicatorImageViewDelegate> {
+@interface ViewController : UIViewController <RUALocationIndicatorImageViewDataSource,RUALocationIndicatorImageViewDelegate,RUADisplayViewDataSource,RUAAdjusterViewDelegate> {
 	float priorX;
 	float priorY;
+	float currentTemp;
+	float currentEntropy;
+	BOOL touchHasRegistered;
 }
 
 @end

@@ -39,6 +39,10 @@
 @property (strong, nonatomic) UILabel *entropyUnitsLabel;
 @property (strong, nonatomic) UILabel *qualityUnitsLabel;
 
+@property CGFloat containerViewHeight;
+@property CGFloat containerViewOriginY;
+@property NSUInteger numberOfRows;
+
 @property BOOL qualityIsHidden;
 
 @property id <RUADisplayViewDataSource> dataSource;
@@ -63,12 +67,6 @@
 -(void)updateTitle:(NSString *)title;
 -(void)showQuality;
 -(void)hideQuality;
-@end
-
-@protocol RUADisplayViewDelegate <NSObject>
-
--(void)
-
 @end
 
 @protocol RUADisplayViewDataSource <NSObject>

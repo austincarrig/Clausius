@@ -10,12 +10,21 @@
 #import "Masonry.h"
 #import "UIColor+Mvuke.h"
 
+const static CGFloat TITLE_CONTAINER_VIEW_PADDING = 10.0f;
+
 @interface RUADisplayView ()
 @property (strong, nonatomic) UIView *containerView;
 @property (strong, nonatomic) UIView *labelsContainer;
 @property (strong, nonatomic) UIView *textFieldsContainer;
 @property (strong, nonatomic) UIView *unitsContainer;
 @property (strong, nonatomic) UIView *hideShowQualityView;
+
+@property (strong, nonatomic) NSNumber *temperature;
+@property (strong, nonatomic) NSNumber *pressure;
+@property (strong, nonatomic) NSNumber *specVolume;
+@property (strong, nonatomic) NSNumber *intEnergy;
+@property (strong, nonatomic) NSNumber *enthalpy;
+@property (strong, nonatomic) NSNumber *entropy;
 @end
 
 @implementation RUADisplayView
@@ -110,7 +119,7 @@
 	
 	// Set Autolayout for Containers
 	[self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-		make.top.equalTo(self.title.mas_bottom).with.offset(10.0);
+		make.top.equalTo(self.title.mas_bottom).with.offset(TITLE_CONTAINER_VIEW_PADDING);
 		make.centerX.equalTo(self.title);
 		make.bottom.equalTo(self);
 		make.width.equalTo(self.title);
@@ -160,30 +169,8 @@
 		make.right.equalTo(self.unitsContainer.mas_left).with.offset(-20.0f);
 	}];
 	
-	// Add Adjuster Views
-	if ([self.dataSource respondsToSelector:@selector(tagsForAdjusterViewsInDisplayView:)]) {
-		NSSet *tags = [self.dataSource tagsForAdjusterViewsInDisplayView:self];
+	self.containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
 		
-		CGFloat containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
-		CGFloat height = containerViewHeight/self.labelsContainer.subviews.count;
-		
-		for (id tag in tags) {
-			RUAAdjusterView *adjusterView = [[RUAAdjusterView alloc] initWithFrame:CGRectZero
-																			   tag:[(NSNumber *)tag integerValue]];
-			adjusterView.delegate = self;
-			[adjusterView setBackgroundColor:[UIColor clearColor]];
-			[self.containerView addSubview:adjusterView];
-			[self.containerView bringSubviewToFront:adjusterView];
-			
-			[adjusterView mas_makeConstraints:^(MASConstraintMaker *make) {
-				make.left.equalTo(self.containerView);
-				make.right.equalTo(self.containerView);
-				make.top.equalTo([NSNumber numberWithFloat:height*([(NSNumber *)tag floatValue] - 1)]);
-				make.height.equalTo([NSNumber numberWithFloat:height]);
-			}];
-		}
-	}
-	
 	// Set Autolayout for Labels
 	for (UILabel *label in self.labelsContainer.subviews) {
 		[label setTextColor:[UIColor blackColor]];
@@ -233,8 +220,7 @@
 	// Add layer for lines between rows of display
 	for (int i = 1; i < [self.labelsContainer.subviews count]; i++) {
 		UIBezierPath *rowSeparator = [UIBezierPath bezierPath];
-		CGFloat containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
-		CGFloat yLocation = containerViewHeight*(CGFloat)i/self.labelsContainer.subviews.count;
+		CGFloat yLocation = self.containerViewHeight*(CGFloat)i/self.labelsContainer.subviews.count;
 		[rowSeparator moveToPoint:CGPointMake(0, yLocation)];
 		[rowSeparator addLineToPoint:CGPointMake(titleSize.width, yLocation)];
 		CAShapeLayer *lineLayer = [CAShapeLayer layer];
@@ -250,6 +236,9 @@
 		make.right.equalTo(self.containerView);
 		make.top.equalTo(self.entropyLabel.mas_bottom);
 	}];
+	
+	self.containerViewOriginY = titleSize.height + TITLE_CONTAINER_VIEW_PADDING;
+	self.numberOfRows = self.labelsContainer.subviews.count;
 }
 
 #pragma mark - Lazy Init Title
@@ -526,23 +515,25 @@
 	}
 }
 
--(void)updateTextFieldsWithTemperature:(NSNumber *)temperature
-							  pressure:(NSNumber *)pressure
-						specificVolume:(NSNumber *)specificVolume
-						internalEnergy:(NSNumber *)internalEnergy
-							  enthalpy:(NSNumber *)enthalpy
-							   entropy:(NSNumber *)entropy
-							   quality:(NSNumber *)quality;
+- (void)updateTextFieldsWithTemperature:(NSNumber *)temperature
+							   pressure:(NSNumber *)pressure
+						 specificVolume:(NSNumber *)specificVolume
+						 internalEnergy:(NSNumber *)internalEnergy
+						 	   enthalpy:(NSNumber *)enthalpy
+							    entropy:(NSNumber *)entropy
+							    quality:(NSNumber *)quality;
 {
 	if (pressure.floatValue >= 100000.0) {
 		pressure = [NSNumber numberWithFloat:99999.9];
 	}
 	
 	if (temperature) {
+		self.temperature = temperature;
 		[self.temperatureTextField setText:[NSString stringWithFormat:@"%d",[temperature intValue]]];
 	}
 	
 	if (pressure) {
+		self.pressure = pressure;
 		[self.pressureTextField setText:[NSString stringWithFormat:@"%.1f",[pressure floatValue]]];
 	}
 	
@@ -579,18 +570,6 @@
 - (void)showQuality {
 	[self.hideShowQualityView setHidden:YES];
 	self.qualityIsHidden = NO;
-}
-
-#pragma mark - Adjuster View Delegate
-
-- (void)adjusterView:(RUAAdjusterView *)adjusterView didBeginTouchAtLocation:(CGPoint)location
-{
-	NSLog(@"Location: %@",NSStringFromCGPoint(location));
-}
-
-- (void)adjusterView:(RUAAdjusterView *)adjusterView didAdjustFromLocation:(CGPoint)fromLocation toLocation:(CGPoint)toLocation
-{
-	NSLog(@"From Location: %@\nTo Location: %@",NSStringFromCGPoint(fromLocation),NSStringFromCGPoint(toLocation));
 }
 
 @end
