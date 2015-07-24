@@ -17,7 +17,7 @@ const static float T_CRITICAL = 373.9;
 const static float T_SAT_MIN = 1.0;
 const static float T_TOTAL_CHANGE = 10.0;
 const static float S_TOTAL_CHANGE = 0.1;
-const static float X_TOTAL_CHANGE = 0.03;
+const static float X_TOTAL_CHANGE = 0.01;
 
 @interface ViewController ()
 @property (strong, nonatomic) UIImageView *infoView;
@@ -118,8 +118,8 @@ const static float X_TOTAL_CHANGE = 0.03;
 		[adjusterView mas_makeConstraints:^(MASConstraintMaker *make) {
 			make.left.equalTo(self.secondContainerView);
 			make.right.equalTo(self.secondContainerView);
-			make.top.equalTo([NSNumber numberWithFloat:(height*([(NSNumber *)tag floatValue] - 1) + self.displayView.containerViewOriginY)]);
-			make.height.equalTo([NSNumber numberWithFloat:height]);
+			make.top.equalTo([NSNumber numberWithFloat:(height*([(NSNumber *)tag floatValue] - 1) + self.displayView.containerViewOriginY + 2.0f)]);
+			make.height.equalTo([NSNumber numberWithFloat:height - 4.0f]);
 		}];
 	}
 }
