@@ -49,13 +49,13 @@
 	if (event.allTouches.count == 1) {
 		CGPoint touchLocation = [(UITouch *)[touches anyObject] locationInView:self];
 		
-		if ([self.delegate respondsToSelector:@selector(adjusterView:didAdjustFromLocation:toLocation:)]) {
+		if ([self.delegate respondsToSelector:@selector(adjusterView:didAdjustFromLocation:toLocation:)] && [self pointInside:touchLocation
+																													withEvent:event]) {
 			[self.delegate adjusterView:self
 			 didAdjustFromLocation:self.currentTouchLocation
 							 toLocation:touchLocation];
+			self.currentTouchLocation = touchLocation;
 		}
-		
-		self.currentTouchLocation = touchLocation;
 	}
 }
 

@@ -129,6 +129,7 @@
 		4941C4FA1B6075BA00E163C8 /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
 		4941C4FB1B6075BA00E163C8 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		4941C4FC1B6075BA00E163C8 /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+MASAdditions.m"; sourceTree = "<group>"; };
+		498CF81E1B6699F400A8E235 /* ClausiusConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClausiusConstants.h; sourceTree = "<group>"; };
 		499813791B6015400044987E /* RUAAdjusterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAAdjusterView.h; sourceTree = "<group>"; };
 		4998137A1B6015400044987E /* RUAAdjusterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUAAdjusterView.m; sourceTree = "<group>"; };
 		F15A8140971EB808610BEB52 /* libPods-Clausius.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clausius.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,6 +196,7 @@
 			children = (
 				492A98DE1B574DF100F061E8 /* UIColor+Mvuke.h */,
 				492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */,
+				498CF81E1B6699F400A8E235 /* ClausiusConstants.h */,
 				492A98E01B574DF100F061E8 /* LaunchScreen.xib */,
 				492A984B1B574BCC00F061E8 /* Info.plist */,
 				492A984C1B574BCC00F061E8 /* main.m */,
@@ -289,8 +291,8 @@
 				492A98C51B574D5600F061E8 /* SaturatedPlotPoint.m */,
 				492A98B71B574D5600F061E8 /* SaturatedPlotPoint+Create.h */,
 				492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */,
-				492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */,
 				492A98C61B574D5600F061E8 /* SaturatedPlotPoint+Fetch.h */,
+				492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */,
 			);
 			name = SaturatedPlotPoint;
 			sourceTree = "<group>";

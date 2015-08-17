@@ -38,7 +38,7 @@
 			[fileNameScanner scanUpToCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:@"._"]
 											intoString:&area];
 			
-			if ([area isEqualToString:@"Saturated"]) {
+			if ([area isEqualToString:@"Sat"]) {
 				[self loadSaturatedFile:fileName type:type];
 				
 				ImportedFile *file = [ImportedFile createImportedFileWithName:fileName

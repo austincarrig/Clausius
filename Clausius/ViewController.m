@@ -12,6 +12,7 @@
 #import "UIColor+Mvuke.h"
 #import "CoreData.h"
 #import "H2O_Wagner_Pruss.h"
+#import "ClausiusConstants.h"
 
 const static float T_CRITICAL = 373.9;
 const static float T_SAT_MIN = 1.0;
@@ -226,7 +227,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 -(NSSet *)tagsForAdjusterViews
 {
-	return [NSSet setWithObjects:@1, @6, @7, nil];
+	return [NSSet setWithObjects:@1, @2, @6, @7, nil];
 }
 
 #pragma mark - Location Indication Image View Datasource
@@ -373,7 +374,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 											   temperature:temperature
 												   entropy:entropy];
 		} else {
-			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)temperature
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:temperature
 																							  inContext:appDelegate.managedObjectContext];
 			if (entropy < [saturatedPoint.s_f floatValue]) {
 				// Compressed Liquid
@@ -398,6 +399,11 @@ const static float X_TOTAL_CHANGE = 0.01;
 											temperature:(float)temperature
 												entropy:(float)entropy
 {
+	currentPressure = [saturatedPoint.p floatValue];
+	currentSpecVolume = [saturatedPoint.v_f floatValue];
+	currentIntEnergy = [saturatedPoint.u_f floatValue];
+	currentEnthalpy = [saturatedPoint.h_f floatValue];
+	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
 											 pressure:[NSNumber numberWithFloat:[saturatedPoint.p floatValue]]
 									   specificVolume:[NSNumber numberWithFloat:[saturatedPoint.v_f floatValue]]
@@ -409,23 +415,30 @@ const static float X_TOTAL_CHANGE = 0.01;
 	if (!self.displayView.qualityIsHidden) {
 		[self.displayView hideQuality];
 	}
+	
+	currentRegion = CurrentRegionCompressedLiquid;
 }
 
 - (void)calculateSaturatedWithSaturatedPlotPoint:(SaturatedPlotPoint *)saturatedPoint
 									 temperature:(float)temperature
 										 entropy:(float)entropy
 {
-	float specVolume, intEnergy, enthalpy, quality;
+	float pressure, specVolume, intEnergy, enthalpy, quality;
 	
+	pressure = [saturatedPoint.p floatValue];
 	quality = (entropy - [saturatedPoint.s_f floatValue])/([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
 	specVolume = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
 	intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
 	enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
 	
+	currentPressure = pressure;
+	currentSpecVolume = specVolume;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
 	currentQuality = quality;
 	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-											 pressure:[NSNumber numberWithFloat:[saturatedPoint.p floatValue]]
+											 pressure:[NSNumber numberWithFloat:pressure]
 									   specificVolume:[NSNumber numberWithFloat:specVolume]
 									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
 											 enthalpy:[NSNumber numberWithFloat:enthalpy]
@@ -434,6 +447,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 	if (self.displayView.qualityIsHidden) {
 		[self.displayView showQuality];
 	}
+	
+	currentRegion = CurrentRegionSaturated;
 }
 
 - (void)calculateSuperheatedWithTemperature:(float)temperature
@@ -442,6 +457,45 @@ const static float X_TOTAL_CHANGE = 0.01;
 	float pressure, specVolume, intEnergy, enthalpy, quality;
 	quality = 0.0;
 	
+	pressure = [self interpolateToPressureWithTemperature:temperature
+												  entropy:entropy];
+	
+	double kTemperature = temperature + 273.15;
+	double mPressure = pressure/1000;
+	
+	NSLog(@"density1");
+	double density = [self.wagPruss rhoWithTemperature:kTemperature
+										   andPressure:mPressure];
+	specVolume = 1/density;
+	NSLog(@"density2");
+	
+	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+														   andDensity:density]/1000.0;
+	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+													andDensity:density]/1000.0;
+	
+	currentPressure = pressure;
+	currentSpecVolume = specVolume;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVolume]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:[NSNumber numberWithFloat:quality*100]];
+	
+	if (!self.displayView.qualityIsHidden) {
+		[self.displayView hideQuality];
+	}
+	
+	currentRegion = CurrentRegionSuperheated;
+}
+
+- (float)interpolateToPressureWithTemperature:(float)temperature entropy:(float)entropy
+{
 	// Find list of entropies for specific temperature
 	NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
 	
@@ -468,35 +522,43 @@ const static float X_TOTAL_CHANGE = 0.01;
 		float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
 		float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
 		
-		pressure = lowPres + weight*(highPres - lowPres);
+		return lowPres + weight*(highPres - lowPres);
 	} else {
-		pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+		return ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+	}
+}
+
+- (float)interpolateToEntropyWithTemperature:(float)temperature pressure:(float)pressure
+{
+	// Find list of entropies for specific temperature
+	NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
+	
+	int location = 0;
+	BOOL locationReached = NO;
+	
+	// Find index of first entropy value in array which is less than chosen entropy value
+	for (int i = 0; i < self.superheatedPressures.count; i++) {
+		if ([(NSNumber *)self.superheatedPressures[i] floatValue] >= pressure) {
+			continue;
+		} else {
+			locationReached = YES;
+			location = i;
+		}
 	}
 	
-	double kTemperature = temperature + 273.15;
-	double mPressure = pressure/1000;
-	
-	NSLog(@"density1");
-	double density = [self.wagPruss rhoWithTemperature:kTemperature
-										   andPressure:mPressure];
-	specVolume = 1/density;
-	NSLog(@"density2");
-	
-	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
-														   andDensity:density]/1000.0;
-	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-													andDensity:density]/1000.0;
-	
-	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-											 pressure:[NSNumber numberWithFloat:pressure]
-									   specificVolume:[NSNumber numberWithFloat:specVolume]
-									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-											 enthalpy:[NSNumber numberWithFloat:enthalpy]
-											  entropy:[NSNumber numberWithFloat:entropy]
-											  quality:[NSNumber numberWithFloat:quality*100]];
-	
-	if (!self.displayView.qualityIsHidden) {
-		[self.displayView hideQuality];
+	// Interpolation to determine pressure value
+	if (location != self.superheatedPressures.count - 1 && locationReached) {
+		float lowPres = [(NSNumber *)self.superheatedPressures[location] floatValue];
+		float highPres = [(NSNumber *)self.superheatedPressures[location + 1] floatValue];
+		
+		float weight = (pressure - lowPres)/(highPres - lowPres);
+		
+		float lowEnt = ((NSNumber *)[array objectAtIndex:location]).floatValue;
+		float highEnt = ((NSNumber *)[array objectAtIndex:(location + 1)]).floatValue;
+		
+		return lowEnt + weight*(highEnt - lowEnt);
+	} else {
+		return ((NSNumber *)[array objectAtIndex:location]).floatValue;
 	}
 }
 
@@ -601,6 +663,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 {
 	if (touchHasRegistered) {
 		if (adjusterView.tag == 1) {
+			// Temperature
 			float dT = (toLocation.x - fromLocation.x)*T_TOTAL_CHANGE/adjusterView.frame.size.width;
 			float newTemp = currentTemp + dT;
 			if (newTemp > T_SAT_MIN && [self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy
@@ -611,8 +674,41 @@ const static float X_TOTAL_CHANGE = 0.01;
 				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
 										  secondaryAxisValue:currentTemp];
 			}
-			// Adjust temperature accordingly
+		} else if (adjusterView.tag == 2) {
+			// Pressure
+			float dP = (toLocation.x - fromLocation.x)*currentPressure/(10.0f*adjusterView.frame.size.width);
+			float newPressure = currentPressure + dP;
+			
+			if ([currentRegion isEqualToString:CurrentRegionSaturated]) {
+				AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+				
+				currentTemp = [SaturatedPlotPoint fetchTemperatureWithPressure:newPressure
+																	 inContext:appDel.managedObjectContext];
+				
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:currentEntropy];
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+										  secondaryAxisValue:currentTemp];
+			} else {
+				float newEntropy = [self interpolateToEntropyWithTemperature:currentTemp
+																	pressure:newPressure];
+				
+				currentEntropy = newEntropy;
+				currentPressure = newPressure;
+				
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:currentEntropy];
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+										  secondaryAxisValue:currentTemp];
+			}
+		} else if (adjusterView.tag == 3) {
+			// Specific Volume
+		} else if (adjusterView.tag == 4) {
+			// Internal Energy
+		} else if (adjusterView.tag == 5) {
+			// Enthalpy
 		} else if (adjusterView.tag == 6) {
+			// Entropy
 			float ds = (toLocation.x - fromLocation.x)*S_TOTAL_CHANGE/adjusterView.frame.size.width;
 			float newEntropy = currentEntropy + ds;
 			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:newEntropy
@@ -624,6 +720,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 										  secondaryAxisValue:currentTemp];
 			}
 		} else if (adjusterView.tag == 7) {
+			// Quality
 			float dx = (toLocation.x - fromLocation.x)*X_TOTAL_CHANGE/adjusterView.frame.size.width;
 			float newQuality = currentQuality + dx;
 			if (newQuality <= 100.0 && newQuality >= 0.0) {
