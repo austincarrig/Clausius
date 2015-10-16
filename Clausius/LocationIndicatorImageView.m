@@ -119,12 +119,12 @@ unsigned char *rawData;
 		
 		float secondaryAxisValue;
 		
-		if ([self.dataSource respondsToSelector:@selector(primaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(primaryAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisEndingValue)]) {
-			secondaryAxisValue = [self.dataSource secondaryAxisStartingValue] + ([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
+		if ([self.dataSource respondsToSelector:@selector(xAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(xAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(yAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(yAxisEndingValue)]) {
+			secondaryAxisValue = [self.dataSource yAxisStartingValue] + ([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
 			
-			if ([self.dataSource respondsToSelector:@selector(minimumSecondaryAxisValue)]) {
-				if (secondaryAxisValue < [self.dataSource minimumSecondaryAxisValue]) {
-					CGFloat newY = ((fabs([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue]) - fabs([self.dataSource minimumSecondaryAxisValue] - [self.dataSource secondaryAxisStartingValue]))/fabs([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue]))*self.frame.size.height;
+			if ([self.dataSource respondsToSelector:@selector(minimumYAxisValue)]) {
+				if (secondaryAxisValue < [self.dataSource minimumYAxisValue]) {
+					CGFloat newY = ((fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]) - fabs([self.dataSource minimumYAxisValue] - [self.dataSource yAxisStartingValue]))/fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]))*self.frame.size.height;
 					pointerLocation = CGPointMake(pointerLocation.x, newY);
 				}
 			}
@@ -172,12 +172,12 @@ unsigned char *rawData;
 		
 		float secondaryAxisValue;
 		
-		if ([self.dataSource respondsToSelector:@selector(primaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(primaryAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(secondaryAxisEndingValue)]) {
-			secondaryAxisValue = [self.dataSource secondaryAxisStartingValue] + ([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
+		if ([self.dataSource respondsToSelector:@selector(xAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(xAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(yAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(yAxisEndingValue)]) {
+			secondaryAxisValue = [self.dataSource yAxisStartingValue] + ([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
 			
-			if ([self.dataSource respondsToSelector:@selector(minimumSecondaryAxisValue)]) {
-				if (secondaryAxisValue < [self.dataSource minimumSecondaryAxisValue]) {
-					CGFloat newY = ((fabs([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue]) - fabs([self.dataSource minimumSecondaryAxisValue] - [self.dataSource secondaryAxisStartingValue]))/fabs([self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue]))*self.frame.size.height;
+			if ([self.dataSource respondsToSelector:@selector(minimumYAxisValue)]) {
+				if (secondaryAxisValue < [self.dataSource minimumYAxisValue]) {
+					CGFloat newY = ((fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]) - fabs([self.dataSource minimumYAxisValue] - [self.dataSource yAxisStartingValue]))/fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]))*self.frame.size.height;
 					
 					pointerLocation = CGPointMake(pointerLocation.x, newY);
 				}

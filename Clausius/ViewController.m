@@ -13,6 +13,13 @@
 #import "CoreData.h"
 #import "H2O_Wagner_Pruss.h"
 
+#import "RUDataSelector.h"
+#import "RUSolver.h"
+
+#import "RUAxis.h"
+
+#import "Clausius-Swift.h"
+
 const static CGFloat T_CRITICAL = 373.9;
 const static CGFloat T_SAT_MIN = 1.0;
 
@@ -20,17 +27,15 @@ const static CGFloat T_SAT_MIN = 1.0;
 @property (strong, nonatomic) UIImageView *infoView;
 @property (weak, nonatomic) IBOutlet UIButton *infoButton;
 
-@property (strong, nonatomic) LocationIndicatorImageView *chartView;
+@property (strong, nonatomic) RUChartView *chartView;
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIView *secondContainerView;
 @property (strong, nonatomic) DisplayView *displayView;
 
 @property (strong, nonatomic) H2O_Wagner_Pruss *wagPruss;
 
-@property (strong, nonatomic) NSMutableArray *superheatedPressures;
-@property (strong, nonatomic) NSMutableArray *superheatedEntropies;
-
-@property (strong, nonatomic) NSString *chartType;
+@property (strong, nonatomic) NSArray *superheatedPressures;
+@property (strong, nonatomic) NSArray *superheatedEntropies;
 @end
 
 @implementation ViewController
@@ -78,7 +83,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 	
 	if (self.secondContainerView.superview != nil && self.chartView.image != nil) {
 		[self.secondContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-			make.left.equalTo(self.containerView).with.offset(20.0);
+			make.right.equalTo(self.containerView).with.offset(-20.0);
 			make.top.equalTo(self.containerView).with.offset(20.0);
 			make.height.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.height]);
 			make.width.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.width]);
@@ -87,19 +92,24 @@ const static CGFloat T_SAT_MIN = 1.0;
 	
 	[self.secondContainerView addSubview:self.displayView];
 	
-	self.chartType = @"Water";
-	
-	[self chooseNewFileWithChartType:self.chartType];
+	[self chooseNewFileWithChartType:self.chartView.chart.substanceType];
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+	return YES;
 }
 
 #pragma mark - Lazy Init
 
-- (UIImageView *)chartView
+- (RUChartView *)chartView
 {
 	if (!_chartView) {
-		_chartView = [[LocationIndicatorImageView alloc] initWithFrame:self.containerView.frame
-																 image:[UIImage imageNamed:@"Water_ts_chart.jpeg"]
-																sender:self];
+		_chartView = (RUChartView *)[[RUChartView alloc] initWithFrame:self.containerView.frame
+																				image:[UIImage imageNamed:@"Water_pv_chart.png"]
+																			   sender:self];
+		
+		[_chartView setChart:[RUChart chartWithChartType:@"pv"]];
 	}
 	return _chartView;
 }
@@ -149,18 +159,18 @@ const static CGFloat T_SAT_MIN = 1.0;
 	return _wagPruss;
 }
 
-- (NSMutableArray *)superheatedEntropies
+- (NSArray *)superheatedEntropies
 {
 	if (!_superheatedEntropies) {
-		_superheatedEntropies = [[NSMutableArray alloc] init];
+		_superheatedEntropies = [[NSArray alloc] init];
 	}
 	return _superheatedEntropies;
 }
 
-- (NSMutableArray *)superheatedPressures
+- (NSArray *)superheatedPressures
 {
 	if (!_superheatedPressures) {
-		_superheatedPressures = [[NSMutableArray alloc] init];
+		_superheatedPressures = [[NSArray alloc] init];
 	}
 	return _superheatedPressures;
 }
@@ -196,29 +206,29 @@ const static CGFloat T_SAT_MIN = 1.0;
 	return [UIColor primaryColor];
 }
 
-- (CGFloat)primaryAxisEndingValue
+- (CGFloat)xAxisEndingValue
 {
-	return 10.0;
+	return self.chartView.chart.xAxis.max.floatValue;
 }
 
-- (CGFloat)secondaryAxisEndingValue
+- (CGFloat)yAxisEndingValue
 {
-	return 700.0;
+	return self.chartView.chart.yAxis.max.floatValue;
 }
 
-- (CGFloat)primaryAxisStartingValue
+- (CGFloat)xAxisStartingValue
 {
-	return 0.0;
+	return self.chartView.chart.xAxis.min.floatValue;
 }
 
-- (CGFloat)secondaryAxisStartingValue
+- (CGFloat)yAxisStartingValue
 {
-	return -47.0;
+	return self.chartView.chart.yAxis.min.floatValue;
 }
 
-- (CGFloat)minimumSecondaryAxisValue
+- (CGFloat)minimumYAxisValue
 {
-	return 0.0;
+	return T_SAT_MIN;
 }
 
 #pragma mark - Display View Datasource
@@ -257,7 +267,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 	} else if (label.tag == 5) {
 		return @"kJ/kg";
 	} else if (label.tag == 6) {
-		return @"kJ/kg.K";;
+		return @"kJ/kg.K";
 	} else if (label.tag == 7) {
 		return @"%";
 	} else {
@@ -270,30 +280,136 @@ const static CGFloat T_SAT_MIN = 1.0;
 - (void)touchDidBeginAtLocation:(CGPoint)location
 				 inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	[self touchDidRegisterAtLocation:location
-					   withEventType:@"Began"
-					  inLocationView:locationIndicatorImageView];
+	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+		[self tsTouchDidRegisterAtLocation:location
+							 withEventType:@"Began"
+							inLocationView:locationIndicatorImageView];
+	} else if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
+		[self phTouchDidRegisterAtLocation:location
+							 withEventType:@"Began"
+							inLocationView:locationIndicatorImageView];
+	} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+		[self pvTouchDidRegisterAtLocation:location
+							 withEventType:@"Began"
+							inLocationView:locationIndicatorImageView];
+	}
 }
 
 - (void)touchDidMoveToLocation:(CGPoint)location
 				inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	[self touchDidRegisterAtLocation:location
-					   withEventType:@"Moved"
-					  inLocationView:locationIndicatorImageView];
+	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+		[self tsTouchDidRegisterAtLocation:location
+							 withEventType:@"Moved"
+							inLocationView:locationIndicatorImageView];
+	} else if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
+		[self phTouchDidRegisterAtLocation:location
+							 withEventType:@"Moved"
+							inLocationView:locationIndicatorImageView];
+	} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+		[self pvTouchDidRegisterAtLocation:location
+							 withEventType:@"Moved"
+							inLocationView:locationIndicatorImageView];
+	}
 }
 
-- (void)touchDidRegisterAtLocation:(CGPoint)location
-					 withEventType:(NSString *)eventType
-					inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+- (void)pvTouchDidRegisterAtLocation:(CGPoint)location
+					   withEventType:(NSString *)eventType
+					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+{
+	AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
+	
+	CGFloat primaryScale = (log10f([self xAxisEndingValue]) - log10f([self xAxisStartingValue]))/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
+	
+	float specVol = powf(10.0,log10f([self xAxisStartingValue]) + primaryScale*location.x);
+	float pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+	
+	float temp, density, intEnergy, enthalpy, entropy, quality;
+	
+	if (pressure < 22100.) {
+		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.0].firstObject).floatValue;
+		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
+																					inContext:appDel.managedObjectContext];
+		density = 1./specVol;
+		
+		if (specVol <= saturatedPoint.v_f.floatValue) {
+			intEnergy = saturatedPoint.u_f.floatValue;
+			enthalpy = saturatedPoint.h_f.floatValue;
+			entropy = saturatedPoint.s_f.floatValue;
+		} else if (specVol > saturatedPoint.v_f.floatValue && specVol < saturatedPoint.v_g.floatValue) {
+			quality = (specVol - [saturatedPoint.v_f floatValue])/([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
+			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
+			intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
+			enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+		} else {
+			
+			
+			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:temp
+																   andDensity:density]/1000.0;
+			
+			enthalpy = intEnergy + pressure*specVol;
+			
+			entropy = [self.wagPruss calculateEntropyWithTemperature:temp
+														  andDensity:density]/1000.0;
+		}
+		
+		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
+												 pressure:[NSNumber numberWithFloat:pressure]
+										   specificVolume:[NSNumber numberWithFloat:specVol]
+										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+												 enthalpy:[NSNumber numberWithFloat:enthalpy]
+												  entropy:[NSNumber numberWithFloat:entropy]
+												  quality:nil];
+		
+		return;
+	}
+	
+	temp = [RUSolver temperatureForSpecificVolume:specVol
+									  andPressure:pressure];
+	
+	density = 1./specVol;
+	
+	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:temp
+														   andDensity:density];
+	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:temp
+													andDensity:density];
+	entropy = [self.wagPruss calculateEntropyWithTemperature:temp
+												  andDensity:density];
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVol]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:nil];
+}
+
+- (void)phTouchDidRegisterAtLocation:(CGPoint)location
+					   withEventType:(NSString *)eventType
+					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+{
+	CGFloat primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
+	
+	float enthalpy = [self xAxisStartingValue] + primaryScale*location.x;
+	float pressure = powf(10.0, log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+	
+	
+}
+
+- (void)tsTouchDidRegisterAtLocation:(CGPoint)location
+					   withEventType:(NSString *)eventType
+					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
 	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	// Get the scales (units/pixel)for both axes based on graph
-	CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
-	CGFloat secondaryScale = ([self secondaryAxisEndingValue] - [self secondaryAxisStartingValue])/locationIndicatorImageView.frame.size.height;
+	CGFloat primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = ([self yAxisEndingValue] - [self yAxisStartingValue])/locationIndicatorImageView.frame.size.height;
 	
-	float temperature = [self secondaryAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
+	float temperature = [self yAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
 	// If temperature is below the minimum temp, reset the minimum temp
 	if (temperature < T_SAT_MIN) {
 		temperature = T_SAT_MIN;
@@ -472,7 +588,6 @@ const static CGFloat T_SAT_MIN = 1.0;
 														  entropy:[NSNumber numberWithFloat:entropy]
 														  quality:[NSNumber numberWithFloat:quality*100]];
 				
-				
 				if (!self.displayView.qualityIsHidden) {
 					[self.displayView hideQuality];
 				}
@@ -493,9 +608,10 @@ const static CGFloat T_SAT_MIN = 1.0;
 	NSPredicate *fltr = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"self ENDSWITH '.csv' AND self BEGINSWITH '%@_Super_'",chartType]];
 	NSArray *allCSVs = [dirContents filteredArrayUsingPredicate:fltr];
 	
-	[self loadSuperheatedData:[allCSVs firstObject]];
+	self.superheatedPressures = [RUDataSelector loadSuperheatedPressuresWithFileName:[allCSVs firstObject]];
+	self.superheatedEntropies = [RUDataSelector loadSuperheatedEntropiesWithFileName:[allCSVs firstObject]];
 }
-
+/*
 - (void)loadSuperheatedData:(NSString *)fileName
 {
 	// Re-instantiate the superheated data arrays (because we are re-loading data)
@@ -576,5 +692,5 @@ const static CGFloat T_SAT_MIN = 1.0;
 		[self.superheatedEntropies addObject:tempArray];
 	}
 }
-
+*/
 @end

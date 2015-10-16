@@ -229,7 +229,7 @@
 		make.bottom.equalTo(self.containerView);
 		make.left.equalTo(self.containerView);
 		make.right.equalTo(self.containerView);
-		make.top.equalTo(self.entropyLabel.mas_bottom);
+		make.top.equalTo(self.entropyLabel.mas_bottom).with.offset(2.0f);
 	}];
 }
 

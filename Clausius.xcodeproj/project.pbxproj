@@ -45,9 +45,16 @@
 		4941C5041B6075BA00E163C8 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4F71B6075BA00E163C8 /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		4941C5051B6075BA00E163C8 /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4F91B6075BA00E163C8 /* View+MASAdditions.m */; };
 		4941C5061B6075BA00E163C8 /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4FC1B6075BA00E163C8 /* ViewController+MASAdditions.m */; };
+		4962DDE71BCB0AA000034E48 /* Water_ph_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */; settings = {ASSET_TAGS = (); }; };
+		4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */; settings = {ASSET_TAGS = (); }; };
+		4962DDEB1BCB1CC100034E48 /* RUAxis.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEA1BCB1CC100034E48 /* RUAxis.m */; settings = {ASSET_TAGS = (); }; };
+		4962DDF01BCB39E500034E48 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEF1BCB39E500034E48 /* Constants.m */; settings = {ASSET_TAGS = (); }; };
+		4962DDF41BCB73F700034E48 /* RUChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDF31BCB73F700034E48 /* RUChart.m */; settings = {ASSET_TAGS = (); }; };
+		49643C501BCD64660050B686 /* RUGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 49643C4F1BCD64660050B686 /* RUGraph.m */; settings = {ASSET_TAGS = (); }; };
+		498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 498C46F81BD06A6C00FBF7DA /* RUSolver.m */; settings = {ASSET_TAGS = (); }; };
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
-		49A0564A1BC98D250032F280 /* RUAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A056481BC98D250032F280 /* RUAxis.swift */; settings = {ASSET_TAGS = (); }; };
-		49A0564B1BC98D250032F280 /* RUGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A056491BC98D250032F280 /* RUGraph.swift */; settings = {ASSET_TAGS = (); }; };
+		49A056501BC99D350032F280 /* RUChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0564F1BC99D350032F280 /* RUChartView.swift */; settings = {ASSET_TAGS = (); }; };
+		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -131,11 +138,24 @@
 		4941C4FA1B6075BA00E163C8 /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
 		4941C4FB1B6075BA00E163C8 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		4941C4FC1B6075BA00E163C8 /* ViewController+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+MASAdditions.m"; sourceTree = "<group>"; };
+		4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Water_ph_chart.png; path = Images/Water_ph_chart.png; sourceTree = "<group>"; };
+		4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Water_pv_chart.png; path = Images/Water_pv_chart.png; sourceTree = "<group>"; };
+		4962DDE91BCB1CC100034E48 /* RUAxis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUAxis.h; path = Model/RUAxis.h; sourceTree = "<group>"; };
+		4962DDEA1BCB1CC100034E48 /* RUAxis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RUAxis.m; path = Model/RUAxis.m; sourceTree = "<group>"; };
+		4962DDEF1BCB39E500034E48 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		4962DDF11BCB39F600034E48 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		4962DDF21BCB73F700034E48 /* RUChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUChart.h; sourceTree = "<group>"; };
+		4962DDF31BCB73F700034E48 /* RUChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUChart.m; sourceTree = "<group>"; };
+		49643C4E1BCD64660050B686 /* RUGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUGraph.h; sourceTree = "<group>"; };
+		49643C4F1BCD64660050B686 /* RUGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUGraph.m; sourceTree = "<group>"; };
+		498C46F71BD06A6C00FBF7DA /* RUSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUSolver.h; sourceTree = "<group>"; };
+		498C46F81BD06A6C00FBF7DA /* RUSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUSolver.m; sourceTree = "<group>"; };
 		499813791B6015400044987E /* RUAAdjusterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAAdjusterView.h; sourceTree = "<group>"; };
 		4998137A1B6015400044987E /* RUAAdjusterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUAAdjusterView.m; sourceTree = "<group>"; };
 		49A056471BC98D240032F280 /* Clausius-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clausius-Bridging-Header.h"; sourceTree = "<group>"; };
-		49A056481BC98D250032F280 /* RUAxis.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RUAxis.swift; sourceTree = "<group>"; };
-		49A056491BC98D250032F280 /* RUGraph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RUGraph.swift; sourceTree = "<group>"; };
+		49A0564F1BC99D350032F280 /* RUChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RUChartView.swift; sourceTree = "<group>"; };
+		49A056511BC9AC820032F280 /* RUDataSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUDataSelector.h; path = Model/RUDataSelector.h; sourceTree = "<group>"; };
+		49A056521BC9AC820032F280 /* RUDataSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RUDataSelector.m; path = Model/RUDataSelector.m; sourceTree = "<group>"; };
 		F15A8140971EB808610BEB52 /* libPods-Clausius.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clausius.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -202,6 +222,8 @@
 			children = (
 				492A98DE1B574DF100F061E8 /* UIColor+Mvuke.h */,
 				492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */,
+				4962DDF11BCB39F600034E48 /* Constants.h */,
+				4962DDEF1BCB39E500034E48 /* Constants.m */,
 				492A98E01B574DF100F061E8 /* LaunchScreen.xib */,
 				492A984B1B574BCC00F061E8 /* Info.plist */,
 				492A984C1B574BCC00F061E8 /* main.m */,
@@ -229,6 +251,7 @@
 		492A98781B574C3700F061E8 /* Custom Views */ = {
 			isa = PBXGroup;
 			children = (
+				49A0564F1BC99D350032F280 /* RUChartView.swift */,
 				492A98701B574BEA00F061E8 /* LocationIndicatorImageView.h */,
 				492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */,
 				492A98721B574BEA00F061E8 /* DisplayView.h */,
@@ -252,6 +275,8 @@
 				492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */,
 				492A98821B574CAC00F061E8 /* Legend.jpeg */,
 				492A98831B574CAC00F061E8 /* Water_ts_chart.jpeg */,
+				4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */,
+				4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -294,10 +319,10 @@
 			children = (
 				492A98B71B574D5600F061E8 /* SaturatedPlotPoint+Create.h */,
 				492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */,
+				492A98C61B574D5600F061E8 /* SaturatedPlotPoint+Fetch.h */,
 				492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */,
 				492A98C41B574D5600F061E8 /* SaturatedPlotPoint.h */,
 				492A98C51B574D5600F061E8 /* SaturatedPlotPoint.m */,
-				492A98C61B574D5600F061E8 /* SaturatedPlotPoint+Fetch.h */,
 			);
 			name = SaturatedPlotPoint;
 			sourceTree = "<group>";
@@ -337,8 +362,16 @@
 		49A0564C1BC98D340032F280 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				49A056481BC98D250032F280 /* RUAxis.swift */,
-				49A056491BC98D250032F280 /* RUGraph.swift */,
+				4962DDE91BCB1CC100034E48 /* RUAxis.h */,
+				4962DDEA1BCB1CC100034E48 /* RUAxis.m */,
+				49A056511BC9AC820032F280 /* RUDataSelector.h */,
+				49A056521BC9AC820032F280 /* RUDataSelector.m */,
+				49643C4E1BCD64660050B686 /* RUGraph.h */,
+				49643C4F1BCD64660050B686 /* RUGraph.m */,
+				4962DDF21BCB73F700034E48 /* RUChart.h */,
+				4962DDF31BCB73F700034E48 /* RUChart.m */,
+				498C46F71BD06A6C00FBF7DA /* RUSolver.h */,
+				498C46F81BD06A6C00FBF7DA /* RUSolver.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -438,10 +471,12 @@
 				492A98DA1B574DC700F061E8 /* Main.storyboard in Resources */,
 				492A98871B574CAC00F061E8 /* ClausiusiPadSettings@1x.png in Resources */,
 				492A98881B574CAC00F061E8 /* ClausiusiPadSettings@2x.png in Resources */,
+				4962DDE71BCB0AA000034E48 /* Water_ph_chart.png in Resources */,
 				492A98891B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png in Resources */,
 				492A98861B574CAC00F061E8 /* ClausiusiPadApp@2x.png in Resources */,
 				492A988C1B574CAC00F061E8 /* Water_ts_chart.jpeg in Resources */,
 				492A98E21B574DF100F061E8 /* LaunchScreen.xib in Resources */,
+				4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */,
 				492A988E1B574CB400F061E8 /* Images.xcassets in Resources */,
 				492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */,
 				492A98771B574BEA00F061E8 /* Data Files in Resources */,
@@ -463,12 +498,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				492A98D91B574DC700F061E8 /* ViewController.m in Sources */,
-				49A0564B1BC98D250032F280 /* RUGraph.swift in Sources */,
 				492A98CB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m in Sources */,
+				4962DDF01BCB39E500034E48 /* Constants.m in Sources */,
 				492A98CD1B574D5600F061E8 /* ImportedFile.m in Sources */,
 				4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */,
 				492A98E11B574DF100F061E8 /* UIColor+Mvuke.m in Sources */,
 				4941C5011B6075BA00E163C8 /* MASViewAttribute.m in Sources */,
+				498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */,
+				4962DDEB1BCB1CC100034E48 /* RUAxis.m in Sources */,
+				49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */,
 				4941C5001B6075BA00E163C8 /* MASLayoutConstraint.m in Sources */,
 				4941C5041B6075BA00E163C8 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				4941C4FF1B6075BA00E163C8 /* MASConstraintMaker.m in Sources */,
@@ -478,15 +516,17 @@
 				492A98751B574BEA00F061E8 /* LocationIndicatorImageView.m in Sources */,
 				492A98D01B574D5600F061E8 /* SaturatedPlotPoint.m in Sources */,
 				492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */,
-				49A0564A1BC98D250032F280 /* RUAxis.swift in Sources */,
 				492A98CA1B574D5600F061E8 /* ImportedFile+Fetch.m in Sources */,
 				492A98DD1B574DD900F061E8 /* H2O_Wagner_Pruss.m in Sources */,
+				49A056501BC99D350032F280 /* RUChartView.swift in Sources */,
 				4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */,
 				4941C5031B6075BA00E163C8 /* NSArray+MASAdditions.m in Sources */,
 				492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */,
 				492A98761B574BEA00F061E8 /* DisplayView.m in Sources */,
 				4941C5051B6075BA00E163C8 /* View+MASAdditions.m in Sources */,
 				4941C5021B6075BA00E163C8 /* MASViewConstraint.m in Sources */,
+				4962DDF41BCB73F700034E48 /* RUChart.m in Sources */,
+				49643C501BCD64660050B686 /* RUGraph.m in Sources */,
 				4941C4FE1B6075BA00E163C8 /* MASConstraint.m in Sources */,
 				492A98CC1B574D5600F061E8 /* ImportedFile+Create.m in Sources */,
 			);

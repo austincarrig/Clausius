@@ -18,11 +18,6 @@
 @property (strong, nonatomic) id <LocationIndicatorImageViewDataSource> dataSource;
 @property (strong, nonatomic) id <LocationIndicatorImageViewDelegate> delegate;
 
-@property (strong, nonatomic) NSNumber *xMin;
-@property (strong, nonatomic) NSNumber *xMax;
-@property (strong, nonatomic) NSNumber *yMin;
-@property (strong, nonatomic) NSNumber *yMax;
-
 -(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
 
 @end
@@ -46,11 +41,11 @@
  *  @return The raw pixel data for the image.
  */
 - (unsigned char *)pixelDataForCurrentImageInLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
-- (CGFloat)primaryAxisEndingValue;
-- (CGFloat)secondaryAxisEndingValue;
-- (CGFloat)primaryAxisStartingValue;
-- (CGFloat)secondaryAxisStartingValue;
-- (CGFloat)minimumSecondaryAxisValue;
+- (CGFloat)xAxisEndingValue;
+- (CGFloat)yAxisEndingValue;
+- (CGFloat)xAxisStartingValue;
+- (CGFloat)yAxisStartingValue;
+- (CGFloat)minimumYAxisValue;
 @end
 
 @protocol LocationIndicatorImageViewDelegate <NSObject>

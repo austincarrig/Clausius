@@ -1,4 +1,4 @@
-//
+v//
 //  RUGraph.swift
 //  Clausius
 //
@@ -9,18 +9,17 @@
 import Foundation
 import UIKit
 
-@objc class RUGraph : NSObject {
+ /// Abstract class defining what a graph is. In practical usage, use RUChart instead.
+
+@objc public class RUGraph : NSObject {
 	var xAxis : RUAxis?
 	var yAxis : RUAxis?
 	
-	func setAxis(axis : RUAxis) -> Bool {
-		if axis.direction == "x" {
+	func setAxis(axis : RUAxis) {
+		if axis.direction == RUAxisDirection.X {
 			xAxis = axis
-			return true
-		} else if axis.direction == "y"{
+		} else if axis.direction == RUAxisDirection.Y {
 			yAxis = axis
-			return true
 		}
-		return false
 	}
 }
