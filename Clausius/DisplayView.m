@@ -547,8 +547,11 @@
 		[self.entropyTextField setText:[NSString stringWithFormat:@"%.2f", [entropy floatValue]]];
 	}
 	
-	if ([quality floatValue]) {
+	if (quality.floatValue && quality.floatValue != -1) {
+		[self showQuality];
 		[self.qualityTextField setText:[NSString stringWithFormat:@"%.1f", [quality floatValue]]];
+	} else {
+		[self hideQuality];
 	}
 }
 

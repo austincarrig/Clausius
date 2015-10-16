@@ -20,8 +20,9 @@
 
 #import "Clausius-Swift.h"
 
-const static CGFloat T_CRITICAL = 373.9;
-const static CGFloat T_SAT_MIN = 1.0;
+const static CGFloat T_CRITICAL = 373.9; // Critical temperature of water in C
+const static CGFloat P_CRITICAL = 22100.; // Critical pressure of water in kPA
+const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the ts diagram in C
 
 @interface ViewController ()
 @property (strong, nonatomic) UIImageView *infoView;
@@ -83,7 +84,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 	
 	if (self.secondContainerView.superview != nil && self.chartView.image != nil) {
 		[self.secondContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-			make.right.equalTo(self.containerView).with.offset(-20.0);
+			make.left.equalTo(self.containerView).with.offset(20.0);
 			make.top.equalTo(self.containerView).with.offset(20.0);
 			make.height.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.height]);
 			make.width.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.width]);
@@ -93,6 +94,11 @@ const static CGFloat T_SAT_MIN = 1.0;
 	[self.secondContainerView addSubview:self.displayView];
 	
 	[self chooseNewFileWithChartType:self.chartView.chart.substanceType];
+	
+	[self.infoButton setHidden:YES];
+	
+	UISwipeGestureRecognizer *recog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+																				action:nil];
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -106,10 +112,10 @@ const static CGFloat T_SAT_MIN = 1.0;
 {
 	if (!_chartView) {
 		_chartView = (RUChartView *)[[RUChartView alloc] initWithFrame:self.containerView.frame
-																				image:[UIImage imageNamed:@"Water_pv_chart.png"]
+																				image:[UIImage imageNamed:@"Water_ts_chart"]
 																			   sender:self];
 		
-		[_chartView setChart:[RUChart chartWithChartType:@"pv"]];
+		[_chartView setChart:[RUChart chartWithChartType:@"ts"]];
 	}
 	return _chartView;
 }
@@ -319,31 +325,37 @@ const static CGFloat T_SAT_MIN = 1.0;
 {
 	AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
 	
+	// Get scales for both axes in units of [baseUnit/pixel]
+	// If using log10f() the axis is log, converts value to exponent (i.e. b in value = 10^b, therefore b = log10(value))
 	CGFloat primaryScale = (log10f([self xAxisEndingValue]) - log10f([self xAxisStartingValue]))/locationIndicatorImageView.frame.size.width;
 	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
 	
+	// Calculate v & p given location on chart
 	float specVol = powf(10.0,log10f([self xAxisStartingValue]) + primaryScale*location.x);
 	float pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
-	float temp, density, intEnergy, enthalpy, entropy, quality;
+	float temp, density, intEnergy, enthalpy, entropy, quality = -1;
 	
-	if (pressure < 22100.) {
+	// Check if we are at or above
+	if (pressure < P_CRITICAL) {
 		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.0].firstObject).floatValue;
 		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
 																					inContext:appDel.managedObjectContext];
 		density = 1./specVol;
 		
 		if (specVol <= saturatedPoint.v_f.floatValue) {
+			// Compressed Liquid Region
 			intEnergy = saturatedPoint.u_f.floatValue;
 			enthalpy = saturatedPoint.h_f.floatValue;
 			entropy = saturatedPoint.s_f.floatValue;
 		} else if (specVol > saturatedPoint.v_f.floatValue && specVol < saturatedPoint.v_g.floatValue) {
+			// Saturated Vapor (Mixture) Region
 			quality = (specVol - [saturatedPoint.v_f floatValue])/([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
-			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
 			intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
 			enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
 		} else {
-			
+			// Superheated Region below P_CRITICAL
 			
 			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:temp
 																   andDensity:density]/1000.0;
@@ -360,7 +372,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
 												 enthalpy:[NSNumber numberWithFloat:enthalpy]
 												  entropy:[NSNumber numberWithFloat:entropy]
-												  quality:nil];
+												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality])];
 		
 		return;
 	}
@@ -390,13 +402,48 @@ const static CGFloat T_SAT_MIN = 1.0;
 					   withEventType:(NSString *)eventType
 					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
+	AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+	
 	CGFloat primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/locationIndicatorImageView.frame.size.width;
 	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
 	
 	float enthalpy = [self xAxisStartingValue] + primaryScale*location.x;
 	float pressure = powf(10.0, log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
+	float temp, specVol, intEnergy, entropy, quality = -1;
 	
+	if (pressure < P_CRITICAL) {
+		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.].firstObject).floatValue;
+		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
+																						  inContext:appDelegate.managedObjectContext];
+		
+		if (enthalpy < saturatedPoint.h_f.floatValue) {
+			// Compressed Liquid Region
+			specVol = saturatedPoint.v_f.floatValue;
+			intEnergy = saturatedPoint.u_f.floatValue;
+			entropy = saturatedPoint.s_f.floatValue;
+		} else if (enthalpy >= saturatedPoint.h_f.floatValue && enthalpy <= saturatedPoint.h_g.floatValue) {
+			// Saturated Vapor (Mixture) Region
+			quality = (enthalpy - [saturatedPoint.h_f floatValue])/([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+			specVol = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
+			intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
+			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
+		} else if (enthalpy > saturatedPoint.h_g.floatValue) {
+			// Superheated Vapor Region
+			NSLog(@"Finish Me");
+		}
+		
+		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
+												 pressure:[NSNumber numberWithFloat:pressure]
+										   specificVolume:[NSNumber numberWithFloat:specVol]
+										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+												 enthalpy:[NSNumber numberWithFloat:enthalpy]
+												  entropy:[NSNumber numberWithFloat:entropy]
+												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
+	} else {
+		// Superheated Vapor Region
+		NSLog(@"Finish Me");
+	}
 }
 
 - (void)tsTouchDidRegisterAtLocation:(CGPoint)location
@@ -416,9 +463,7 @@ const static CGFloat T_SAT_MIN = 1.0;
 	}
 	
 	float entropy = location.x*primaryScale;
-	float __block pressure, specVolume, intEnergy, enthalpy, quality;
-	
-	quality = 0.0;
+	float __block pressure, specVolume, intEnergy, enthalpy, quality = 0;
 	
 	// Check if finger is above or below critical temperature (379.3 C)
 	if (temperature > T_CRITICAL) {

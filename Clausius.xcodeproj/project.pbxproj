@@ -51,6 +51,7 @@
 		4962DDF01BCB39E500034E48 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEF1BCB39E500034E48 /* Constants.m */; settings = {ASSET_TAGS = (); }; };
 		4962DDF41BCB73F700034E48 /* RUChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDF31BCB73F700034E48 /* RUChart.m */; settings = {ASSET_TAGS = (); }; };
 		49643C501BCD64660050B686 /* RUGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 49643C4F1BCD64660050B686 /* RUGraph.m */; settings = {ASSET_TAGS = (); }; };
+		498435441BD15B5F00190C9C /* Water_ts_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 498435431BD15B5F00190C9C /* Water_ts_chart.png */; settings = {ASSET_TAGS = (); }; };
 		498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 498C46F81BD06A6C00FBF7DA /* RUSolver.m */; settings = {ASSET_TAGS = (); }; };
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
 		49A056501BC99D350032F280 /* RUChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0564F1BC99D350032F280 /* RUChartView.swift */; settings = {ASSET_TAGS = (); }; };
@@ -148,6 +149,7 @@
 		4962DDF31BCB73F700034E48 /* RUChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUChart.m; sourceTree = "<group>"; };
 		49643C4E1BCD64660050B686 /* RUGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUGraph.h; sourceTree = "<group>"; };
 		49643C4F1BCD64660050B686 /* RUGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUGraph.m; sourceTree = "<group>"; };
+		498435431BD15B5F00190C9C /* Water_ts_chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Water_ts_chart.png; path = Images/Water_ts_chart.png; sourceTree = "<group>"; };
 		498C46F71BD06A6C00FBF7DA /* RUSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUSolver.h; sourceTree = "<group>"; };
 		498C46F81BD06A6C00FBF7DA /* RUSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUSolver.m; sourceTree = "<group>"; };
 		499813791B6015400044987E /* RUAAdjusterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAAdjusterView.h; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */,
 				492A98821B574CAC00F061E8 /* Legend.jpeg */,
 				492A98831B574CAC00F061E8 /* Water_ts_chart.jpeg */,
+				498435431BD15B5F00190C9C /* Water_ts_chart.png */,
 				4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */,
 				4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */,
 			);
@@ -480,6 +483,7 @@
 				492A988E1B574CB400F061E8 /* Images.xcassets in Resources */,
 				492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */,
 				492A98771B574BEA00F061E8 /* Data Files in Resources */,
+				498435441BD15B5F00190C9C /* Water_ts_chart.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

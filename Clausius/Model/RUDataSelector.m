@@ -11,8 +11,6 @@
 
 @implementation RUDataSelector
 
-#warning Finish function
-
 + (NSDictionary *)loadChartDataWithChartType:(NSString *)chartType
 {
 	// Get the directory, find the specified file
