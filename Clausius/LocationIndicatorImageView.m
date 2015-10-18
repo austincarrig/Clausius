@@ -25,7 +25,7 @@ unsigned char *rawData;
 
 #pragma mark - Custom Init Methods
 
--(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender
 {
 	self = [super initWithFrame:frame];
 	if (self) {
@@ -302,6 +302,16 @@ unsigned char *rawData;
 	CGContextRelease(context);
 	
 	return rawData;
+}
+
+#pragma mark - Instance Methods
+
+- (void)removeMarker
+{
+	[self.locationIndicatorRing removeAllPoints];
+	[self.locationIndicatorCircle removeAllPoints];
+	[self.locationIndicatorCircleLayer removeFromSuperlayer];
+	[self.locationIndicatorRingLayer removeFromSuperlayer];
 }
 
 @end

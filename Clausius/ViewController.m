@@ -37,6 +37,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 
 @property (strong, nonatomic) NSArray *superheatedPressures;
 @property (strong, nonatomic) NSArray *superheatedEntropies;
+
+@property (strong, nonatomic) NSArray *chartValueTypes;
 @end
 
 @implementation ViewController
@@ -97,8 +99,23 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	[self.infoButton setHidden:YES];
 	
-	UISwipeGestureRecognizer *recog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-																				action:nil];
+	UISwipeGestureRecognizer *rightRecog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+																					 action:@selector(resetChart:)];
+	[rightRecog setDirection:UISwipeGestureRecognizerDirectionRight];
+	[rightRecog setCancelsTouchesInView:YES];
+	
+	[rightRecog setNumberOfTouchesRequired:2];
+	
+	[self.chartView addGestureRecognizer:rightRecog];
+	
+	UISwipeGestureRecognizer *leftRecog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+																				action:@selector(resetChart:)];
+	[leftRecog setDirection:UISwipeGestureRecognizerDirectionLeft];
+	[leftRecog setCancelsTouchesInView:YES];
+	
+	[leftRecog setNumberOfTouchesRequired:2];
+	
+	[self.chartView addGestureRecognizer:leftRecog];
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -112,7 +129,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 {
 	if (!_chartView) {
 		_chartView = (RUChartView *)[[RUChartView alloc] initWithFrame:self.containerView.frame
-																				image:[UIImage imageNamed:@"Water_ts_chart"]
+																				image:[UIImage imageNamed:@"Water_ts_chart.png"]
 																			   sender:self];
 		
 		[_chartView setChart:[RUChart chartWithChartType:@"ts"]];
@@ -181,7 +198,15 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	return _superheatedPressures;
 }
 
-#pragma mark - Tap Gesture Selectors
+- (NSArray *)chartValueTypes
+{
+	if (!_chartValueTypes) {
+		_chartValueTypes = [NSArray arrayWithObjects:@"ts",@"ph",@"pv", nil];
+	}
+	return _chartValueTypes;
+}
+
+#pragma mark - Gesture Selectors
 
 - (IBAction)displayInfo:(id)sender {
 	[self.infoView setHidden:NO];
@@ -203,6 +228,37 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		[self.navigationController setNavigationBarHidden:YES animated:YES];
 		[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	}
+}
+
+- (void)resetChart:(UISwipeGestureRecognizer *)recog
+{
+	NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
+	NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
+	if (recog.direction == UISwipeGestureRecognizerDirectionRight) {
+		self.chartView.image = [UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index+1)+3)%3]]];
+		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index+1)+3)%3]];
+	} else if (recog.direction == UISwipeGestureRecognizerDirectionLeft) {
+		self.chartView.image = [UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index-1)+3)%3]]];
+		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index-1)+3)%3]];
+	}
+	
+	[self.secondContainerView mas_remakeConstraints:^(MASConstraintMaker *make) {
+		make.top.equalTo(self.containerView).with.offset(20.0);
+		make.height.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.height]);
+		make.width.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.width]);
+	}];
+	
+	if (self.chartView.chart.displayPosition == RUChartDisplayPositionLeft) {
+		[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+			make.left.equalTo(self.containerView).with.offset(20.0);
+		}];
+	} else if (self.chartView.chart.displayPosition == RUChartDisplayPositionRight) {
+		[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+			make.right.equalTo(self.containerView).with.offset(-20.0);
+		}];
+	}
+	
+	[self.chartView removeMarker];
 }
 
 #pragma mark - Location Indication Image View Datasource
@@ -372,7 +428,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
 												 enthalpy:[NSNumber numberWithFloat:enthalpy]
 												  entropy:[NSNumber numberWithFloat:entropy]
-												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality])];
+												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
 		
 		return;
 	}

@@ -18,7 +18,8 @@
 @property (strong, nonatomic) id <LocationIndicatorImageViewDataSource> dataSource;
 @property (strong, nonatomic) id <LocationIndicatorImageViewDelegate> delegate;
 
--(instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
+- (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
+- (void)removeMarker;
 
 @end
 

@@ -14,8 +14,32 @@
 + (NSDictionary *)loadChartDataWithChartType:(NSString *)chartType
 {
 	// Get the directory, find the specified file
-	NSString *path = [[NSBundle mainBundle] pathForResource:@"Chart_Data.csv" ofType:nil inDirectory:@"Data Files"];
-	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path] bytes]];
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"Chart_Data"
+													 ofType:@".csv"
+												inDirectory:@"Data Files"];
+	NSError *error;
+	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path
+																			  options:NSDataReadingMapped
+																				error:&error] bytes]];
+	if (error || string == nil) {
+		NSLog(@"%@,%@",error, error.userInfo);
+	}
+	
+	// This is an ugly fix for if string isn't pulled
+	/*
+	while (string == nil) {
+		string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path
+																		options:NSDataReadingMapped
+																		  error:&error] bytes]];
+		
+		if (error) {
+			NSLog(@"%@,%@",error, error.userInfo);
+		}
+		
+		NSLog(@"Again");
+	}
+	*/
+	NSLog(@"file: %@",string);
 	
 	// Create a scanner which contains the entirety of the .csv file
 	NSScanner *scanner = [[NSScanner alloc] initWithString:string];
@@ -29,11 +53,18 @@
 	do {
 		[scanner scanUpToCharactersFromSet:comma
 								intoString:&tempString];
+		NSLog(@"temp: %@", tempString);
 		if (![tempString isEqualToString:chartType]) {
 			[scanner scanUpToCharactersFromSet:newline
 									intoString:nil];
 		}
+		if (scanner.string.length == 0) {
+			NSLog(@"HERE1");
+		}
 		[scanner setScanLocation:scanner.scanLocation + 1];
+		if (scanner.string.length == 0) {
+			NSLog(@"HERE2");
+		}
 	} while (![tempString isEqualToString:chartType]);
 	
 	NSArray *array = [RUDataSelector dataLoadingKeys];
@@ -53,7 +84,13 @@
 		if ([scanner isAtEnd]) {
 			break;
 		}
+		if (scanner.string.length == 0) {
+			NSLog(@"HERE3");
+		}
 		[scanner setScanLocation:scanner.scanLocation + 1];
+		if (scanner.string.length == 0) {
+			NSLog(@"HERE4");
+		}
 		count++;
 	}
 	
