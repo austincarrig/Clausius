@@ -20,7 +20,6 @@
 		492A98891B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A98801B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png */; };
 		492A988A1B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */; };
 		492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 492A98821B574CAC00F061E8 /* Legend.jpeg */; };
-		492A988C1B574CAC00F061E8 /* Water_ts_chart.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 492A98831B574CAC00F061E8 /* Water_ts_chart.jpeg */; };
 		492A988E1B574CB400F061E8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 492A988D1B574CB400F061E8 /* Images.xcassets */; };
 		492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 492A98B51B574D5600F061E8 /* Clausius.xcdatamodel */; };
 		492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */; };
@@ -88,7 +87,6 @@
 		492A98801B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadSpotlight@1x.png"; sourceTree = "<group>"; };
 		492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadSpotlight@2x.png"; sourceTree = "<group>"; };
 		492A98821B574CAC00F061E8 /* Legend.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Legend.jpeg; sourceTree = "<group>"; };
-		492A98831B574CAC00F061E8 /* Water_ts_chart.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Water_ts_chart.jpeg; sourceTree = "<group>"; };
 		492A988D1B574CB400F061E8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		492A98B51B574D5600F061E8 /* Clausius.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Clausius.xcdatamodel; sourceTree = "<group>"; };
 		492A98B61B574D5600F061E8 /* CoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreData.h; sourceTree = "<group>"; };
@@ -276,7 +274,6 @@
 				492A98801B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png */,
 				492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */,
 				492A98821B574CAC00F061E8 /* Legend.jpeg */,
-				492A98831B574CAC00F061E8 /* Water_ts_chart.jpeg */,
 				498435431BD15B5F00190C9C /* Water_ts_chart.png */,
 				4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */,
 				4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */,
@@ -477,7 +474,6 @@
 				4962DDE71BCB0AA000034E48 /* Water_ph_chart.png in Resources */,
 				492A98891B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png in Resources */,
 				492A98861B574CAC00F061E8 /* ClausiusiPadApp@2x.png in Resources */,
-				492A988C1B574CAC00F061E8 /* Water_ts_chart.jpeg in Resources */,
 				492A98E21B574DF100F061E8 /* LaunchScreen.xib in Resources */,
 				4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */,
 				492A988E1B574CB400F061E8 /* Images.xcassets in Resources */,

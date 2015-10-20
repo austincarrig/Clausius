@@ -35,8 +35,9 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 
 @property (strong, nonatomic) H2O_Wagner_Pruss *wagPruss;
 
-@property (strong, nonatomic) NSArray *superheatedPressures;
-@property (strong, nonatomic) NSArray *superheatedEntropies;
+@property (strong, nonatomic) NSArray *superheatedKeys;
+@property (strong, nonatomic) NSArray *superheatedValues;
+@property (strong, nonatomic) NSArray *superheatedMappingKeys;
 
 @property (strong, nonatomic) NSArray *chartValueTypes;
 @end
@@ -96,8 +97,6 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	[self.secondContainerView addSubview:self.displayView];
 	
 	[self chooseNewFileWithChartType:self.chartView.chart.substanceType];
-	
-	[self.infoButton setHidden:YES];
 	
 	UISwipeGestureRecognizer *rightRecog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
 																					 action:@selector(resetChart:)];
@@ -182,20 +181,20 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	return _wagPruss;
 }
 
-- (NSArray *)superheatedEntropies
+- (NSArray *)superheatedValues
 {
-	if (!_superheatedEntropies) {
-		_superheatedEntropies = [[NSArray alloc] init];
+	if (!_superheatedValues) {
+		_superheatedValues = [[NSArray alloc] init];
 	}
-	return _superheatedEntropies;
+	return _superheatedValues;
 }
 
-- (NSArray *)superheatedPressures
+- (NSArray *)superheatedKeys
 {
-	if (!_superheatedPressures) {
-		_superheatedPressures = [[NSArray alloc] init];
+	if (!_superheatedKeys) {
+		_superheatedKeys = [[NSArray alloc] init];
 	}
-	return _superheatedPressures;
+	return _superheatedKeys;
 }
 
 - (NSArray *)chartValueTypes
@@ -235,11 +234,13 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
 	NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
 	if (recog.direction == UISwipeGestureRecognizerDirectionRight) {
-		self.chartView.image = [UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index+1)+3)%3]]];
+		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index+1)+3)%3]]]];
 		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index+1)+3)%3]];
+		[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index+1)+3)%3]];
 	} else if (recog.direction == UISwipeGestureRecognizerDirectionLeft) {
-		self.chartView.image = [UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index-1)+3)%3]]];
+		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index-1)+3)%3]]]];
 		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index-1)+3)%3]];
+		[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index-1)+3)%3]];
 	}
 	
 	[self.secondContainerView mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -259,6 +260,15 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	}
 	
 	[self.chartView removeMarker];
+}
+
+- (void)inspectInfoButtonWithChartValueType:(NSString *)type
+{
+	if ([type isEqualToString:@"ts"] && self.infoButton.isHidden) {
+		[self.infoButton setHidden:NO];
+	} else if (![type isEqualToString:@"ts"] && !self.infoButton.isHidden) {
+		[self.infoButton setHidden:YES];
+	}
 }
 
 #pragma mark - Location Indication Image View Datasource
@@ -524,12 +534,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	// Check if finger is above or below critical temperature (379.3 C)
 	if (temperature > T_CRITICAL) {
 		// Find list of entropies for specific temperature
-		NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
+		NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
 		
 		int location = 0;
 		BOOL locationReached = NO;
 		
-		// Find index of first entropy value in array which is less than chosen entropy value
+		// Find index of first entropy value in array wh 2ich is less than chosen entropy value
 		for (int i = 0; i < array.count; i++) {
 			if ([(NSNumber *)array[i] floatValue] <= entropy) {
 				continue;
@@ -545,12 +555,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			
 			float weight = (entropy - lowEnt)/(highEnt - lowEnt);
 			
-			float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
-			float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
+			float highPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
+			float lowPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:(location + 1)]).floatValue;
 			
 			pressure = lowPres + weight*(highPres - lowPres);
 		} else {
-			pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+			pressure = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
 		}
 		
 		double kTemperature = temperature + 273.15;
@@ -640,7 +650,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 					[self.displayView showQuality];
 				}
 			} else if (entropy > [saturatedPoint.s_g floatValue]) {
-				NSArray *array = (NSArray *)[self.superheatedEntropies objectAtIndex:(NSUInteger)temperature];
+				NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
 				
 				int location = 0;
 				BOOL locationReached = NO;
@@ -659,12 +669,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 					
 					float weight = (entropy - lowEnt)/(highEnt - lowEnt);
 					
-					float highPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
-					float lowPres = ((NSNumber *)[self.superheatedPressures objectAtIndex:(location + 1)]).floatValue;
+					float highPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
+					float lowPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:(location + 1)]).floatValue;
 					
 					pressure = lowPres + weight*(highPres - lowPres);
 				} else {
-					pressure = ((NSNumber *)[self.superheatedPressures objectAtIndex:location]).floatValue;
+					pressure = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
 				}
 				
 				double kTemperature = temperature + 273.15;
@@ -709,15 +719,19 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	NSPredicate *fltr = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"self ENDSWITH '.csv' AND self BEGINSWITH '%@_Super_'",chartType]];
 	NSArray *allCSVs = [dirContents filteredArrayUsingPredicate:fltr];
 	
-	self.superheatedPressures = [RUDataSelector loadSuperheatedPressuresWithFileName:[allCSVs firstObject]];
-	self.superheatedEntropies = [RUDataSelector loadSuperheatedEntropiesWithFileName:[allCSVs firstObject]];
+	self.superheatedKeys = [RUDataSelector loadSuperheatedKeyValuesWithFileName:[allCSVs firstObject]];
+	self.superheatedValues = [RUDataSelector loadSuperheatedValuesWithFileName:[allCSVs firstObject]];
+	
+	NSArray *array = [RUDataSelector loadSuperheatedRowMappingValuesWithFileName:[allCSVs firstObject]];
+	
+	NSLog(@"%@", array);
 }
 /*
 - (void)loadSuperheatedData:(NSString *)fileName
 {
 	// Re-instantiate the superheated data arrays (because we are re-loading data)
-	self.superheatedPressures = [NSMutableArray array];
-	self.superheatedEntropies = [NSMutableArray arrayWithObjects:@[], nil]; // empty array at index=0 is so that the array indeces are mapped to 0
+	self.superheatedKeys = [NSMutableArray array];
+	self.superheatedValues = [NSMutableArray arrayWithObjects:@[], nil]; // empty array at index=0 is so that the array indeces are mapped to 0
 	
 	// Get the directory, find the specified file
 	NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil inDirectory:@"Data Files"];
@@ -748,7 +762,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		[pressureValues addObject:[NSNumber numberWithFloat:[pressureVal floatValue]]];
 	}
 	
-	self.superheatedPressures = pressureValues;
+	self.superheatedKeys = pressureValues;
 	
 	//
 	while (![scanner isAtEnd]) {
@@ -790,7 +804,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		}
 		
 		// Add the corresponding entropy array to the end of the array of entropy arrays
-		[self.superheatedEntropies addObject:tempArray];
+		[self.superheatedValues addObject:tempArray];
 	}
 }
 */

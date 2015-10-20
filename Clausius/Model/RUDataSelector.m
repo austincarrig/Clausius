@@ -21,25 +21,6 @@
 	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path
 																			  options:NSDataReadingMapped
 																				error:&error] bytes]];
-	if (error || string == nil) {
-		NSLog(@"%@,%@",error, error.userInfo);
-	}
-	
-	// This is an ugly fix for if string isn't pulled
-	/*
-	while (string == nil) {
-		string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path
-																		options:NSDataReadingMapped
-																		  error:&error] bytes]];
-		
-		if (error) {
-			NSLog(@"%@,%@",error, error.userInfo);
-		}
-		
-		NSLog(@"Again");
-	}
-	*/
-	NSLog(@"file: %@",string);
 	
 	// Create a scanner which contains the entirety of the .csv file
 	NSScanner *scanner = [[NSScanner alloc] initWithString:string];
@@ -81,16 +62,12 @@
 								intoString:&tempString];
 		[dict setObject:tempString
 				 forKey:[array objectAtIndex:count]];
+		
 		if ([scanner isAtEnd]) {
 			break;
 		}
-		if (scanner.string.length == 0) {
-			NSLog(@"HERE3");
-		}
+		
 		[scanner setScanLocation:scanner.scanLocation + 1];
-		if (scanner.string.length == 0) {
-			NSLog(@"HERE4");
-		}
 		count++;
 	}
 	
@@ -102,7 +79,7 @@
 	return @[kChartDataType, kChartDataXType, kChartDataXMin, kChartDataXMax, kChartDataXScale, kChartDataYType, kChartDataYMin, kChartDataYMax, kChartDataYScale, kChartDataDisplayPosition];
 }
 
-+ (NSArray *)loadSuperheatedPressuresWithFileName:(NSString *)fileName
++ (NSArray *)loadSuperheatedKeyValuesWithFileName:(NSString *)fileName
 {
 	// Get the directory, find the specified file
 	NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil inDirectory:@"Data Files"];
@@ -136,7 +113,7 @@
 	return pressureValues;
 }
 
-+ (NSArray *)loadSuperheatedEntropiesWithFileName:(NSString *)fileName
++ (NSArray *)loadSuperheatedValuesWithFileName:(NSString *)fileName
 {
 	// Get the directory, find the specified file
 	NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil inDirectory:@"Data Files"];
@@ -196,6 +173,48 @@
 	}
 	
 	return entropyValues;
+}
+
++ (NSArray *)loadSuperheatedRowMappingValuesWithFileName:(NSString *)fileName
+{
+	// Get the directory, find the specified file
+	NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil inDirectory:@"Data Files"];
+	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path] bytes]];
+	
+	NSScanner *scanner = [[NSScanner alloc] initWithString:string];
+	
+	NSCharacterSet *newline = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
+	NSCharacterSet *comma = [NSCharacterSet characterSetWithCharactersInString:@","];
+	
+	NSString *pressureString;
+	[scanner scanUpToCharactersFromSet:newline
+							intoString:&pressureString];
+	
+	NSMutableArray *mappingValues = [NSMutableArray arrayWithObjects:@0, nil]; // empty array at index=0 is so that the array indeces are mapped to 0
+	
+	while (![scanner isAtEnd]) {
+		NSString *lineString;
+		[scanner scanUpToCharactersFromSet:newline
+								intoString:&lineString];
+		if (![scanner isAtEnd]) {
+			[scanner setScanLocation:[scanner scanLocation]+1];
+		}
+		
+		NSScanner *lineScanner = [NSScanner scannerWithString:lineString];
+		
+		// Get temperature, delimited by comma in first index of row (unused in this scheme, but gets rid of first element)
+		NSString *temperatureString;
+		[lineScanner scanUpToCharactersFromSet:comma
+									intoString:&temperatureString];
+		if (![lineScanner isAtEnd]) {
+			[lineScanner setScanLocation:[lineScanner scanLocation]+1];
+		}
+
+		// Add the corresponding entropy array to the end of the array of entropy arrays
+		[mappingValues addObject:[NSNumber numberWithInteger:temperatureString.integerValue]];
+	}
+	
+	return mappingValues;
 }
 
 @end

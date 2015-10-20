@@ -19,6 +19,17 @@
 @property (strong, nonatomic) id <LocationIndicatorImageViewDelegate> delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame image:(UIImage *)image sender:(id)sender;
+
+/**
+ *  Used to reset the image, as this function also resets the rawdata for the imageView.
+ *
+ *  @param image The image that you would like to set the view's image to.
+ */
+- (void)resetImage:(UIImage *)image;
+
+/**
+ *  Used to remove the marker from the view.
+ */
 - (void)removeMarker;
 
 @end
@@ -42,6 +53,7 @@
  *  @return The raw pixel data for the image.
  */
 - (unsigned char *)pixelDataForCurrentImageInLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;
+
 - (CGFloat)xAxisEndingValue;
 - (CGFloat)yAxisEndingValue;
 - (CGFloat)xAxisStartingValue;

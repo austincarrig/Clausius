@@ -34,7 +34,26 @@
 
 + (NSDictionary *)loadChartDataWithChartType:(NSString *)chartType;
 
-+ (NSArray *)loadSuperheatedPressuresWithFileName:(NSString *)fileName;
-+ (NSArray *)loadSuperheatedEntropiesWithFileName:(NSString *)fileName;
+/**
+ *  This returns an array of the key values (i.e. temperature or pressure) listed in the first row of the passed file.
+ *
+ *  @param fileName The filename of the CSV file containing the values to be loaded. Found in the form #Substance#_Super_#ValueType#.csv
+ *
+ *  @return An array of the key values.
+ */
+
++ (NSArray *)loadSuperheatedKeyValuesWithFileName:(NSString *)fileName;
+
+/**
+ *  This returns an array of the key values (i.e. temperature or pressure) listed in the first row of the passed file.
+ *
+ *  @param fileName The filename of the CSV file containing the values to be loaded. Found in the form #Substance#_Super_#ValueType#.csv
+ *
+ *  @return A nested array of the values. Each inner array corresponds to a row in the csv.
+ */
+
++ (NSArray *)loadSuperheatedValuesWithFileName:(NSString *)fileName;
+
++ (NSArray *)loadSuperheatedRowMappingValuesWithFileName:(NSString *)fileName;
 
 @end

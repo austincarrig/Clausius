@@ -99,9 +99,18 @@ unsigned char *rawData;
 	return _locationIndicatorCircleLayer;
 }
 
+- (void)resetImage:(UIImage *)image
+{
+	self.image = image;
+	
+	free(rawData);
+	rawData = [self getRGBAsFromImage:image
+						  inImageView:self];
+}
+
 #pragma mark - Responder Methods
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	[super touchesBegan:touches withEvent:event];
 		
@@ -265,8 +274,6 @@ unsigned char *rawData;
 	// Now your rawData contains the image data in the RGBA8888 pixel format.
 	NSUInteger byteIndex = (bytesPerRow * imagey) + imagex * bytesPerPixel;
 	
-	NSLog(@"%s", rawData);
-	
 	if (rawData) {
 		for (int i = 0 ; i < count ; ++i) {
 			CGFloat red   = (rawData[byteIndex]     * 1.0) / 255.0;
@@ -300,7 +307,6 @@ unsigned char *rawData;
 	
 	CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
 	CGContextRelease(context);
-	
 	return rawData;
 }
 
