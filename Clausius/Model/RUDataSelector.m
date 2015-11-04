@@ -34,18 +34,11 @@
 	do {
 		[scanner scanUpToCharactersFromSet:comma
 								intoString:&tempString];
-		NSLog(@"temp: %@", tempString);
 		if (![tempString isEqualToString:chartType]) {
 			[scanner scanUpToCharactersFromSet:newline
 									intoString:nil];
 		}
-		if (scanner.string.length == 0) {
-			NSLog(@"HERE1");
-		}
 		[scanner setScanLocation:scanner.scanLocation + 1];
-		if (scanner.string.length == 0) {
-			NSLog(@"HERE2");
-		}
 	} while (![tempString isEqualToString:chartType]);
 	
 	NSArray *array = [RUDataSelector dataLoadingKeys];
@@ -163,7 +156,14 @@
 			if (!([valueString isEqualToString:@"#VALUE!"] || [valueString isEqualToString:@"#NAME?"] || [valueString isEqualToString:@""]) && valueString) {
 				[tempArray addObject:[NSNumber numberWithFloat:[valueString floatValue]]];
 			} else {
-				break;
+				if (tempArray.count) {
+					if (![[tempArray objectAtIndex:0] isEqual:@0]) {
+						break;
+					}
+				}
+				
+				[tempArray addObject:@0];
+				continue;
 			}
 			count++;
 		}

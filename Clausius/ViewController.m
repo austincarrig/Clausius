@@ -96,23 +96,20 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	[self.secondContainerView addSubview:self.displayView];
 	
-	[self chooseNewFileWithChartType:self.chartView.chart.substanceType];
+	[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:@"ts"];
 	
-	UISwipeGestureRecognizer *rightRecog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-																					 action:@selector(resetChart:)];
-	[rightRecog setDirection:UISwipeGestureRecognizerDirectionRight];
+	UIScreenEdgePanGestureRecognizer *rightRecog = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self
+																									 action:@selector(resetChart:)];
+	[rightRecog setEdges:UIRectEdgeRight];
 	[rightRecog setCancelsTouchesInView:YES];
-	
-	[rightRecog setNumberOfTouchesRequired:2];
 	
 	[self.chartView addGestureRecognizer:rightRecog];
 	
-	UISwipeGestureRecognizer *leftRecog = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-																				action:@selector(resetChart:)];
-	[leftRecog setDirection:UISwipeGestureRecognizerDirectionLeft];
-	[leftRecog setCancelsTouchesInView:YES];
+	UIScreenEdgePanGestureRecognizer *leftRecog = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self
+																									action:@selector(resetChart:)];
 	
-	[leftRecog setNumberOfTouchesRequired:2];
+	[leftRecog setEdges:UIRectEdgeLeft];
+	[leftRecog setCancelsTouchesInView:YES];
 	
 	[self.chartView addGestureRecognizer:leftRecog];
 }
@@ -229,37 +226,43 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	}
 }
 
-- (void)resetChart:(UISwipeGestureRecognizer *)recog
+- (void)resetChart:(UIScreenEdgePanGestureRecognizer *)recog
 {
-	NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
-	NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
-	if (recog.direction == UISwipeGestureRecognizerDirectionRight) {
-		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index+1)+3)%3]]]];
-		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index+1)+3)%3]];
-		[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index+1)+3)%3]];
-	} else if (recog.direction == UISwipeGestureRecognizerDirectionLeft) {
-		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",self.chartValueTypes[((index-1)+3)%3]]]];
-		self.chartView.chart = [RUChart chartWithChartType:self.chartValueTypes[((index-1)+3)%3]];
-		[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index-1)+3)%3]];
-	}
-	
-	[self.secondContainerView mas_remakeConstraints:^(MASConstraintMaker *make) {
-		make.top.equalTo(self.containerView).with.offset(20.0);
-		make.height.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.height]);
-		make.width.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.width]);
-	}];
-	
-	if (self.chartView.chart.displayPosition == RUChartDisplayPositionLeft) {
-		[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
-			make.left.equalTo(self.containerView).with.offset(20.0);
+	if (recog.state == UIGestureRecognizerStateEnded) {
+		NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
+		NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
+		if (recog.edges == UIRectEdgeRight) {
+			NSString *type = self.chartValueTypes[((index+1)+3)%3];
+			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
+			self.chartView.chart = [RUChart chartWithChartType:type];
+			[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index+1)+3)%3]];
+			[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
+		} else if (recog.edges == UIRectEdgeLeft) {
+			NSString *type = self.chartValueTypes[((index-1)+3)%3];
+			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
+			self.chartView.chart = [RUChart chartWithChartType:type];
+			[self inspectInfoButtonWithChartValueType:type];
+			[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
+		}
+		
+		[self.secondContainerView mas_remakeConstraints:^(MASConstraintMaker *make) {
+			make.top.equalTo(self.containerView).with.offset(20.0);
+			make.height.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.height]);
+			make.width.equalTo([NSNumber numberWithFloat:self.secondContainerView.frame.size.width]);
 		}];
-	} else if (self.chartView.chart.displayPosition == RUChartDisplayPositionRight) {
-		[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
-			make.right.equalTo(self.containerView).with.offset(-20.0);
-		}];
+		
+		if (self.chartView.chart.displayPosition == RUChartDisplayPositionLeft) {
+			[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+				make.left.equalTo(self.containerView).with.offset(20.0);
+			}];
+		} else if (self.chartView.chart.displayPosition == RUChartDisplayPositionRight) {
+			[self.secondContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+				make.right.equalTo(self.containerView).with.offset(-20.0);
+			}];
+		}
+		
+		[self.chartView removeMarker];
 	}
-	
-	[self.chartView removeMarker];
 }
 
 - (void)inspectInfoButtonWithChartValueType:(NSString *)type
@@ -385,6 +388,62 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	}
 }
 
+- (void)touchDidRegisterAtLocation:(CGPoint)location
+					 withEventType:(NSString *)eventType
+					inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+{
+	AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
+	
+	RUChart *chart = ((RUChartView *)locationIndicatorImageView).chart;
+	RUAxisValueType secondaryAxisType = chart.yAxis.valueType;
+	
+	CGFloat primaryScale, secondaryScale;
+	
+	// Find axis scales based on scale type
+	primaryScale = [self scaleWithScaleType:chart.xAxis.scaleType
+								inImageView:locationIndicatorImageView];
+	secondaryScale = [self scaleWithScaleType:chart.yAxis.scaleType
+								  inImageView:locationIndicatorImageView];
+	
+	float temperature, pressure, specVol, density, intEnergy, enthalpy, entropy, quality = -1;
+	
+	// Which secondary axis am I dealing with?
+	if (secondaryAxisType == RUAxisValueTypeTemperature) {
+		temperature = [self yAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
+	} else if (secondaryAxisType == RUAxisValueTypePressure) {
+		pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+	}
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature - 273.15]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVol]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
+}
+
+- (CGFloat)scaleWithScaleType:(RUAxisScaleType)type inImageView:(LocationIndicatorImageView *)view
+{
+	CGFloat primaryScale;
+	
+	switch (type) {
+		case RUAxisScaleTypeLinear:
+			// Linear
+			primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/view.frame.size.width;
+			break;
+			
+		case RUAxisScaleTypeLog:
+			// Log
+			primaryScale = (log10f([self xAxisEndingValue]) - log10f([self xAxisStartingValue]))/view.frame.size.width;
+		default:
+			primaryScale = 0;
+			break;
+	}
+	
+	return primaryScale;
+}
+
 - (void)pvTouchDidRegisterAtLocation:(CGPoint)location
 					   withEventType:(NSString *)eventType
 					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
@@ -400,14 +459,13 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	float specVol = powf(10.0,log10f([self xAxisStartingValue]) + primaryScale*location.x);
 	float pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
-	float temp, density, intEnergy, enthalpy, entropy, quality = -1;
+	float temp, density = 1./specVol, intEnergy, enthalpy, entropy, quality = -1;
 	
 	// Check if we are at or above
 	if (pressure < P_CRITICAL) {
 		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.0].firstObject).floatValue;
 		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
 																					inContext:appDel.managedObjectContext];
-		density = 1./specVol;
 		
 		if (specVol <= saturatedPoint.v_f.floatValue) {
 			// Compressed Liquid Region
@@ -443,17 +501,60 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		return;
 	}
 	
-	temp = [RUSolver temperatureForSpecificVolume:specVol
-									  andPressure:pressure];
+	NSArray *array = [self.superheatedMappingKeys copy];
 	
-	density = 1./specVol;
+	int loc = 0;
+	BOOL locationReached = NO;
 	
-	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:temp
-														   andDensity:density];
-	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:temp
-													andDensity:density];
-	entropy = [self.wagPruss calculateEntropyWithTemperature:temp
-												  andDensity:density];
+	for (int i = 0; i < array.count; i++) {
+		if (((NSNumber *)array[i]).floatValue >= pressure) {
+			continue;
+		} else {
+			locationReached = YES;
+			loc = i;
+		}
+	}
+	
+	// Find list of entropies for specific temperature
+	NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
+	NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+	
+	int lowArrayLoc = 0;
+	int highArrayLoc = 0;
+	locationReached = NO;
+	
+	// Find index of first entropy value in array which is less than chosen entropy value
+	for (int i = 0; i < lowArray.count; i++) {
+		if ([(NSNumber *)lowArray[i] floatValue] >= specVol) {
+			continue;
+		} else {
+			locationReached = YES;
+			lowArrayLoc = i;
+		}
+	}
+	
+	if (lowArrayLoc != lowArray.count - 1 && locationReached) {
+		float lowSpecVol = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
+		float highSpecVol = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
+		
+		float weight = (specVol - lowSpecVol)/(highSpecVol - lowSpecVol);
+		
+		float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+		float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
+		
+		temp = lowTemp + weight*(highTemp - lowTemp);
+	} else {
+		temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+	}
+	
+	double kTemperature = temp + 273.15;
+
+	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+														   andDensity:density]/1000.0;
+	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+													andDensity:density]/1000.0;
+	entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
+												  andDensity:density]/1000.0;
 	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp]
 											 pressure:[NSNumber numberWithFloat:pressure]
@@ -539,7 +640,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		int location = 0;
 		BOOL locationReached = NO;
 		
-		// Find index of first entropy value in array wh 2ich is less than chosen entropy value
+		// Find index of first entropy value in array which is less than chosen entropy value
 		for (int i = 0; i < array.count; i++) {
 			if ([(NSNumber *)array[i] floatValue] <= entropy) {
 				continue;
@@ -710,21 +811,20 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	priorY = location.y;
 }
 
-- (void)chooseNewFileWithChartType:(NSString *)chartType
+- (void)chooseNewFileWithChartType:(NSString *)chartType valueType:(NSString *)valueType
 {
 	NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
 	NSString *path = [bundleRoot stringByAppendingString:@"/Data Files"];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSArray *dirContents = [fm contentsOfDirectoryAtPath:path error:nil];
-	NSPredicate *fltr = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"self ENDSWITH '.csv' AND self BEGINSWITH '%@_Super_'",chartType]];
+	NSPredicate *fltr = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"self ENDSWITH '.csv' AND self BEGINSWITH '%@_Super_%@'",chartType,valueType]];
 	NSArray *allCSVs = [dirContents filteredArrayUsingPredicate:fltr];
 	
-	self.superheatedKeys = [RUDataSelector loadSuperheatedKeyValuesWithFileName:[allCSVs firstObject]];
-	self.superheatedValues = [RUDataSelector loadSuperheatedValuesWithFileName:[allCSVs firstObject]];
-	
-	NSArray *array = [RUDataSelector loadSuperheatedRowMappingValuesWithFileName:[allCSVs firstObject]];
-	
-	NSLog(@"%@", array);
+	if (allCSVs.count) {
+		self.superheatedKeys = [RUDataSelector loadSuperheatedKeyValuesWithFileName:[allCSVs firstObject]];
+		self.superheatedValues = [RUDataSelector loadSuperheatedValuesWithFileName:[allCSVs firstObject]];
+		self.superheatedMappingKeys = [RUDataSelector loadSuperheatedRowMappingValuesWithFileName:[allCSVs firstObject]];
+	}
 }
 /*
 - (void)loadSuperheatedData:(NSString *)fileName
