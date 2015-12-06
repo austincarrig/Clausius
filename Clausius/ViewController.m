@@ -461,18 +461,17 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	float temp, density = 1./specVol, intEnergy, enthalpy, entropy, quality = -1;
 	
-	// Check if we are at or above
 	if (pressure < P_CRITICAL) {
 		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.0].firstObject).floatValue;
 		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
 																					inContext:appDel.managedObjectContext];
 		
-		if (specVol <= saturatedPoint.v_f.floatValue) {
+		if (specVol < saturatedPoint.v_f.floatValue) {
 			// Compressed Liquid Region
 			intEnergy = saturatedPoint.u_f.floatValue;
 			enthalpy = saturatedPoint.h_f.floatValue;
 			entropy = saturatedPoint.s_f.floatValue;
-		} else if (specVol > saturatedPoint.v_f.floatValue && specVol < saturatedPoint.v_g.floatValue) {
+		} else if (specVol >= saturatedPoint.v_f.floatValue && specVol <= saturatedPoint.v_g.floatValue) {
 			// Saturated Vapor (Mixture) Region
 			quality = (specVol - [saturatedPoint.v_f floatValue])/([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
 			intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
@@ -481,13 +480,68 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		} else {
 			// Superheated Region below P_CRITICAL
 			
-			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:temp
+			NSArray *pressureKeys = [self.superheatedMappingKeys copy];
+			
+			NSLog(@"array: %@",pressureKeys);
+			
+			int loc = 0;
+			BOOL locationReached = NO;
+			
+			for (int i = 0; i < pressureKeys.count; i++) {
+				if (((NSNumber *)pressureKeys[i]).floatValue >= pressure) {
+					continue;
+				} else {
+					locationReached = YES;
+					loc = i;
+				}
+			}
+			
+			// Find list of temperatures for specific temperature
+			NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
+			NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+			
+			int lowArrayLoc = 0;
+			int highArrayLoc = 0;
+			locationReached = NO;
+			
+			// Find index of first specific volume value in array which is less than chosen v value
+			for (int i = 0; i < lowArray.count; i++) {
+				if ([(NSNumber *)lowArray[i] floatValue] >= specVol) {
+					continue;
+				} else {
+					locationReached = YES;
+					lowArrayLoc = i;
+				}
+			}
+			
+			if (lowArrayLoc != lowArray.count - 1 && locationReached) {
+				NSLog(@"1");
+				float lowSpecVol = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
+				float highSpecVol = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
+				
+				float weight = (specVol - lowSpecVol)/(highSpecVol - lowSpecVol);
+				
+				float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+				float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
+				
+				temp = lowTemp + weight*(highTemp - lowTemp);
+			} else {
+				NSLog(@"2");
+				temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+			}
+			
+			double kTemperature = temp + 273.15;
+			
+			NSLog(@"%f",temp);
+			
+			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
 																   andDensity:density]/1000.0;
-			
-			enthalpy = intEnergy + pressure*specVol;
-			
-			entropy = [self.wagPruss calculateEntropyWithTemperature:temp
+			enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+															andDensity:density]/1000.0;
+			entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
 														  andDensity:density]/1000.0;
+			
+			temp = kTemperature;
 		}
 		
 		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
@@ -501,13 +555,15 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		return;
 	}
 	
-	NSArray *array = [self.superheatedMappingKeys copy];
+	NSArray *pressureKeys = [self.superheatedMappingKeys copy];
+	
+	NSLog(@"array: %@",pressureKeys);
 	
 	int loc = 0;
 	BOOL locationReached = NO;
 	
-	for (int i = 0; i < array.count; i++) {
-		if (((NSNumber *)array[i]).floatValue >= pressure) {
+	for (int i = 0; i < pressureKeys.count; i++) {
+		if (((NSNumber *)pressureKeys[i]).floatValue >= pressure) {
 			continue;
 		} else {
 			locationReached = YES;
@@ -515,7 +571,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		}
 	}
 	
-	// Find list of entropies for specific temperature
+	// Find list of temperatures for specific temperature
 	NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
 	NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
 	
@@ -523,7 +579,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	int highArrayLoc = 0;
 	locationReached = NO;
 	
-	// Find index of first entropy value in array which is less than chosen entropy value
+	// Find index of first specific volume value in array which is less than chosen v value
 	for (int i = 0; i < lowArray.count; i++) {
 		if ([(NSNumber *)lowArray[i] floatValue] >= specVol) {
 			continue;
@@ -597,7 +653,67 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
 		} else if (enthalpy > saturatedPoint.h_g.floatValue) {
 			// Superheated Vapor Region
-			NSLog(@"Finish Me");
+			NSArray *pressureKeys = [self.superheatedMappingKeys copy];
+			
+			int loc = 0;
+			BOOL locationReached = NO;
+			
+			for (int i = 0; i < pressureKeys.count; i++) {
+				if (((NSNumber *)pressureKeys[i]).floatValue >= pressure) {
+					continue;
+				} else {
+					locationReached = YES;
+					loc = i;
+				}
+			}
+			
+			// Find list of temperatures for specific temperature
+			NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
+			NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+			
+			int lowArrayLoc = 0;
+			int highArrayLoc = 0;
+			locationReached = NO;
+			
+			// Find index of first specific volume value in array which is less than chosen v value
+			for (int i = 0; i < lowArray.count; i++) {
+				if ([(NSNumber *)lowArray[i] floatValue] >= enthalpy) {
+					continue;
+				} else {
+					locationReached = YES;
+					lowArrayLoc = i;
+				}
+			}
+			
+			if (lowArrayLoc != lowArray.count - 1 && locationReached) {
+				float lowEnthalpy = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
+				float highEnthalpy = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
+				
+				float weight = (enthalpy - lowEnthalpy)/(highEnthalpy - lowEnthalpy);
+				
+				float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+				float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
+				
+				NSLog(@"1");
+				temp = lowTemp + weight*(highTemp - lowTemp);
+			} else {
+				NSLog(@"2");
+				temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+			}
+			
+			double kTemperature = temp + 273.15;
+			double mPressure = pressure/1000;
+			
+			double density = [self.wagPruss rhoWithTemperature:kTemperature
+												   andPressure:mPressure];
+			specVol = 1/density;
+			
+			intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+																   andDensity:density]/1000.0;
+			entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
+														  andDensity:density]/1000.0;
+			
+			temp = kTemperature;
 		}
 		
 		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
@@ -609,7 +725,72 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
 	} else {
 		// Superheated Vapor Region
-		NSLog(@"Finish Me");
+		NSArray *pressureKeys = [self.superheatedMappingKeys copy];
+		
+		int loc = 0;
+		BOOL locationReached = NO;
+		
+		for (int i = 0; i < pressureKeys.count; i++) {
+			if (((NSNumber *)pressureKeys[i]).floatValue >= pressure) {
+				continue;
+			} else {
+				locationReached = YES;
+				loc = i;
+			}
+		}
+		
+		// Find list of temperatures for specific temperature
+		NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
+		NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+		
+		int lowArrayLoc = 0;
+		int highArrayLoc = 0;
+		locationReached = NO;
+		
+		// Find index of first specific volume value in array which is less than chosen v value
+		for (int i = 0; i < lowArray.count; i++) {
+			if ([(NSNumber *)lowArray[i] floatValue] >= specVol) {
+				continue;
+			} else {
+				locationReached = YES;
+				lowArrayLoc = i;
+			}
+		}
+		
+		if (lowArrayLoc != lowArray.count - 1 && locationReached) {
+			float lowSpecVol = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
+			float highSpecVol = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
+			
+			float weight = (specVol - lowSpecVol)/(highSpecVol - lowSpecVol);
+			
+			float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+			float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
+			
+			temp = lowTemp + weight*(highTemp - lowTemp);
+		} else {
+			temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
+		}
+		
+		double kTemperature = temp + 273.15;
+		double mPressure = pressure/1000;
+		
+		double density = [self.wagPruss rhoWithTemperature:kTemperature
+											   andPressure:mPressure];
+		
+		intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+															   andDensity:density]/1000.0;
+		enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+														andDensity:density]/1000.0;
+		entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
+													  andDensity:density]/1000.0;
+		
+		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp]
+												 pressure:[NSNumber numberWithFloat:pressure]
+										   specificVolume:[NSNumber numberWithFloat:specVol]
+										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+												 enthalpy:[NSNumber numberWithFloat:enthalpy]
+												  entropy:[NSNumber numberWithFloat:entropy]
+												  quality:nil];
 	}
 }
 
