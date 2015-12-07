@@ -392,7 +392,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 					 withEventType:(NSString *)eventType
 					inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
+	//AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
 	
 	RUChart *chart = ((RUChartView *)locationIndicatorImageView).chart;
 	RUAxisValueType secondaryAxisType = chart.yAxis.valueType;
@@ -405,7 +405,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	secondaryScale = [self scaleWithScaleType:chart.yAxis.scaleType
 								  inImageView:locationIndicatorImageView];
 	
-	float temperature, pressure, specVol, density, intEnergy, enthalpy, entropy, quality = -1;
+	float temperature, pressure, specVol, intEnergy, enthalpy, entropy, quality = -1;
 	
 	// Which secondary axis am I dealing with?
 	if (secondaryAxisType == RUAxisValueTypeTemperature) {
@@ -498,10 +498,10 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			
 			// Find list of temperatures for specific temperature
 			NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
-			NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+			//NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
 			
 			int lowArrayLoc = 0;
-			int highArrayLoc = 0;
+			//int highArrayLoc = 0;
 			locationReached = NO;
 			
 			// Find index of first specific volume value in array which is less than chosen v value
@@ -573,10 +573,10 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	// Find list of temperatures for specific temperature
 	NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
-	NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+	//NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
 	
 	int lowArrayLoc = 0;
-	int highArrayLoc = 0;
+	//int highArrayLoc = 0;
 	locationReached = NO;
 	
 	// Find index of first specific volume value in array which is less than chosen v value
@@ -643,7 +643,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		if (enthalpy < saturatedPoint.h_f.floatValue) {
 			// Compressed Liquid Region
 			specVol = saturatedPoint.v_f.floatValue;
-			intEnergy = saturatedPoint.u_f.floatValue;
+			intEnergy = enthalpy - pressure*specVol;
 			entropy = saturatedPoint.s_f.floatValue;
 		} else if (enthalpy >= saturatedPoint.h_f.floatValue && enthalpy <= saturatedPoint.h_g.floatValue) {
 			// Saturated Vapor (Mixture) Region
@@ -653,6 +653,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
 		} else if (enthalpy > saturatedPoint.h_g.floatValue) {
 			// Superheated Vapor Region
+			
 			NSArray *pressureKeys = [self.superheatedMappingKeys copy];
 			
 			int loc = 0;
@@ -669,10 +670,10 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			
 			// Find list of temperatures for specific temperature
 			NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
-			NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+			//NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
 			
 			int lowArrayLoc = 0;
-			int highArrayLoc = 0;
+			//int highArrayLoc = 0;
 			locationReached = NO;
 			
 			// Find index of first specific volume value in array which is less than chosen v value
@@ -694,10 +695,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 				float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
 				float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
 				
-				NSLog(@"1");
 				temp = lowTemp + weight*(highTemp - lowTemp);
 			} else {
-				NSLog(@"2");
 				temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
 			}
 			
@@ -715,14 +714,6 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			
 			temp = kTemperature;
 		}
-		
-		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
-												 pressure:[NSNumber numberWithFloat:pressure]
-										   specificVolume:[NSNumber numberWithFloat:specVol]
-										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-												 enthalpy:[NSNumber numberWithFloat:enthalpy]
-												  entropy:[NSNumber numberWithFloat:entropy]
-												  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
 	} else {
 		// Superheated Vapor Region
 		NSArray *pressureKeys = [self.superheatedMappingKeys copy];
@@ -741,15 +732,15 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		
 		// Find list of temperatures for specific temperature
 		NSArray *lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
-		NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
+		//NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
 		
 		int lowArrayLoc = 0;
-		int highArrayLoc = 0;
+		//int highArrayLoc = 0;
 		locationReached = NO;
 		
 		// Find index of first specific volume value in array which is less than chosen v value
 		for (int i = 0; i < lowArray.count; i++) {
-			if ([(NSNumber *)lowArray[i] floatValue] >= specVol) {
+			if ([(NSNumber *)lowArray[i] floatValue] >= enthalpy) {
 				continue;
 			} else {
 				locationReached = YES;
@@ -758,10 +749,10 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		}
 		
 		if (lowArrayLoc != lowArray.count - 1 && locationReached) {
-			float lowSpecVol = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
-			float highSpecVol = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
+			float lowEnthalpy = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
+			float highEnthalpy = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
 			
-			float weight = (specVol - lowSpecVol)/(highSpecVol - lowSpecVol);
+			float weight = (enthalpy - lowEnthalpy)/(highEnthalpy - lowEnthalpy);
 			
 			float lowTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
 			float highTemp = ((NSNumber *)[self.superheatedKeys objectAtIndex:(lowArrayLoc + 1)]).floatValue;
@@ -776,22 +767,23 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		
 		double density = [self.wagPruss rhoWithTemperature:kTemperature
 											   andPressure:mPressure];
+		specVol = 1/density;
 		
 		intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
 															   andDensity:density]/1000.0;
-		enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-														andDensity:density]/1000.0;
 		entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
 													  andDensity:density]/1000.0;
 		
-		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp]
-												 pressure:[NSNumber numberWithFloat:pressure]
-										   specificVolume:[NSNumber numberWithFloat:specVol]
-										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-												 enthalpy:[NSNumber numberWithFloat:enthalpy]
-												  entropy:[NSNumber numberWithFloat:entropy]
-												  quality:nil];
+		temp = kTemperature;
 	}
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVol]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:(quality == -1 ? nil : [NSNumber numberWithFloat:quality*100])];
 }
 
 - (void)tsTouchDidRegisterAtLocation:(CGPoint)location

@@ -58,8 +58,11 @@
  *  Used to update the title if the graph type chanegs
  */
 -(void)updateTitle:(NSString *)title;
+
 -(void)showQuality;
 -(void)hideQuality;
+
+-(void)changeUnit:(NSString *)unit withTag:(NSUInteger)index;
 @end
 
 @protocol DisplayViewDataSource <NSObject>

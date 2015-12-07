@@ -44,17 +44,17 @@
 		4941C5041B6075BA00E163C8 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4F71B6075BA00E163C8 /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		4941C5051B6075BA00E163C8 /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4F91B6075BA00E163C8 /* View+MASAdditions.m */; };
 		4941C5061B6075BA00E163C8 /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4FC1B6075BA00E163C8 /* ViewController+MASAdditions.m */; };
-		4962DDE71BCB0AA000034E48 /* Water_ph_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */; settings = {ASSET_TAGS = (); }; };
-		4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */; settings = {ASSET_TAGS = (); }; };
-		4962DDEB1BCB1CC100034E48 /* RUAxis.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEA1BCB1CC100034E48 /* RUAxis.m */; settings = {ASSET_TAGS = (); }; };
-		4962DDF01BCB39E500034E48 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEF1BCB39E500034E48 /* Constants.m */; settings = {ASSET_TAGS = (); }; };
-		4962DDF41BCB73F700034E48 /* RUChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDF31BCB73F700034E48 /* RUChart.m */; settings = {ASSET_TAGS = (); }; };
-		49643C501BCD64660050B686 /* RUGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 49643C4F1BCD64660050B686 /* RUGraph.m */; settings = {ASSET_TAGS = (); }; };
-		498435441BD15B5F00190C9C /* Water_ts_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 498435431BD15B5F00190C9C /* Water_ts_chart.png */; settings = {ASSET_TAGS = (); }; };
-		498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 498C46F81BD06A6C00FBF7DA /* RUSolver.m */; settings = {ASSET_TAGS = (); }; };
+		4962DDE71BCB0AA000034E48 /* Water_ph_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */; };
+		4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 4962DDE61BCB0AA000034E48 /* Water_pv_chart.png */; };
+		4962DDEB1BCB1CC100034E48 /* RUAxis.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEA1BCB1CC100034E48 /* RUAxis.m */; };
+		4962DDF01BCB39E500034E48 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDEF1BCB39E500034E48 /* Constants.m */; };
+		4962DDF41BCB73F700034E48 /* RUChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 4962DDF31BCB73F700034E48 /* RUChart.m */; };
+		49643C501BCD64660050B686 /* RUGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 49643C4F1BCD64660050B686 /* RUGraph.m */; };
+		498435441BD15B5F00190C9C /* Water_ts_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 498435431BD15B5F00190C9C /* Water_ts_chart.png */; };
+		498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 498C46F81BD06A6C00FBF7DA /* RUSolver.m */; };
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
-		49A056501BC99D350032F280 /* RUChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0564F1BC99D350032F280 /* RUChartView.swift */; settings = {ASSET_TAGS = (); }; };
-		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; settings = {ASSET_TAGS = (); }; };
+		49A056501BC99D350032F280 /* RUChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0564F1BC99D350032F280 /* RUChartView.swift */; };
+		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,7 +212,6 @@
 				492A988F1B574CDB00F061E8 /* Core Data */,
 				492A98741B574BEA00F061E8 /* Data Files */,
 				492A984A1B574BCC00F061E8 /* Supporting Files */,
-				49A056471BC98D240032F280 /* Clausius-Bridging-Header.h */,
 			);
 			path = Clausius;
 			sourceTree = "<group>";
@@ -226,6 +225,7 @@
 				4962DDEF1BCB39E500034E48 /* Constants.m */,
 				492A98E01B574DF100F061E8 /* LaunchScreen.xib */,
 				492A984B1B574BCC00F061E8 /* Info.plist */,
+				49A056471BC98D240032F280 /* Clausius-Bridging-Header.h */,
 				492A984C1B574BCC00F061E8 /* main.m */,
 			);
 			name = "Supporting Files";

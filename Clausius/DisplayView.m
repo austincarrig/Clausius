@@ -515,16 +515,24 @@
 							   entropy:(NSNumber *)entropy
 							   quality:(NSNumber *)quality;
 {
-	if (pressure.floatValue >= 100000.0) {
-		pressure = [NSNumber numberWithFloat:99999.9];
-	}
-	
 	if (temperature) {
 		[self.temperatureTextField setText:[NSString stringWithFormat:@"%d",[temperature intValue]]];
 	}
 	
 	if (pressure) {
-		[self.pressureTextField setText:[NSString stringWithFormat:@"%.1f",[pressure floatValue]]];
+		if (pressure.integerValue >= 1000) {
+			[self.pressureTextField setText:[NSString stringWithFormat:@"%.1f",[pressure floatValue]/1000.]];
+			
+			if ([self.pressureUnitsLabel.text isEqualToString:@"kPa"]) {
+				[self.pressureUnitsLabel setText:@"MPa"];
+			}
+		} else {
+			[self.pressureTextField setText:[NSString stringWithFormat:@"%.1f",[pressure floatValue]]];
+			
+			if ([self.pressureUnitsLabel.text isEqualToString:@"MPa"]) {
+				[self.pressureUnitsLabel setText:@"kPa"];
+			}
+		}
 	}
 	
 	if (specificVolume) {
@@ -563,6 +571,17 @@
 - (void)showQuality {
 	[self.hideShowQualityView setHidden:YES];
 	self.qualityIsHidden = NO;
+}
+
+-(void)changeUnit:(NSString *)unit withTag:(NSUInteger)index
+{
+	NSArray *unitLabels = self.unitsContainer.subviews;
+	
+	for (UILabel *label in unitLabels) {
+		if (label.tag == index) {
+			[label setText:unit];
+		}
+	}
 }
 
 @end
