@@ -11,7 +11,9 @@
 @protocol LocationIndicatorImageViewDataSource;
 @protocol LocationIndicatorImageViewDelegate;
 
-@interface LocationIndicatorImageView : UIImageView
+@interface LocationIndicatorImageView : UIImageView {
+	CGPoint lastLocation;
+}
 
 @property (strong, nonatomic, readonly) UIColor *primaryColor;
 

@@ -557,8 +557,6 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	NSArray *pressureKeys = [self.superheatedMappingKeys copy];
 	
-	NSLog(@"array: %@",pressureKeys);
-	
 	int loc = 0;
 	BOOL locationReached = NO;
 	
@@ -636,7 +634,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	float temp, specVol, intEnergy, entropy, quality = -1;
 	
 	if (pressure < P_CRITICAL) {
-		temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.].firstObject).floatValue;
+		temp = [self.wagPruss temperatureVapourLiquidWithPressure:pressure];
 		SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
 																						  inContext:appDelegate.managedObjectContext];
 		

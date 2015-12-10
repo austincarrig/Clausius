@@ -1612,7 +1612,7 @@
 
 
 // calculate pressure at the liquid-vapor curve
-- (double)pressueVapourLiquidWithTemperature:(double)temperature;
+- (double)pressureVapourLiquidWithTemperature:(double)temperature;
 {
 	double theta, aLV[7], pLV;
 	
@@ -1629,6 +1629,63 @@
 												+ aLV[4]*pow(theta,3.5) + aLV[5]*pow(theta,4.) + aLV[6]*pow(theta,7.5) ) );
 	
 	return pLV;
+}
+
+
+- (double)temperatureVapourLiquidWithPressure:(double)pressure
+{
+	count = 0;
+	
+	double min = 273;
+	double max = 647.05;
+	
+	return [self findSideWithPressure:pressure/1000.
+								  min:min
+								  max:max];
+}
+
+
+- (double)findSideWithPressure:(double)pressure min:(double)min max:(double)max
+{
+	count++;
+	
+	pressure = pressure*pow(10, 6);
+	
+	double middle = (min+max)/2;
+	
+	double minP = [self pressureVapourLiquidWithTemperature:min]*pow(10, 6);
+	double middleP = [self pressureVapourLiquidWithTemperature:middle]*pow(10, 6);
+	double maxP = [self pressureVapourLiquidWithTemperature:max]*pow(10, 6);
+	
+	NSAssert(!(pressure < minP), @"Pressure too small");
+	NSAssert(!(pressure > maxP), @"Pressure too large");
+	
+	if ((int)pressure == (int)minP) {
+		NSLog(@"%d",count);
+		return min;
+	}
+	
+	if ((int)pressure == (int)maxP) {
+		NSLog(@"%d",count);
+		return max;
+	}
+	
+	if ((int)pressure == (int)middleP) {
+		NSLog(@"%d",count);
+		return middle;
+	}
+	
+	if (pressure > minP && pressure < middleP) {
+		return [self findSideWithPressure:pressure/pow(10, 6)
+									  min:min
+									  max:middle];
+	} else if (pressure > middleP && pressure < maxP) {
+		return [self findSideWithPressure:pressure/pow(10, 6)
+									  min:middle
+									  max:max];
+	}
+	
+	return -1;
 }
 
 
@@ -1758,7 +1815,7 @@
 
     
     // Calculate accurate saturation pressure
-    double pSat = [[[self accuratePressueVapourLiquidWithTemperature:temperature] objectAtIndex:0.] doubleValue];
+    double pSat = [[[self accuratePressureVapourLiquidWithTemperature:temperature] objectAtIndex:0.] doubleValue];
         
     
     // temperature above, pressure below the vapor-liquid pressure
@@ -1856,14 +1913,14 @@
 
 
 // Calculate accurate liquid-density curve
-- (NSArray *)accuratePressueVapourLiquidWithTemperature:(double)temperature
+- (NSArray *)accuratePressureVapourLiquidWithTemperature:(double)temperature
 {
     // Define variables
     double pPreliminary, rhoLiquidPreliminary, rhoVaporPreliminary;
     double pressure, rhoLiquid, rhoVapor;
     
     // Calculate preliminary values for pPreliminary, rhoLiquidPreliminary and rhoVaporPreliminary
-    pPreliminary         = [self pressueVapourLiquidWithTemperature:temperature];
+    pPreliminary         = [self pressureVapourLiquidWithTemperature:temperature];
     rhoLiquidPreliminary = [self liquidDensityAtSaturation:temperature];
     rhoVaporPreliminary  = [self vaporDensityAtSaturation:temperature];
     
@@ -2001,8 +2058,8 @@
     while (fabs(dx) > 1.e-5 && i < 1000 ) {
         
         // Set increment
-        f  =  [self pressueVapourLiquidWithTemperature:tPreliminary] - pressure;
-        df = ([self pressueVapourLiquidWithTemperature:tPreliminary + deltaT] - [self pressueVapourLiquidWithTemperature:tPreliminary - deltaT]) / (2. * deltaT);
+        f  =  [self pressureVapourLiquidWithTemperature:tPreliminary] - pressure;
+        df = ([self pressureVapourLiquidWithTemperature:tPreliminary + deltaT] - [self pressureVapourLiquidWithTemperature:tPreliminary - deltaT]) / (2. * deltaT);
         dx =  - f / df/2.;
         
         // Calculate tPreliminary

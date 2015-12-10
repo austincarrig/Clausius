@@ -9,14 +9,15 @@
 #import "LocationIndicatorImageView.h"
 #import "UIColor+Mvuke.h"
 
-static const CGFloat outerRadius = 9.0f;
+static const CGFloat smallOuterRadius = 9.0f;
 static const CGFloat innerRadius = 6.5f;
 static const CGFloat outerLineWidth = 0.75f;
+static const CGFloat largeOuterRadius = 60.0f;
+static const CGFloat hitmarkerLength = 7.0f;
+static const CGFloat TAU = 2*M_PI;
 unsigned char *rawData;
 
 @interface LocationIndicatorImageView ()
-@property (nonatomic, strong) UIBezierPath *locationIndicatorRing;
-@property (nonatomic, strong) UIBezierPath *locationIndicatorCircle;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorRingLayer;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorCircleLayer;
 @end
@@ -48,35 +49,11 @@ unsigned char *rawData;
 
 #pragma mark - Lazy Init
 
--(UIBezierPath *)locationIndicatorRing
-{
-	if (!_locationIndicatorRing) {
-		_locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:CGPointZero
-																radius:outerRadius
-															startAngle:0.0f
-															  endAngle:360.0f
-															 clockwise:YES];
-	}
-	return _locationIndicatorRing;
-}
-
--(UIBezierPath *)locationIndicatorCircle
-{
-	if (!_locationIndicatorCircle) {
-		_locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:CGPointZero
-																  radius:innerRadius
-															  startAngle:0.0f
-																endAngle:360.0f
-															   clockwise:YES];
-	}
-	return _locationIndicatorCircle;
-}
-
 -(CAShapeLayer *)locationIndicatorRingLayer
 {
 	if (!_locationIndicatorRingLayer) {
 		_locationIndicatorRingLayer = [CAShapeLayer layer];
-		_locationIndicatorRingLayer.path = [self.locationIndicatorRing CGPath];
+		_locationIndicatorRingLayer.path = [UIBezierPath bezierPath].CGPath;
 		_locationIndicatorRingLayer.fillColor = [[UIColor clearColor] CGColor];
 		_locationIndicatorRingLayer.strokeColor = [[self.primaryColor colorWithAlphaComponent:0.8] CGColor];
 		_locationIndicatorRingLayer.lineWidth = outerLineWidth;
@@ -90,7 +67,7 @@ unsigned char *rawData;
 {
 	if (!_locationIndicatorCircleLayer) {
 		_locationIndicatorCircleLayer = [CAShapeLayer layer];
-		_locationIndicatorCircleLayer.path = [self.locationIndicatorRing CGPath];
+		_locationIndicatorCircleLayer.path = [UIBezierPath bezierPath].CGPath;
 		_locationIndicatorCircleLayer.fillColor = [[self.primaryColor colorWithAlphaComponent:0.8] CGColor];
 		_locationIndicatorCircleLayer.strokeColor = [[UIColor clearColor] CGColor];
 		_locationIndicatorCircleLayer.rasterizationScale = 2.0 * [[UIScreen mainScreen] scale];
@@ -98,6 +75,8 @@ unsigned char *rawData;
 	}
 	return _locationIndicatorCircleLayer;
 }
+
+#pragma mark - Public Methods
 
 - (void)resetImage:(UIImage *)image
 {
@@ -110,7 +89,7 @@ unsigned char *rawData;
 
 #pragma mark - Responder Methods
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
 	[super touchesBegan:touches withEvent:event];
 		
@@ -119,6 +98,8 @@ unsigned char *rawData;
 		CGPoint pointerLocation = touchLocation;
 		CGFloat alphaOfPixel = 1.0;
 		
+		lastLocation = pointerLocation;
+		
 		if ([self pointInside:touchLocation withEvent:event]) {
 			UIColor *color = (UIColor *)[[self getRGBAsFromImage:self.image inImageView:self atX:touchLocation.x andY:touchLocation.y count:1] lastObject];
 			alphaOfPixel = CGColorGetAlpha(color.CGColor);
@@ -126,10 +107,8 @@ unsigned char *rawData;
 			alphaOfPixel = 0.0;
 		}
 		
-		float secondaryAxisValue;
-		
 		if ([self.dataSource respondsToSelector:@selector(xAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(xAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(yAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(yAxisEndingValue)]) {
-			secondaryAxisValue = [self.dataSource yAxisStartingValue] + ([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
+			float secondaryAxisValue = [self.dataSource yAxisStartingValue] + ([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
 			
 			if ([self.dataSource respondsToSelector:@selector(minimumYAxisValue)]) {
 				if (secondaryAxisValue < [self.dataSource minimumYAxisValue]) {
@@ -140,20 +119,55 @@ unsigned char *rawData;
 		}
 		
 		if (alphaOfPixel != 0.0) {
-			self.locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		radius:outerRadius
-																	startAngle:0.0f
-																	  endAngle:360.0f
-																	 clockwise:YES];
-			[self.locationIndicatorRingLayer setPath:[self.locationIndicatorRing CGPath]];
+			UIGraphicsBeginImageContext(CGSizeMake(largeOuterRadius*2.0f, largeOuterRadius*2.0f));
+			
+			UIBezierPath *hitMarkerTop = [UIBezierPath bezierPath];
+			UIBezierPath *hitMarkerBottom = [UIBezierPath bezierPath];
+			UIBezierPath *hitMarkerLeft = [UIBezierPath bezierPath];
+			UIBezierPath *hitMarkerRight = [UIBezierPath bezierPath];
+			
+			[hitMarkerTop moveToPoint:CGPointMake(pointerLocation.x, pointerLocation.y - largeOuterRadius)];
+			[hitMarkerTop addLineToPoint:CGPointMake(pointerLocation.x, pointerLocation.y - largeOuterRadius + hitmarkerLength)];
+			[hitMarkerTop stroke];
+			
+			[hitMarkerBottom moveToPoint:CGPointMake(pointerLocation.x, pointerLocation.y + largeOuterRadius)];
+			[hitMarkerBottom addLineToPoint:CGPointMake(pointerLocation.x, pointerLocation.y + largeOuterRadius - hitmarkerLength)];
+			[hitMarkerBottom stroke];
+			
+			[hitMarkerLeft moveToPoint:CGPointMake(pointerLocation.x - largeOuterRadius, pointerLocation.y)];
+			[hitMarkerLeft addLineToPoint:CGPointMake(pointerLocation.x  - largeOuterRadius + hitmarkerLength, pointerLocation.y)];
+			[hitMarkerLeft stroke];
+			
+			[hitMarkerRight moveToPoint:CGPointMake(pointerLocation.x + largeOuterRadius, pointerLocation.y)];
+			[hitMarkerRight addLineToPoint:CGPointMake(pointerLocation.x + largeOuterRadius - hitmarkerLength, pointerLocation.y)];
+			[hitMarkerRight stroke];
+			
+			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				 radius:largeOuterRadius
+																			 startAngle:0.0f
+																			   endAngle:TAU
+																			  clockwise:YES];
+			
+			CGMutablePathRef ringAndMarkers = CGPathCreateMutableCopy(locationIndicatorRing.CGPath);
+			CGPathAddPath(ringAndMarkers, NULL, hitMarkerTop.CGPath);
+			CGPathAddPath(ringAndMarkers, NULL, hitMarkerBottom.CGPath);
+			CGPathAddPath(ringAndMarkers, NULL, hitMarkerLeft.CGPath);
+			CGPathAddPath(ringAndMarkers, NULL, hitMarkerRight.CGPath);
+			
+			CGPathMoveToPoint(ringAndMarkers, NULL, pointerLocation.x, pointerLocation.y);
+			
+			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
 			[self.layer addSublayer:self.locationIndicatorRingLayer];
 			
-			self.locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		  radius:innerRadius
-																	  startAngle:0.0f
-																		endAngle:360.0f
-																	   clockwise:YES];
-			[self.locationIndicatorCircleLayer setPath:[self.locationIndicatorCircle CGPath]];
+			CGPathRelease(ringAndMarkers);
+			UIGraphicsEndImageContext();
+			
+			UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				   radius:innerRadius
+																			   startAngle:0.0f
+																				 endAngle:TAU
+																				clockwise:YES];
+			[self.locationIndicatorCircleLayer setPath:[locationIndicatorCircle CGPath]];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
 		}
 		
@@ -163,7 +177,7 @@ unsigned char *rawData;
 	}
 }
 
--(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+-(void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
 	[super touchesMoved:touches withEvent:event];
 	
@@ -194,42 +208,121 @@ unsigned char *rawData;
 		}
 		
 		if (alphaOfPixel != 0.0 && [self.locationIndicatorCircleLayer.superlayer isEqual:self.layer] && [self.locationIndicatorRingLayer.superlayer isEqual:self.layer]) {
-			[self.locationIndicatorRing removeAllPoints];
-			[self.locationIndicatorCircle removeAllPoints];
+			CGAffineTransform transform = CGAffineTransformMakeTranslation(touchLocation.x - lastLocation.x,
+																		   touchLocation.y - lastLocation.y);
+			lastLocation = pointerLocation;
 			
-			self.locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		radius:outerRadius
-																	startAngle:0.0f
-																	  endAngle:360.0f
-																	 clockwise:YES];
-			[self.locationIndicatorRingLayer setPath:[self.locationIndicatorRing CGPath]];
+			CGPathRef ringAndMarkers = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
+																		  &transform);
+			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
 			
-			self.locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		  radius:innerRadius
-																	  startAngle:0.0f
-																		endAngle:360.0f
-																	   clockwise:YES];
-			[self.locationIndicatorCircleLayer setPath:[self.locationIndicatorCircle CGPath]];
+			CGPathRef locationIndicatorCircle = CGPathCreateCopyByTransformingPath(self.locationIndicatorCircleLayer.path,
+																				   &transform);
+			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle];
+			
+			CGPathRelease(ringAndMarkers);
+			CGPathRelease(locationIndicatorCircle);
 		} else if (alphaOfPixel != 0 && !([self.locationIndicatorCircleLayer.superlayer isEqual:self.layer] && [self.locationIndicatorRingLayer.superlayer isEqual:self.layer])) {
-			self.locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		radius:outerRadius
-																	startAngle:0.0f
-																	  endAngle:360.0f
-																	 clockwise:YES];
-			[self.locationIndicatorRingLayer setPath:[self.locationIndicatorRing CGPath]];
+			CGAffineTransform transform = CGAffineTransformMakeTranslation(touchLocation.x - lastLocation.x,
+																		   touchLocation.y - lastLocation.y);
+			lastLocation = pointerLocation;
+			
+			CGPathRef ringAndMarkers = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
+																		  &transform);
+			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
 			[self.layer addSublayer:self.locationIndicatorRingLayer];
 			
-			self.locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
-																		  radius:innerRadius
-																	  startAngle:0.0f
-																		endAngle:360.0f
-																	   clockwise:YES];
-			[self.locationIndicatorCircleLayer setPath:[self.locationIndicatorCircle CGPath]];
+			CGPathRef locationIndicatorCircle = CGPathCreateCopyByTransformingPath(self.locationIndicatorCircleLayer.path,
+																				   &transform);
+			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
+			
+			CGPathRelease(ringAndMarkers);
+			CGPathRelease(locationIndicatorCircle);
 		}
 		
 		if ([self.delegate respondsToSelector:@selector(touchDidMoveToLocation:inLocationView:)] && alphaOfPixel != 0.0) {
 			[self.delegate touchDidMoveToLocation:touchLocation inLocationView:self];
+		}
+	}
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+	[super touchesEnded:touches withEvent:event];
+	
+	if ((int)event.allTouches.count == 1) {
+		CGPoint touchLocation = [[[event allTouches] anyObject] locationInView:self];
+		CGPoint pointerLocation = touchLocation;
+		CGFloat alphaOfPixel = 1.0;
+		
+		if ([self pointInside:touchLocation withEvent:event]) {
+			UIColor *color = (UIColor *)[[self getRGBAsFromImage:self.image inImageView:self atX:touchLocation.x andY:touchLocation.y count:1] lastObject];
+			alphaOfPixel = CGColorGetAlpha(color.CGColor);
+		} else {
+			alphaOfPixel = 0.0;
+		}
+		
+		float secondaryAxisValue;
+		
+		if ([self.dataSource respondsToSelector:@selector(xAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(xAxisEndingValue)] && [self.dataSource respondsToSelector:@selector(yAxisStartingValue)] && [self.dataSource respondsToSelector:@selector(yAxisEndingValue)]) {
+			secondaryAxisValue = [self.dataSource yAxisStartingValue] + ([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue])*(self.frame.size.height - touchLocation.y)/self.frame.size.height;
+			
+			if ([self.dataSource respondsToSelector:@selector(minimumYAxisValue)]) {
+				if (secondaryAxisValue < [self.dataSource minimumYAxisValue]) {
+					CGFloat newY = ((fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]) - fabs([self.dataSource minimumYAxisValue] - [self.dataSource yAxisStartingValue]))/fabs([self.dataSource yAxisEndingValue] - [self.dataSource yAxisStartingValue]))*self.frame.size.height;
+					
+					pointerLocation = CGPointMake(pointerLocation.x, newY);
+				}
+			}
+		}
+		
+		if (alphaOfPixel != 0.0 && [self.locationIndicatorCircleLayer.superlayer isEqual:self.layer] && [self.locationIndicatorRingLayer.superlayer isEqual:self.layer]) {
+			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				 radius:smallOuterRadius
+																			 startAngle:0.0f
+																			   endAngle:TAU
+																			  clockwise:YES];
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing.CGPath];
+			
+			UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				   radius:innerRadius
+																			   startAngle:0.0f
+																				 endAngle:TAU
+																				clockwise:YES];
+			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
+		} else if (alphaOfPixel != 0.0 && !([self.locationIndicatorCircleLayer.superlayer isEqual:self.layer] && [self.locationIndicatorRingLayer.superlayer isEqual:self.layer])) {
+			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				 radius:smallOuterRadius
+																			 startAngle:0.0f
+																			   endAngle:TAU
+																			  clockwise:YES];
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing.CGPath];
+			[self.layer addSublayer:self.locationIndicatorRingLayer];
+			
+			UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																				   radius:innerRadius
+																			   startAngle:0.0f
+																				 endAngle:TAU
+																				clockwise:YES];
+			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
+			[self.layer addSublayer:self.locationIndicatorCircleLayer];
+		} else {
+			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:lastLocation
+																				 radius:smallOuterRadius
+																			 startAngle:0.0f
+																			   endAngle:TAU
+																			  clockwise:YES];
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing.CGPath];
+			[self.layer addSublayer:self.locationIndicatorRingLayer];
+			
+			UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:lastLocation
+																				   radius:innerRadius
+																			   startAngle:0.0f
+																				 endAngle:TAU
+																				clockwise:YES];
+			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
+			[self.layer addSublayer:self.locationIndicatorCircleLayer];
 		}
 	}
 }
@@ -314,8 +407,6 @@ unsigned char *rawData;
 
 - (void)removeMarker
 {
-	[self.locationIndicatorRing removeAllPoints];
-	[self.locationIndicatorCircle removeAllPoints];
 	[self.locationIndicatorCircleLayer removeFromSuperlayer];
 	[self.locationIndicatorRingLayer removeFromSuperlayer];
 }

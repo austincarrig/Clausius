@@ -14,7 +14,9 @@
 	 Wagner & Pruß (2002)
 	 The IAPWS Formulation 1995 for the thermodynamic properties of ordinary water substance
 	 for general and scientific use. J.Phys.Chem.Ref.Data., 31, 387-535 
-	 */	
+	 */
+	
+	unsigned int count;
 	
 	NSString *fluidSpecies;
 	NSString *fluidMethod;
@@ -268,7 +270,9 @@
 - (double)vaporDensityAtSaturation:(double)temperature;
 
 // calculate pressure at the liuid-vapor curve
-- (double)pressueVapourLiquidWithTemperature:(double)temperature;
+- (double)pressureVapourLiquidWithTemperature:(double)temperature;
+
+- (double)temperatureVapourLiquidWithPressure:(double)pressure;
 
 // calculate rho for pressure and temperature
 - (double)rhoWithTemperature:(double)temperature 
@@ -280,7 +284,7 @@
 			  andDensityEstimate:(double)density;
 
 // calculate accurate pressure at the liuid-vapor curve
-- (NSArray *)accuratePressueVapourLiquidWithTemperature:(double)temperature;
+- (NSArray *)accuratePressureVapourLiquidWithTemperature:(double)temperature;
 
 // calculate accurate temperature at the liuid-vapor curve
 - (NSArray *)accurateTemperatureVapourLiquidWithPressure:(double)pressure;
