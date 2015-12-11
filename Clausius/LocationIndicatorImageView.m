@@ -279,7 +279,7 @@ unsigned char *rawData;
 		}
 	}
 }
-/*
+
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
 	[super touchesEnded:touches withEvent:event];
@@ -362,7 +362,7 @@ unsigned char *rawData;
 		[self.locationIndicatorHitmarkerLayer removeFromSuperlayer];
 	}
 }
-*/
+
 #pragma mark - Image Scanning Methods
 
 - (CGFloat)valueOfIntersection:(NSArray *)colorsForLine forImage:(UIImage *)image inImageView:(UIImageView *)imageView

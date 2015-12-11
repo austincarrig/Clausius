@@ -838,12 +838,9 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		double kTemperature = temperature + 273.15;
 		double mPressure = pressure/1000;
 		
-		NSLog(@"density1");
 		double density = [self.wagPruss rhoWithTemperature:kTemperature
 											   andPressure:mPressure];
 		specVolume = 1/density;
-		
-		NSLog(@"density2");
 		
 		intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
 															   andDensity:density]/1000.0;
@@ -952,11 +949,9 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 				double kTemperature = temperature + 273.15;
 				double mPressure = pressure/1000;
 				
-				NSLog(@"density1");
 				double density = [self.wagPruss rhoWithTemperature:kTemperature
 													   andPressure:mPressure];
 				specVolume = 1/density;
-				NSLog(@"density2");
 				
 				intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
 																	   andDensity:density]/1000.0;
