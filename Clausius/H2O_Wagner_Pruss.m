@@ -1649,13 +1649,15 @@
 {
 	count++;
 	
-	pressure = pressure*pow(10, 6);
+	float power = pow(10, 6);
+	
+	pressure = pressure*power;
 	
 	double middle = (min+max)/2;
 	
-	double minP = [self pressureVapourLiquidWithTemperature:min]*pow(10, 6);
-	double middleP = [self pressureVapourLiquidWithTemperature:middle]*pow(10, 6);
-	double maxP = [self pressureVapourLiquidWithTemperature:max]*pow(10, 6);
+	double minP = [self pressureVapourLiquidWithTemperature:min]*power;
+	double middleP = [self pressureVapourLiquidWithTemperature:middle]*power;
+	double maxP = [self pressureVapourLiquidWithTemperature:max]*power;
 	
 	NSAssert(!(pressure < minP), @"Pressure too small");
 	NSAssert(!(pressure > maxP), @"Pressure too large");
@@ -1676,11 +1678,11 @@
 	}
 	
 	if (pressure > minP && pressure < middleP) {
-		return [self findSideWithPressure:pressure/pow(10, 6)
+		return [self findSideWithPressure:pressure/power
 									  min:min
 									  max:middle];
 	} else if (pressure > middleP && pressure < maxP) {
-		return [self findSideWithPressure:pressure/pow(10, 6)
+		return [self findSideWithPressure:pressure/power
 									  min:middle
 									  max:max];
 	}

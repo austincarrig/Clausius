@@ -11,15 +11,18 @@
 
 static const CGFloat smallOuterRadius = 9.0f;
 static const CGFloat innerRadius = 6.5f;
-static const CGFloat outerLineWidth = 0.75f;
+static const CGFloat smallOuterLineWidth = 0.75f;
+static const CGFloat largeOuterLineWidth = 5.0f;
+static const CGFloat hitmarkerLineWidth = 1.0f;
 static const CGFloat largeOuterRadius = 60.0f;
-static const CGFloat hitmarkerLength = 7.0f;
+static const CGFloat hitmarkerLength = 25.0f;
 static const CGFloat TAU = 2*M_PI;
 unsigned char *rawData;
 
 @interface LocationIndicatorImageView ()
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorRingLayer;
 @property (nonatomic, strong) CAShapeLayer *locationIndicatorCircleLayer;
+@property (nonatomic, strong) CAShapeLayer *locationIndicatorHitmarkerLayer;
 @end
 
 @implementation LocationIndicatorImageView
@@ -56,7 +59,7 @@ unsigned char *rawData;
 		_locationIndicatorRingLayer.path = [UIBezierPath bezierPath].CGPath;
 		_locationIndicatorRingLayer.fillColor = [[UIColor clearColor] CGColor];
 		_locationIndicatorRingLayer.strokeColor = [[self.primaryColor colorWithAlphaComponent:0.8] CGColor];
-		_locationIndicatorRingLayer.lineWidth = outerLineWidth;
+		_locationIndicatorRingLayer.lineWidth = smallOuterLineWidth;
 		_locationIndicatorRingLayer.rasterizationScale = 2.0 * [[UIScreen mainScreen] scale];
 		_locationIndicatorRingLayer.shouldRasterize = YES;
 	}
@@ -74,6 +77,21 @@ unsigned char *rawData;
 		_locationIndicatorCircleLayer.shouldRasterize = YES;
 	}
 	return _locationIndicatorCircleLayer;
+}
+
+- (CAShapeLayer *)locationIndicatorHitmarkerLayer
+{
+	if (!_locationIndicatorHitmarkerLayer) {
+		_locationIndicatorHitmarkerLayer = [CAShapeLayer layer];
+		_locationIndicatorHitmarkerLayer.path = [UIBezierPath bezierPath].CGPath;
+		_locationIndicatorHitmarkerLayer.fillColor = [[UIColor clearColor] CGColor];
+		_locationIndicatorHitmarkerLayer.strokeColor = [[self.primaryColor colorWithAlphaComponent:0.8] CGColor];
+		_locationIndicatorHitmarkerLayer.lineWidth = hitmarkerLineWidth;
+		_locationIndicatorHitmarkerLayer.rasterizationScale = 2.0 * [[UIScreen mainScreen] scale];
+		_locationIndicatorHitmarkerLayer.shouldRasterize = YES;
+	}
+	
+	return _locationIndicatorHitmarkerLayer;
 }
 
 #pragma mark - Public Methods
@@ -142,24 +160,28 @@ unsigned char *rawData;
 			[hitMarkerRight addLineToPoint:CGPointMake(pointerLocation.x + largeOuterRadius - hitmarkerLength, pointerLocation.y)];
 			[hitMarkerRight stroke];
 			
+			CGMutablePathRef markers = CGPathCreateMutableCopy(hitMarkerTop.CGPath);
+			CGPathAddPath(markers, NULL, hitMarkerBottom.CGPath);
+			CGPathAddPath(markers, NULL, hitMarkerLeft.CGPath);
+			CGPathAddPath(markers, NULL, hitMarkerRight.CGPath);
+			
+			CGPathMoveToPoint(markers, NULL, pointerLocation.x, pointerLocation.y);
+			
+			[self.locationIndicatorHitmarkerLayer setPath:markers];
+			[self.layer addSublayer:self.locationIndicatorHitmarkerLayer];
+			
 			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
 																				 radius:largeOuterRadius
 																			 startAngle:0.0f
 																			   endAngle:TAU
 																			  clockwise:YES];
 			
-			CGMutablePathRef ringAndMarkers = CGPathCreateMutableCopy(locationIndicatorRing.CGPath);
-			CGPathAddPath(ringAndMarkers, NULL, hitMarkerTop.CGPath);
-			CGPathAddPath(ringAndMarkers, NULL, hitMarkerBottom.CGPath);
-			CGPathAddPath(ringAndMarkers, NULL, hitMarkerLeft.CGPath);
-			CGPathAddPath(ringAndMarkers, NULL, hitMarkerRight.CGPath);
+			self.locationIndicatorRingLayer.lineWidth = largeOuterLineWidth;
 			
-			CGPathMoveToPoint(ringAndMarkers, NULL, pointerLocation.x, pointerLocation.y);
-			
-			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing.CGPath];
 			[self.layer addSublayer:self.locationIndicatorRingLayer];
 			
-			CGPathRelease(ringAndMarkers);
+			CGPathRelease(markers);
 			UIGraphicsEndImageContext();
 			
 			UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
@@ -212,24 +234,34 @@ unsigned char *rawData;
 																		   touchLocation.y - lastLocation.y);
 			lastLocation = pointerLocation;
 			
-			CGPathRef ringAndMarkers = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
-																		  &transform);
-			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
+			CGPathRef markers = CGPathCreateCopyByTransformingPath(self.locationIndicatorHitmarkerLayer.path,
+																   &transform);
+			[self.locationIndicatorHitmarkerLayer setPath:markers];
+			
+			CGPathRef locationIndicatorRing = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
+																				 &transform);
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing];
 			
 			CGPathRef locationIndicatorCircle = CGPathCreateCopyByTransformingPath(self.locationIndicatorCircleLayer.path,
 																				   &transform);
 			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle];
 			
-			CGPathRelease(ringAndMarkers);
+			CGPathRelease(markers);
+			CGPathRelease(locationIndicatorRing);
 			CGPathRelease(locationIndicatorCircle);
 		} else if (alphaOfPixel != 0 && !([self.locationIndicatorCircleLayer.superlayer isEqual:self.layer] && [self.locationIndicatorRingLayer.superlayer isEqual:self.layer])) {
 			CGAffineTransform transform = CGAffineTransformMakeTranslation(touchLocation.x - lastLocation.x,
 																		   touchLocation.y - lastLocation.y);
 			lastLocation = pointerLocation;
 			
-			CGPathRef ringAndMarkers = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
+			CGPathRef markers = CGPathCreateCopyByTransformingPath(self.locationIndicatorHitmarkerLayer.path,
+																   &transform);
+			[self.locationIndicatorHitmarkerLayer setPath:markers];
+			[self.layer addSublayer:self.locationIndicatorHitmarkerLayer];
+			
+			CGPathRef locationIndicatorRing = CGPathCreateCopyByTransformingPath(self.locationIndicatorRingLayer.path,
 																		  &transform);
-			[self.locationIndicatorRingLayer setPath:ringAndMarkers];
+			[self.locationIndicatorRingLayer setPath:locationIndicatorRing];
 			[self.layer addSublayer:self.locationIndicatorRingLayer];
 			
 			CGPathRef locationIndicatorCircle = CGPathCreateCopyByTransformingPath(self.locationIndicatorCircleLayer.path,
@@ -237,7 +269,8 @@ unsigned char *rawData;
 			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
 			
-			CGPathRelease(ringAndMarkers);
+			CGPathRelease(markers);
+			CGPathRelease(locationIndicatorRing);
 			CGPathRelease(locationIndicatorCircle);
 		}
 		
@@ -246,7 +279,7 @@ unsigned char *rawData;
 		}
 	}
 }
-
+/*
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
 	[super touchesEnded:touches withEvent:event];
@@ -255,6 +288,8 @@ unsigned char *rawData;
 		CGPoint touchLocation = [[[event allTouches] anyObject] locationInView:self];
 		CGPoint pointerLocation = touchLocation;
 		CGFloat alphaOfPixel = 1.0;
+		
+		self.locationIndicatorRingLayer.lineWidth = smallOuterLineWidth;
 		
 		if ([self pointInside:touchLocation withEvent:event]) {
 			UIColor *color = (UIColor *)[[self getRGBAsFromImage:self.image inImageView:self atX:touchLocation.x andY:touchLocation.y count:1] lastObject];
@@ -324,9 +359,10 @@ unsigned char *rawData;
 			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
 		}
+		[self.locationIndicatorHitmarkerLayer removeFromSuperlayer];
 	}
 }
-
+*/
 #pragma mark - Image Scanning Methods
 
 - (CGFloat)valueOfIntersection:(NSArray *)colorsForLine forImage:(UIImage *)image inImageView:(UIImageView *)imageView
