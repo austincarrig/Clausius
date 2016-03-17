@@ -34,6 +34,7 @@
 		492A98DD1B574DD900F061E8 /* H2O_Wagner_Pruss.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98DC1B574DD900F061E8 /* H2O_Wagner_Pruss.m */; };
 		492A98E11B574DF100F061E8 /* UIColor+Mvuke.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */; };
 		492A98E21B574DF100F061E8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 492A98E01B574DF100F061E8 /* LaunchScreen.xib */; };
+		4932C0471C9B54EB009B45F5 /* RUAPopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4932C0461C9B54EB009B45F5 /* RUAPopupView.m */; };
 		4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4E51B6075BA00E163C8 /* MASCompositeConstraint.m */; };
 		4941C4FE1B6075BA00E163C8 /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4E71B6075BA00E163C8 /* MASConstraint.m */; };
 		4941C4FF1B6075BA00E163C8 /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4EA1B6075BA00E163C8 /* MASConstraintMaker.m */; };
@@ -55,6 +56,7 @@
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
 		49A056501BC99D350032F280 /* RUChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A0564F1BC99D350032F280 /* RUChartView.swift */; };
 		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; };
+		49A57F331C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +114,8 @@
 		492A98DE1B574DF100F061E8 /* UIColor+Mvuke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Mvuke.h"; sourceTree = "<group>"; };
 		492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Mvuke.m"; sourceTree = "<group>"; };
 		492A98E01B574DF100F061E8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		4932C0451C9B54EB009B45F5 /* RUAPopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAPopupView.h; sourceTree = "<group>"; };
+		4932C0461C9B54EB009B45F5 /* RUAPopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUAPopupView.m; sourceTree = "<group>"; };
 		4941C4E41B6075BA00E163C8 /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		4941C4E51B6075BA00E163C8 /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
 		4941C4E61B6075BA00E163C8 /* MASConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASConstraint.h; sourceTree = "<group>"; };
@@ -156,6 +160,7 @@
 		49A0564F1BC99D350032F280 /* RUChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RUChartView.swift; sourceTree = "<group>"; };
 		49A056511BC9AC820032F280 /* RUDataSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUDataSelector.h; path = Model/RUDataSelector.h; sourceTree = "<group>"; };
 		49A056521BC9AC820032F280 /* RUDataSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RUDataSelector.m; path = Model/RUDataSelector.m; sourceTree = "<group>"; };
+		49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadProApp@2x.png"; sourceTree = "<group>"; };
 		F15A8140971EB808610BEB52 /* libPods-Clausius.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clausius.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -252,6 +257,8 @@
 			isa = PBXGroup;
 			children = (
 				49A0564F1BC99D350032F280 /* RUChartView.swift */,
+				4932C0451C9B54EB009B45F5 /* RUAPopupView.h */,
+				4932C0461C9B54EB009B45F5 /* RUAPopupView.m */,
 				492A98701B574BEA00F061E8 /* LocationIndicatorImageView.h */,
 				492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */,
 				492A98721B574BEA00F061E8 /* DisplayView.h */,
@@ -273,6 +280,7 @@
 				492A987F1B574CAC00F061E8 /* ClausiusiPadSettings@2x.png */,
 				492A98801B574CAC00F061E8 /* ClausiusiPadSpotlight@1x.png */,
 				492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */,
+				49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */,
 				492A98821B574CAC00F061E8 /* Legend.jpeg */,
 				498435431BD15B5F00190C9C /* Water_ts_chart.png */,
 				4962DDE51BCB0AA000034E48 /* Water_ph_chart.png */,
@@ -434,6 +442,7 @@
 				TargetAttributes = {
 					492A98461B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
+						DevelopmentTeam = XS9UK84A6B;
 					};
 					492A985F1B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
@@ -480,6 +489,7 @@
 				492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */,
 				492A98771B574BEA00F061E8 /* Data Files in Resources */,
 				498435441BD15B5F00190C9C /* Water_ts_chart.png in Resources */,
+				49A57F331C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +514,7 @@
 				4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */,
 				492A98E11B574DF100F061E8 /* UIColor+Mvuke.m in Sources */,
 				4941C5011B6075BA00E163C8 /* MASViewAttribute.m in Sources */,
+				4932C0471C9B54EB009B45F5 /* RUAPopupView.m in Sources */,
 				498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */,
 				4962DDEB1BCB1CC100034E48 /* RUAxis.m in Sources */,
 				49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */,
@@ -639,6 +650,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -656,6 +668,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

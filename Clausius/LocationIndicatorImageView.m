@@ -342,7 +342,7 @@ unsigned char *rawData;
 																				clockwise:YES];
 			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
-		} else {
+		}/* else {
 			UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:lastLocation
 																				 radius:smallOuterRadius
 																			 startAngle:0.0f
@@ -358,7 +358,7 @@ unsigned char *rawData;
 																				clockwise:YES];
 			[self.locationIndicatorCircleLayer setPath:locationIndicatorCircle.CGPath];
 			[self.layer addSublayer:self.locationIndicatorCircleLayer];
-		}
+		}*/
 		[self.locationIndicatorHitmarkerLayer removeFromSuperlayer];
 	}
 }

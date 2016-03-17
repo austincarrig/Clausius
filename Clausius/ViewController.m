@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
+
+#import "RUAPopupView.h"
+
 #import "Masonry.h"
 #import "UIColor+Mvuke.h"
 #import "CoreData.h"
@@ -40,6 +43,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 @property (strong, nonatomic) NSArray *superheatedMappingKeys;
 
 @property (strong, nonatomic) NSArray *chartValueTypes;
+
+@property (strong, nonatomic) RUAPopupView *popupView;
 @end
 
 @implementation ViewController
@@ -50,14 +55,14 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 {
 	[super viewDidLoad];
 	
-	/*
+	
 	// Show/hide nav bar
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
 																		  action:@selector(doubleTap)];
 	
 	[tap setNumberOfTapsRequired:2];
 	[self.view addGestureRecognizer:tap];
-	*/
+	
 	
 	priorX = 0;
 	priorY = 0;
@@ -112,6 +117,18 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	[leftRecog setCancelsTouchesInView:YES];
 	
 	[self.chartView addGestureRecognizer:leftRecog];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	[self.view addSubview:self.popupView];
+	[self.popupView mas_makeConstraints:^(MASConstraintMaker *make) {
+		make.height.equalTo(@(self.popupView.frame.size.height));
+		make.width.equalTo(@(self.popupView.frame.size.width));
+		make.center.equalTo(self.view);
+	}];
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -202,6 +219,14 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	return _chartValueTypes;
 }
 
+- (RUAPopupView *)popupView
+{
+	if (!_popupView) {
+		_popupView = [[RUAPopupView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 200.0f, 160.0f) text:@"t-s"];
+	}
+	return _popupView;
+}
+
 #pragma mark - Gesture Selectors
 
 - (IBAction)displayInfo:(id)sender {
@@ -217,6 +242,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 
 -(void)doubleTap
 {
+	[self.popupView showHideAnimated:YES];
+	/*
 	if (self.navigationController.isNavigationBarHidden) {
 		[self.navigationController setNavigationBarHidden:NO animated:YES];
 		[[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -224,21 +251,36 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		[self.navigationController setNavigationBarHidden:YES animated:YES];
 		[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	}
+	 */
 }
 
 - (void)resetChart:(UIScreenEdgePanGestureRecognizer *)recog
 {
+	[self.popupView.layer removeAllAnimations];
 	if (recog.state == UIGestureRecognizerStateEnded) {
 		NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
 		NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
+		
 		if (recog.edges == UIRectEdgeRight) {
 			NSString *type = self.chartValueTypes[((index+1)+3)%3];
+			NSString *letter1 = [type substringToIndex:1];
+			NSString *letter2 = [type substringFromIndex:1];
+			
+			NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
+			self.popupView.text = displayName;
+			
 			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
 			self.chartView.chart = [RUChart chartWithChartType:type];
 			[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index+1)+3)%3]];
 			[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
 		} else if (recog.edges == UIRectEdgeLeft) {
 			NSString *type = self.chartValueTypes[((index-1)+3)%3];
+			NSString *letter1 = [type substringToIndex:1];
+			NSString *letter2 = [type substringFromIndex:1];
+			
+			NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
+			self.popupView.text = displayName;
+			
 			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
 			self.chartView.chart = [RUChart chartWithChartType:type];
 			[self inspectInfoButtonWithChartValueType:type];
@@ -260,6 +302,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 				make.right.equalTo(self.containerView).with.offset(-20.0);
 			}];
 		}
+		
+		[self.popupView showHideAnimated:YES];
 		
 		[self.chartView removeMarker];
 	}

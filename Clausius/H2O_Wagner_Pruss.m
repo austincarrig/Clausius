@@ -1776,7 +1776,7 @@
 	// debugging
     if ([debug isEqualToString:@"debug"]) {
 		// print all rhos
-		NSLog(@"%lu",[arrayOfRho count]);
+		NSLog(@"%lu",(unsigned long)[arrayOfRho count]);
 		for(i = 0; i <= [arrayOfRho count] - 1; i = i + 1){
 			NSLog(@"rho: %18.14f, error: %@",[[arrayOfRho objectAtIndex:i] doubleValue], [arrayOfError objectAtIndex:i]);
 		}
