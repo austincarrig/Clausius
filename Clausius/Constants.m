@@ -18,3 +18,7 @@ NSString *const kChartDataYMin = @"ymin";
 NSString *const kChartDataYMax = @"ymax";
 NSString *const kChartDataYScale = @"yscale";
 NSString *const kChartDataDisplayPosition = @"dispposit";
+
+NSString *const kCurrentRegionSuperheated = @"Superheated";
+NSString *const kCurrentRegionSaturated = @"Saturated";
+NSString *const kCurrentRegionCompressedLiquid = @"Compressed Liquid";

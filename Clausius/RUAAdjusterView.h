@@ -12,7 +12,7 @@
 
 @interface RUAAdjusterView : UIView
 @property (strong, nonatomic) id <RUAAdjusterViewDelegate> delegate;
-- (instancetype)initWithFrame:(CGRect)frame;
+- (instancetype)initWithFrame:(CGRect)frame tag:(NSUInteger)tag;
 @end
 
 @protocol RUAAdjusterViewDelegate <NSObject>

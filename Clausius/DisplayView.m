@@ -10,14 +10,25 @@
 #import "Masonry.h"
 #import "UIColor+Mvuke.h"
 
+const static CGFloat TITLE_CONTAINER_VIEW_PADDING = 10.0f;
+
+
 @interface DisplayView ()
 @property (strong, nonatomic) UIView *containerView;
 @property (strong, nonatomic) UIView *labelsContainer;
 @property (strong, nonatomic) UIView *textFieldsContainer;
 @property (strong, nonatomic) UIView *unitsContainer;
 @property (strong, nonatomic) UIView *hideShowQualityView;
+
 @property CGFloat height;
 @property CGFloat width;
+
+@property (strong, nonatomic) NSNumber *temperature;
+@property (strong, nonatomic) NSNumber *pressure;
+@property (strong, nonatomic) NSNumber *specVolume;
+@property (strong, nonatomic) NSNumber *intEnergy;
+@property (strong, nonatomic) NSNumber *enthalpy;
+@property (strong, nonatomic) NSNumber *entropy;
 @end
 
 @implementation DisplayView
@@ -73,9 +84,9 @@
 	// Set Text For Labels From DataSource
 	UIFont *smallLabelFont = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
 	
-	if ([self.dataSource respondsToSelector:@selector(nameForLabel:InDisplayView:)]) {
+	if ([self.dataSource respondsToSelector:@selector(nameForLabel:inDisplayView:)]) {
 		for (UILabel *label in self.labelsContainer.subviews) {
-			[label setText:[self.dataSource nameForLabel:label InDisplayView:self]];
+			[label setText:[self.dataSource nameForLabel:label inDisplayView:self]];
 		}
 	} else {
 		for (UILabel *label in self.labelsContainer.subviews) {
@@ -83,9 +94,9 @@
 		}
 	}
 	
-	if ([self.dataSource respondsToSelector:@selector(unitsForLabel:InDisplayView:)]) {
+	if ([self.dataSource respondsToSelector:@selector(unitsForLabel:inDisplayView:)]) {
 		for (UILabel *label in self.unitsContainer.subviews) {
-			NSString *labelText = [self.dataSource unitsForLabel:label InDisplayView:self];
+			NSString *labelText = [self.dataSource unitsForLabel:label inDisplayView:self];
 			if ([labelText rangeOfCharacterFromSet:[NSCharacterSet decimalDigitCharacterSet]].location == NSNotFound) {
 				[label setText:labelText];
 			} else {
@@ -115,7 +126,7 @@
 	
 	// Set Autolayout for Containers
 	[self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-		make.top.equalTo(self.title.mas_bottom).with.offset(10.0);
+		make.top.equalTo(self.title.mas_bottom).with.offset(TITLE_CONTAINER_VIEW_PADDING);
 		make.centerX.equalTo(self.title);
 		make.bottom.equalTo(self);
 		make.width.equalTo(self.title);
@@ -164,6 +175,8 @@
 		make.left.equalTo(self.labelsContainer.mas_right).with.offset(15.0f);
 		make.right.equalTo(self.unitsContainer.mas_left).with.offset(-20.0f);
 	}];
+	
+	self.containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
 	
 	// Set Autolayout for Labels
 	for (UILabel *label in self.labelsContainer.subviews) {
@@ -214,8 +227,7 @@
 	// Add layer for lines between rows of display
 	for (int i = 1; i < [self.labelsContainer.subviews count]; i++) {
 		UIBezierPath *rowSeparator = [UIBezierPath bezierPath];
-		CGFloat containerViewHeight = (self.frame.size.height - 10.0f - titleSize.height);
-		CGFloat yLocation = containerViewHeight*(CGFloat)i/self.labelsContainer.subviews.count;
+		CGFloat yLocation = self.containerViewHeight*(CGFloat)i/self.labelsContainer.subviews.count;
 		[rowSeparator moveToPoint:CGPointMake(0, yLocation)];
 		[rowSeparator addLineToPoint:CGPointMake(titleSize.width, yLocation)];
 		CAShapeLayer *lineLayer = [CAShapeLayer layer];
@@ -231,6 +243,9 @@
 		make.right.equalTo(self.containerView);
 		make.top.equalTo(self.entropyLabel.mas_bottom).with.offset(2.0f);
 	}];
+	
+	self.containerViewOriginY = titleSize.height + TITLE_CONTAINER_VIEW_PADDING;
+	self.numberOfRows = self.labelsContainer.subviews.count;
 }
 
 #pragma mark - Lazy Init Title
@@ -516,10 +531,12 @@
 							   quality:(NSNumber *)quality;
 {
 	if (temperature) {
+		self.temperature = temperature;
 		[self.temperatureTextField setText:[NSString stringWithFormat:@"%d",[temperature intValue]]];
 	}
 	
 	if (pressure) {
+		self.pressure = pressure;
 		if (pressure.integerValue >= 1000) {
 			[self.pressureTextField setText:[NSString stringWithFormat:@"%.1f",[pressure floatValue]/1000.]];
 			

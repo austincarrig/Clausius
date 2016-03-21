@@ -20,3 +20,7 @@ FOUNDATION_EXPORT NSString *const kChartDataYMin;
 FOUNDATION_EXPORT NSString *const kChartDataYMax;
 FOUNDATION_EXPORT NSString *const kChartDataYScale;
 FOUNDATION_EXPORT NSString *const kChartDataDisplayPosition;
+
+FOUNDATION_EXPORT NSString *const kCurrentRegionSuperheated;
+FOUNDATION_EXPORT NSString *const kCurrentRegionSaturated;
+FOUNDATION_EXPORT NSString *const kCurrentRegionCompressedLiquid;

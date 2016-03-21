@@ -11,6 +11,8 @@
 
 #import "RUAPopupView.h"
 
+#import "Constants.h"
+
 #import "Masonry.h"
 #import "UIColor+Mvuke.h"
 #import "CoreData.h"
@@ -21,17 +23,18 @@
 
 #import "RUAxis.h"
 
-#import "Clausius-Swift.h"
-
-const static CGFloat T_CRITICAL = 373.9; // Critical temperature of water in C
-const static CGFloat P_CRITICAL = 22100.; // Critical pressure of water in kPA
-const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the ts diagram in C
+const static float T_CRITICAL = 373.9;  // Critical temperature of water in C
+const static float P_CRITICAL = 22100.; // Critical pressure of water in kPA
+const static float T_SAT_MIN = 1.0; // Minimum temperature to display on the ts diagram in C
+const static float T_TOTAL_CHANGE = 10.0;
+const static float S_TOTAL_CHANGE = 0.1;
+const static float X_TOTAL_CHANGE = 0.01;
 
 @interface ViewController ()
 @property (strong, nonatomic) UIImageView *infoView;
 @property (weak, nonatomic) IBOutlet UIButton *infoButton;
 
-@property (strong, nonatomic) RUChartView *chartView;
+@property (strong, nonatomic) LocationIndicatorImageView *chartView;
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIView *secondContainerView;
 @property (strong, nonatomic) DisplayView *displayView;
@@ -55,17 +58,17 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 {
 	[super viewDidLoad];
 	
-	
+	/*
 	// Show/hide nav bar
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
 																		  action:@selector(doubleTap)];
 	
 	[tap setNumberOfTapsRequired:2];
 	[self.view addGestureRecognizer:tap];
+	*/
 	
-	
-	priorX = 0;
-	priorY = 0;
+	touchHasRegistered = NO;
+	allowQualityScrubbing = NO;
 	
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	[self.navigationController setNavigationBarHidden:YES];
@@ -129,6 +132,32 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		make.width.equalTo(@(self.popupView.frame.size.width));
 		make.center.equalTo(self.view);
 	}];
+	
+	// Add Adjuster Views
+	NSSet *tags = [self tagsForAdjusterViews];
+	
+	CGFloat height = self.displayView.containerViewHeight/self.displayView.numberOfRows;
+	
+	for (id tag in tags) {
+		RUAAdjusterView *adjusterView = [[RUAAdjusterView alloc] initWithFrame:CGRectZero
+																		   tag:[(NSNumber *)tag integerValue]];
+		adjusterView.delegate = self;
+		[adjusterView setBackgroundColor:[UIColor clearColor]];
+		[self.secondContainerView addSubview:adjusterView];
+		[self.secondContainerView bringSubviewToFront:adjusterView];
+		
+		[adjusterView mas_makeConstraints:^(MASConstraintMaker *make) {
+			make.left.equalTo(self.secondContainerView);
+			make.right.equalTo(self.secondContainerView);
+			make.top.equalTo([NSNumber numberWithFloat:(height*([(NSNumber *)tag floatValue] - 1) + self.displayView.containerViewOriginY + 2.0f)]);
+			make.height.equalTo([NSNumber numberWithFloat:height - 4.0f]);
+		}];
+	}
+}
+
+- (NSSet *)tagsForAdjusterViews
+{
+	return [NSSet setWithObjects:@1, @2, @6, @7, nil];
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -138,12 +167,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 
 #pragma mark - Lazy Init
 
-- (RUChartView *)chartView
+- (LocationIndicatorImageView *)chartView
 {
 	if (!_chartView) {
-		_chartView = (RUChartView *)[[RUChartView alloc] initWithFrame:self.containerView.frame
-																				image:[UIImage imageNamed:@"Water_ts_chart.png"]
-																			   sender:self];
+		_chartView = (LocationIndicatorImageView *)[[LocationIndicatorImageView alloc] initWithFrame:self.containerView.frame
+																							   image:[UIImage imageNamed:@"Water_ts_chart.png"]
+																							  sender:self];
 		
 		[_chartView setChart:[RUChart chartWithChartType:@"ts"]];
 	}
@@ -261,31 +290,24 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
 		NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
 		
+		NSString *type;
+		
 		if (recog.edges == UIRectEdgeRight) {
-			NSString *type = self.chartValueTypes[((index+1)+3)%3];
-			NSString *letter1 = [type substringToIndex:1];
-			NSString *letter2 = [type substringFromIndex:1];
-			
-			NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
-			self.popupView.text = displayName;
-			
-			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
-			self.chartView.chart = [RUChart chartWithChartType:type];
-			[self inspectInfoButtonWithChartValueType:self.chartValueTypes[((index+1)+3)%3]];
-			[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
+			type = self.chartValueTypes[((index+1)+3)%3];
 		} else if (recog.edges == UIRectEdgeLeft) {
-			NSString *type = self.chartValueTypes[((index-1)+3)%3];
-			NSString *letter1 = [type substringToIndex:1];
-			NSString *letter2 = [type substringFromIndex:1];
-			
-			NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
-			self.popupView.text = displayName;
-			
-			[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
-			self.chartView.chart = [RUChart chartWithChartType:type];
-			[self inspectInfoButtonWithChartValueType:type];
-			[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
+			type = self.chartValueTypes[((index-1)+3)%3];
 		}
+		
+		NSString *letter1 = [type substringToIndex:1];
+		NSString *letter2 = [type substringFromIndex:1];
+		
+		NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
+		self.popupView.text = displayName;
+		
+		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
+		self.chartView.chart = [RUChart chartWithChartType:type];
+		[self inspectInfoButtonWithChartValueType:type];
+		[self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:type];
 		
 		[self.secondContainerView mas_remakeConstraints:^(MASConstraintMaker *make) {
 			make.top.equalTo(self.containerView).with.offset(20.0);
@@ -305,7 +327,22 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		
 		[self.popupView showHideAnimated:YES];
 		
-		[self.chartView removeMarker];
+		if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy
+												secondaryAxisValue:currentTemp]) {
+			if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+										  secondaryAxisValue:currentTemp];
+			} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+				[self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
+										  secondaryAxisValue:currentPressure];
+			} else {
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEnthalpy
+										  secondaryAxisValue:currentPressure];
+			}
+		} else {
+			touchHasRegistered = NO;
+			[self.chartView removeMarker];
+		}
 	}
 }
 
@@ -325,34 +362,34 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	return [UIColor primaryColor];
 }
 
-- (CGFloat)xAxisEndingValue
+- (CGFloat)primaryAxisEndingValue
 {
 	return self.chartView.chart.xAxis.max.floatValue;
 }
 
-- (CGFloat)yAxisEndingValue
+- (CGFloat)secondaryAxisEndingValue
 {
 	return self.chartView.chart.yAxis.max.floatValue;
 }
 
-- (CGFloat)xAxisStartingValue
+- (CGFloat)primaryAxisStartingValue
 {
 	return self.chartView.chart.xAxis.min.floatValue;
 }
 
-- (CGFloat)yAxisStartingValue
+- (CGFloat)secondaryAxisStartingValue
 {
 	return self.chartView.chart.yAxis.min.floatValue;
 }
 
-- (CGFloat)minimumYAxisValue
+- (CGFloat)minimumSecondaryAxisValue
 {
 	return T_SAT_MIN;
 }
 
 #pragma mark - Display View Datasource
 
--(NSString *)nameForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView
+-(NSString *)nameForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView
 {
 	if (label.tag == 1) {
 		return @"T";
@@ -373,7 +410,7 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	}
 }
 
--(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView
+-(NSString *)unitsForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView
 {
 	if (label.tag == 1) {
 		return @"℃";
@@ -399,6 +436,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 - (void)touchDidBeginAtLocation:(CGPoint)location
 				 inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
+	if (!touchHasRegistered) {
+		touchHasRegistered = YES;
+	}
+	
+	[locationIndicatorImageView addLargeMarkerAtLocation:location];
+	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
 		[self tsTouchDidRegisterAtLocation:location
 							 withEventType:@"Began"
@@ -417,6 +460,8 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 - (void)touchDidMoveToLocation:(CGPoint)location
 				inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
+	[locationIndicatorImageView moveLargeMarkerToLocation:location];
+	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
 		[self tsTouchDidRegisterAtLocation:location
 							 withEventType:@"Moved"
@@ -432,13 +477,17 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	}
 }
 
+- (void)touchDidEndAtLocation:(CGPoint)location
+			   inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
+{
+	[locationIndicatorImageView addSmallMarkerAtLocation:location];
+}
+
 - (void)touchDidRegisterAtLocation:(CGPoint)location
 					 withEventType:(NSString *)eventType
 					inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	//AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
-	
-	RUChart *chart = ((RUChartView *)locationIndicatorImageView).chart;
+	RUChart *chart = ((LocationIndicatorImageView *)locationIndicatorImageView).chart;
 	RUAxisValueType secondaryAxisType = chart.yAxis.valueType;
 	
 	CGFloat primaryScale, secondaryScale;
@@ -453,9 +502,9 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	// Which secondary axis am I dealing with?
 	if (secondaryAxisType == RUAxisValueTypeTemperature) {
-		temperature = [self yAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
+		temperature = [self secondaryAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
 	} else if (secondaryAxisType == RUAxisValueTypePressure) {
-		pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+		pressure = powf(10.0,log10f([self secondaryAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	}
 	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature - 273.15]
@@ -474,12 +523,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	switch (type) {
 		case RUAxisScaleTypeLinear:
 			// Linear
-			primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/view.frame.size.width;
+			primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/view.frame.size.width;
 			break;
 			
 		case RUAxisScaleTypeLog:
 			// Log
-			primaryScale = (log10f([self xAxisEndingValue]) - log10f([self xAxisStartingValue]))/view.frame.size.width;
+			primaryScale = (log10f([self primaryAxisEndingValue]) - log10f([self primaryAxisStartingValue]))/view.frame.size.width;
 		default:
 			primaryScale = 0;
 			break;
@@ -496,12 +545,12 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	
 	// Get scales for both axes in units of [baseUnit/pixel]
 	// If using log10f() the axis is log, converts value to exponent (i.e. b in value = 10^b, therefore b = log10(value))
-	CGFloat primaryScale = (log10f([self xAxisEndingValue]) - log10f([self xAxisStartingValue]))/locationIndicatorImageView.frame.size.width;
-	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
+	CGFloat primaryScale = (log10f([self primaryAxisEndingValue]) - log10f([self primaryAxisStartingValue]))/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = (log10f([self secondaryAxisEndingValue]) - log10f([self secondaryAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
 	
 	// Calculate v & p given location on chart
-	float specVol = powf(10.0,log10f([self xAxisStartingValue]) + primaryScale*location.x);
-	float pressure = powf(10.0,log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+	float specVol = powf(10.0,log10f([self primaryAxisStartingValue]) + primaryScale*location.x);
+	float pressure = powf(10.0,log10f([self secondaryAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
 	float temp, density = 1./specVol, intEnergy, enthalpy, entropy, quality = -1;
 	
@@ -588,6 +637,14 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 			temp = kTemperature;
 		}
 		
+		currentTemp = temp - 273.15;
+		currentPressure = pressure;
+		currentSpecVolume = specVol;
+		currentIntEnergy = intEnergy;
+		currentEnthalpy = enthalpy;
+		currentEntropy = entropy;
+		currentQuality = quality;
+		
 		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
 												 pressure:[NSNumber numberWithFloat:pressure]
 										   specificVolume:[NSNumber numberWithFloat:specVol]
@@ -654,6 +711,14 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 	entropy = [self.wagPruss calculateEntropyWithTemperature:kTemperature
 												  andDensity:density]/1000.0;
 	
+	currentTemp = temp;
+	currentPressure = pressure;
+	currentSpecVolume = specVol;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
+	currentEntropy = entropy;
+	currentQuality = quality;
+	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp]
 											 pressure:[NSNumber numberWithFloat:pressure]
 									   specificVolume:[NSNumber numberWithFloat:specVol]
@@ -669,11 +734,11 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 {
 	AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 	
-	CGFloat primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/locationIndicatorImageView.frame.size.width;
-	CGFloat secondaryScale = (log10f([self yAxisEndingValue]) - log10f([self yAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
+	CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = (log10f([self secondaryAxisEndingValue]) - log10f([self secondaryAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
 	
-	float enthalpy = [self xAxisStartingValue] + primaryScale*location.x;
-	float pressure = powf(10.0, log10f([self yAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
+	float enthalpy = [self primaryAxisStartingValue] + primaryScale*location.x;
+	float pressure = powf(10.0, log10f([self secondaryAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
 	float temp, specVol, intEnergy, entropy, quality = -1;
 	
@@ -819,6 +884,14 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		temp = kTemperature;
 	}
 	
+	currentTemp = temp - 273.15;
+	currentPressure = pressure;
+	currentSpecVolume = specVol;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
+	currentEntropy = entropy;
+	currentQuality = quality;
+	
 	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temp - 273.15]
 											 pressure:[NSNumber numberWithFloat:pressure]
 									   specificVolume:[NSNumber numberWithFloat:specVol]
@@ -832,193 +905,23 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 					   withEventType:(NSString *)eventType
 					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	// Get the scales (units/pixel)for both axes based on graph
-	CGFloat primaryScale = ([self xAxisEndingValue] - [self xAxisStartingValue])/locationIndicatorImageView.frame.size.width;
-	CGFloat secondaryScale = ([self yAxisEndingValue] - [self yAxisStartingValue])/locationIndicatorImageView.frame.size.height;
+	CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
+	CGFloat secondaryScale = ([self secondaryAxisEndingValue] - [self secondaryAxisStartingValue])/locationIndicatorImageView.frame.size.height;
 	
-	float temperature = [self yAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
+	currentTemp = [self secondaryAxisStartingValue] + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y);
 	// If temperature is below the minimum temp, reset the minimum temp
-	if (temperature < T_SAT_MIN) {
-		temperature = T_SAT_MIN;
+	if (currentTemp < T_SAT_MIN) {
+		currentTemp = T_SAT_MIN;
 	}
 	
-	float entropy = location.x*primaryScale;
-	float __block pressure, specVolume, intEnergy, enthalpy, quality = 0;
+	currentEntropy = location.x*primaryScale;
 	
-	// Check if finger is above or below critical temperature (379.3 C)
-	if (temperature > T_CRITICAL) {
-		// Find list of entropies for specific temperature
-		NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
-		
-		int location = 0;
-		BOOL locationReached = NO;
-		
-		// Find index of first entropy value in array which is less than chosen entropy value
-		for (int i = 0; i < array.count; i++) {
-			if ([(NSNumber *)array[i] floatValue] <= entropy) {
-				continue;
-			} else {
-				locationReached = YES;
-				location = i;
-			}
-		}
-		
-		if (location != array.count - 1 && locationReached) {
-			float highEnt = [(NSNumber *)array[location] floatValue];
-			float lowEnt = [(NSNumber *)array[location + 1] floatValue];
-			
-			float weight = (entropy - lowEnt)/(highEnt - lowEnt);
-			
-			float highPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
-			float lowPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:(location + 1)]).floatValue;
-			
-			pressure = lowPres + weight*(highPres - lowPres);
-		} else {
-			pressure = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
-		}
-		
-		double kTemperature = temperature + 273.15;
-		double mPressure = pressure/1000;
-		
-		double density = [self.wagPruss rhoWithTemperature:kTemperature
-											   andPressure:mPressure];
-		specVolume = 1/density;
-		
-		intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
-															   andDensity:density]/1000.0;
-		enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-														andDensity:density]/1000.0;
-		
-		[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-												 pressure:[NSNumber numberWithFloat:pressure]
-										   specificVolume:[NSNumber numberWithFloat:specVolume]
-										   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-												 enthalpy:[NSNumber numberWithFloat:enthalpy]
-												  entropy:[NSNumber numberWithFloat:entropy]
-												  quality:[NSNumber numberWithFloat:quality*100]];
-		
-		
-		if (!self.displayView.qualityIsHidden) {
-			[self.displayView hideQuality];
-		}
-	} else if (temperature <= T_CRITICAL) {
-		if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
-			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
-																							  inContext:appDelegate.managedObjectContext];
-			
-			
-			pressure = [saturatedPoint.p floatValue];
-			quality = (entropy - [saturatedPoint.s_f floatValue])/([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
-			specVolume = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
-			intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
-			enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
-			
-			[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-													 pressure:[NSNumber numberWithFloat:pressure]
-											   specificVolume:[NSNumber numberWithFloat:specVolume]
-											   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-													 enthalpy:[NSNumber numberWithFloat:enthalpy]
-													  entropy:[NSNumber numberWithFloat:entropy]
-													  quality:[NSNumber numberWithFloat:quality*100]];
-			if (self.displayView.qualityIsHidden) {
-				[self.displayView showQuality];
-			}
-		} else {
-			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)temperature
-																							  inContext:appDelegate.managedObjectContext];
-			if (entropy < [saturatedPoint.s_f floatValue]) {
-				pressure = [saturatedPoint.p floatValue];
-				specVolume = [saturatedPoint.v_f floatValue];
-				intEnergy = [saturatedPoint.u_f floatValue];
-				enthalpy = [saturatedPoint.h_f floatValue];
-				
-				[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-														 pressure:[NSNumber numberWithFloat:pressure]
-												   specificVolume:[NSNumber numberWithFloat:specVolume]
-												   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-														 enthalpy:[NSNumber numberWithFloat:enthalpy]
-														  entropy:[NSNumber numberWithFloat:entropy]
-														  quality:[NSNumber numberWithFloat:quality*100]];
-				
-				if (!self.displayView.qualityIsHidden) {
-					[self.displayView hideQuality];
-				}
-			} else if (entropy > [saturatedPoint.s_f floatValue] && entropy < [saturatedPoint.s_g floatValue]) {
-				pressure = [saturatedPoint.p floatValue];
-				quality = (entropy - [saturatedPoint.s_f floatValue])/([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
-				specVolume = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
-				intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
-				enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
-				
-				[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-														 pressure:[NSNumber numberWithFloat:pressure]
-												   specificVolume:[NSNumber numberWithFloat:specVolume]
-												   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-														 enthalpy:[NSNumber numberWithFloat:enthalpy]
-														  entropy:[NSNumber numberWithFloat:entropy]
-														  quality:[NSNumber numberWithFloat:quality*100]];
-				if (self.displayView.qualityIsHidden) {
-					[self.displayView showQuality];
-				}
-			} else if (entropy > [saturatedPoint.s_g floatValue]) {
-				NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
-				
-				int location = 0;
-				BOOL locationReached = NO;
-				for (int i = 0; i < array.count; i++) {
-					if ([(NSNumber *)array[i] floatValue] <= entropy) {
-						continue;
-					} else {
-						locationReached = YES;
-						location = i;
-					}
-				}
-				
-				if (location != array.count - 1 && locationReached) {
-					float highEnt = [(NSNumber *)array[location] floatValue];
-					float lowEnt = [(NSNumber *)array[location + 1] floatValue];
-					
-					float weight = (entropy - lowEnt)/(highEnt - lowEnt);
-					
-					float highPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
-					float lowPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:(location + 1)]).floatValue;
-					
-					pressure = lowPres + weight*(highPres - lowPres);
-				} else {
-					pressure = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
-				}
-				
-				double kTemperature = temperature + 273.15;
-				double mPressure = pressure/1000;
-				
-				double density = [self.wagPruss rhoWithTemperature:kTemperature
-													   andPressure:mPressure];
-				specVolume = 1/density;
-				
-				intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
-																	   andDensity:density]/1000.0;
-				enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
-																andDensity:density]/1000.0;
-				
-				[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
-														 pressure:[NSNumber numberWithFloat:pressure]
-												   specificVolume:[NSNumber numberWithFloat:specVolume]
-												   internalEnergy:[NSNumber numberWithFloat:intEnergy]
-														 enthalpy:[NSNumber numberWithFloat:enthalpy]
-														  entropy:[NSNumber numberWithFloat:entropy]
-														  quality:[NSNumber numberWithFloat:quality*100]];
-				
-				if (!self.displayView.qualityIsHidden) {
-					[self.displayView hideQuality];
-				}
-			}
-		}
-	}
+	[self calculateNewValuesWithTemperature:currentTemp
+									entropy:currentEntropy];
 	
-	priorX = location.x;
-	priorY = location.y;
+	return;
 }
 
 - (void)chooseNewFileWithChartType:(NSString *)chartType valueType:(NSString *)valueType
@@ -1036,86 +939,363 @@ const static CGFloat T_SAT_MIN = 1.0; // Minimum temperature to display on the t
 		self.superheatedMappingKeys = [RUDataSelector loadSuperheatedRowMappingValuesWithFileName:[allCSVs firstObject]];
 	}
 }
-/*
-- (void)loadSuperheatedData:(NSString *)fileName
+
+#pragma mark - Calculation Methods
+
+- (void)calculateNewValuesWithTemperature:(float)temperature
+								  entropy:(float)entropy
 {
-	// Re-instantiate the superheated data arrays (because we are re-loading data)
-	self.superheatedKeys = [NSMutableArray array];
-	self.superheatedValues = [NSMutableArray arrayWithObjects:@[], nil]; // empty array at index=0 is so that the array indeces are mapped to 0
+	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
-	// Get the directory, find the specified file
-	NSString *path = [[NSBundle mainBundle] pathForResource:fileName ofType:nil inDirectory:@"Data Files"];
-	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path] bytes]];
-	
-	NSScanner *scanner = [[NSScanner alloc] initWithString:string];
-	
-	NSCharacterSet *newline = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
-	NSCharacterSet *comma = [NSCharacterSet characterSetWithCharactersInString:@","];
-	
-	NSString *pressureString;
-	[scanner scanUpToCharactersFromSet:newline
-							intoString:&pressureString];
-	NSScanner *pressureScanner = [NSScanner scannerWithString:pressureString];
-	
-	NSMutableArray *pressureValues = [[NSMutableArray alloc] init];
-	
-	// Get all pressure values
-	while (![pressureScanner isAtEnd]) {
-		NSString *pressureVal;
-		// Delimited by commas
-		[pressureScanner scanUpToCharactersFromSet:comma
-										intoString:&pressureVal];
-		
-		if (![pressureScanner isAtEnd]) {
-			[pressureScanner setScanLocation:[pressureScanner scanLocation]+1];
+	// Check if finger is above or below critical temperature (379.3 C)
+	if (temperature > T_CRITICAL) {
+		// Superheated above 379.3 C
+		[self calculateSuperheatedWithTemperature:temperature
+										  entropy:entropy];
+	} else if (temperature <= T_CRITICAL) {
+		if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
+			// Saturated at 379.3 C
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
+																							  inContext:appDelegate.managedObjectContext];
+			
+			
+			[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
+											   temperature:temperature
+												   entropy:entropy];
+		} else {
+			SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:temperature
+																							  inContext:appDelegate.managedObjectContext];
+			if (entropy < [saturatedPoint.s_f floatValue]) {
+				// Compressed Liquid
+				[self calculateCompressedLiquidWithSaturatedPlotPoint:saturatedPoint
+														  temperature:temperature
+															  entropy:entropy];
+			} else if (entropy > [saturatedPoint.s_f floatValue] && entropy < [saturatedPoint.s_g floatValue]) {
+				// Saturated
+				[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
+												   temperature:temperature
+													   entropy:entropy];
+			} else if (entropy > [saturatedPoint.s_g floatValue]) {
+				// Superheated below 379.3 C
+				[self calculateSuperheatedWithTemperature:temperature
+												  entropy:entropy];
+			}
 		}
-		[pressureValues addObject:[NSNumber numberWithFloat:[pressureVal floatValue]]];
+	}
+}
+
+- (void)calculateCompressedLiquidWithSaturatedPlotPoint:(SaturatedPlotPoint *)saturatedPoint
+											temperature:(float)temperature
+												entropy:(float)entropy
+{
+	currentPressure = [saturatedPoint.p floatValue];
+	currentSpecVolume = [saturatedPoint.v_f floatValue];
+	currentIntEnergy = [saturatedPoint.u_f floatValue];
+	currentEnthalpy = [saturatedPoint.h_f floatValue];
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+											 pressure:[NSNumber numberWithFloat:[saturatedPoint.p floatValue]]
+									   specificVolume:[NSNumber numberWithFloat:[saturatedPoint.v_f floatValue]]
+									   internalEnergy:[NSNumber numberWithFloat:[saturatedPoint.u_f floatValue]]
+											 enthalpy:[NSNumber numberWithFloat:[saturatedPoint.h_f floatValue]]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:[NSNumber numberWithFloat:0]];
+	
+	if (!self.displayView.qualityIsHidden) {
+		[self.displayView hideQuality];
 	}
 	
-	self.superheatedKeys = pressureValues;
+	currentRegion = kCurrentRegionCompressedLiquid;
+}
+
+- (void)calculateSaturatedWithSaturatedPlotPoint:(SaturatedPlotPoint *)saturatedPoint
+									 temperature:(float)temperature
+										 entropy:(float)entropy
+{
+	float pressure, specVolume, intEnergy, enthalpy, quality;
 	
-	//
-	while (![scanner isAtEnd]) {
-		NSString *lineString;
-		[scanner scanUpToCharactersFromSet:newline
-								intoString:&lineString];
-		if (![scanner isAtEnd]) {
-			[scanner setScanLocation:[scanner scanLocation]+1];
+	pressure = [saturatedPoint.p floatValue];
+	quality = (entropy - [saturatedPoint.s_f floatValue])/([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
+	specVolume = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
+	intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
+	enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+	
+	currentPressure = pressure;
+	currentSpecVolume = specVolume;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
+	currentQuality = quality;
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVolume]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:[NSNumber numberWithFloat:quality*100]];
+	if (self.displayView.qualityIsHidden) {
+		[self.displayView showQuality];
+	}
+	
+	currentRegion = kCurrentRegionSaturated;
+}
+
+- (void)calculateSuperheatedWithTemperature:(float)temperature
+									entropy:(float)entropy
+{
+	float pressure, specVolume, intEnergy, enthalpy, quality;
+	quality = 0.0;
+	
+	pressure = [self interpolateToPressureWithTemperature:temperature
+												  entropy:entropy];
+	
+	double kTemperature = temperature + 273.15;
+	double mPressure = pressure/1000;
+	
+	NSLog(@"density1");
+	double density = [self.wagPruss rhoWithTemperature:kTemperature
+										   andPressure:mPressure];
+	specVolume = 1/density;
+	NSLog(@"density2");
+	
+	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
+														   andDensity:density]/1000.0;
+	enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
+													andDensity:density]/1000.0;
+	
+	currentPressure = pressure;
+	currentSpecVolume = specVolume;
+	currentIntEnergy = intEnergy;
+	currentEnthalpy = enthalpy;
+	
+	[self.displayView updateTextFieldsWithTemperature:[NSNumber numberWithFloat:temperature]
+											 pressure:[NSNumber numberWithFloat:pressure]
+									   specificVolume:[NSNumber numberWithFloat:specVolume]
+									   internalEnergy:[NSNumber numberWithFloat:intEnergy]
+											 enthalpy:[NSNumber numberWithFloat:enthalpy]
+											  entropy:[NSNumber numberWithFloat:entropy]
+											  quality:[NSNumber numberWithFloat:quality*100]];
+	
+	if (!self.displayView.qualityIsHidden) {
+		[self.displayView hideQuality];
+	}
+	
+	currentRegion = kCurrentRegionSuperheated;
+}
+
+- (float)interpolateToPressureWithTemperature:(float)temperature entropy:(float)entropy
+{
+	// Find list of entropies for specific temperature
+	NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
+	
+	int location = 0;
+	BOOL locationReached = NO;
+	
+	// Find index of first entropy value in array which is less than chosen entropy value
+	for (int i = 0; i < array.count; i++) {
+		if ([(NSNumber *)array[i] floatValue] <= entropy) {
+			continue;
+		} else {
+			locationReached = YES;
+			location = i;
 		}
+	}
+	
+	// Interpolation to determine pressure value
+	if (location != array.count - 1 && locationReached) {
+		float highEnt = [(NSNumber *)array[location] floatValue];
+		float lowEnt = [(NSNumber *)array[location + 1] floatValue];
 		
-		NSScanner *lineScanner = [NSScanner scannerWithString:lineString];
+		float weight = (entropy - lowEnt)/(highEnt - lowEnt);
 		
-		// Get temperature, delimited by comma in first index of row (unused in this scheme, but gets rid of first element)
-		NSString *temperatureString;
-		[lineScanner scanUpToCharactersFromSet:comma
-									intoString:&temperatureString];
-		if (![lineScanner isAtEnd]) {
-			[lineScanner setScanLocation:[lineScanner scanLocation]+1];
+		float highPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
+		float lowPres = ((NSNumber *)[self.superheatedKeys objectAtIndex:(location + 1)]).floatValue;
+		
+		return lowPres + weight*(highPres - lowPres);
+	} else {
+		return ((NSNumber *)[self.superheatedKeys objectAtIndex:location]).floatValue;
+	}
+}
+
+- (float)interpolateToEntropyWithTemperature:(float)temperature pressure:(float)pressure
+{
+	// Find list of entropies for specific temperature
+	NSArray *array = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)temperature];
+	
+	int location = 0;
+	BOOL locationReached = NO;
+	
+	// Find index of first entropy value in array which is less than chosen entropy value
+	for (int i = 0; i < self.superheatedKeys.count; i++) {
+		if ([(NSNumber *)self.superheatedKeys[i] floatValue] >= pressure) {
+			continue;
+		} else {
+			locationReached = YES;
+			location = i;
 		}
+	}
+	
+	// Interpolation to determine pressure value
+	if (location != self.superheatedKeys.count - 1 && locationReached) {
+		float lowPres = [(NSNumber *)self.superheatedKeys[location] floatValue];
+		float highPres = [(NSNumber *)self.superheatedKeys[location + 1] floatValue];
 		
-		// Store one line of entropies
-		NSMutableArray *tempArray = [[NSMutableArray alloc] init];
+		float weight = (pressure - lowPres)/(highPres - lowPres);
 		
-		int count = 0;
-		while (![lineScanner isAtEnd]) {
-			NSString *valueString;
-			[lineScanner scanUpToCharactersFromSet:comma
-										intoString:&valueString];
-			if (![lineScanner isAtEnd]) {
-				[lineScanner setScanLocation:[lineScanner scanLocation]+1];
-			}
-			
-			if (!([valueString isEqualToString:@"#VALUE!"] || [valueString isEqualToString:@"#NAME?"] || [valueString isEqualToString:@""]) && valueString) {
-				[tempArray addObject:[NSNumber numberWithFloat:[valueString floatValue]]];
-			} else {
-				break;
-			}
-			count ++;
-		}
+		float lowEnt = ((NSNumber *)[array objectAtIndex:location]).floatValue;
+		float highEnt = ((NSNumber *)[array objectAtIndex:(location + 1)]).floatValue;
 		
-		// Add the corresponding entropy array to the end of the array of entropy arrays
-		[self.superheatedValues addObject:tempArray];
+		return lowEnt + weight*(highEnt - lowEnt);
+	} else {
+		return ((NSNumber *)[array objectAtIndex:location]).floatValue;
+	}
+}
+
+#pragma mark - Adjuster View Delegate
+/*
+- (void)moveMarkerToPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue
+{
+	if ([self respondsToAllProperSelectors]) {
+		CGFloat xValue = ((primValue - [self.dataSource primaryAxisStartingValue])*self.frame.size.width/self.primaryAxisRange);
+		CGFloat yValue = self.frame.size.height - ((secValue - [self.dataSource secondaryAxisStartingValue])*self.frame.size.height/self.secondaryAxisRange);
+		
+		CGPoint pointerLocation = CGPointMake(xValue, yValue);
+		
+		UIBezierPath *locationIndicatorRing = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																			 radius:smallOuterRadius
+																		 startAngle:0.0f
+																		   endAngle:360.0f
+																		  clockwise:YES];
+		[self.locationIndicatorRingLayer setPath:[locationIndicatorRing CGPath]];
+		[self.layer addSublayer:self.locationIndicatorRingLayer];
+		
+		UIBezierPath *locationIndicatorCircle = [UIBezierPath bezierPathWithArcCenter:pointerLocation
+																			   radius:innerRadius
+																		   startAngle:0.0f
+																			 endAngle:360.0f
+																   clockwise:YES];
+		[self.locationIndicatorCircleLayer setPath:[locationIndicatorCircle CGPath]];
+		[self.layer addSublayer:self.locationIndicatorCircleLayer];
 	}
 }
 */
+- (void)adjusterView:(RUAAdjusterView *)adjusterView didAdjustFromLocation:(CGPoint)fromLocation toLocation:(CGPoint)toLocation
+{
+	if (touchHasRegistered) {
+		CGFloat dx = toLocation.x - fromLocation.x;
+		CGFloat width = self.chartView.frame.size.width;
+		CGFloat height = self.chartView.frame.size.height;
+		CGFloat rangeX = [self primaryAxisEndingValue] - [self primaryAxisStartingValue];
+		CGFloat rangeY = [self secondaryAxisEndingValue] - [self secondaryAxisStartingValue];
+		if (adjusterView.tag == 1) {
+			// Temperature
+			float dT = dx*T_TOTAL_CHANGE/adjusterView.frame.size.width;
+			float newTemp = currentTemp + dT;
+			if (newTemp > T_SAT_MIN && [self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy
+																		   secondaryAxisValue:newTemp]) {
+				currentTemp = newTemp;
+				[self calculateNewValuesWithTemperature:newTemp
+												entropy:currentEntropy];
+				
+				CGFloat newY = height - ((newTemp - [self secondaryAxisStartingValue]) * height/rangeY);
+				CGPoint newChartLocation = CGPointMake(self.chartView.lastLocation.x, newY);
+				[self.chartView addSmallMarkerAtLocation:newChartLocation];
+			}
+		} else if (adjusterView.tag == 2) {
+			// Pressure
+			float dP = dx*currentPressure/(10.0f*adjusterView.frame.size.width);
+			float newPressure = currentPressure + dP;
+			
+			if ([currentRegion isEqualToString:kCurrentRegionSaturated]) {
+				AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+				
+				currentTemp = [SaturatedPlotPoint fetchTemperatureWithPressure:newPressure
+																	 inContext:appDel.managedObjectContext];
+				
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:currentEntropy];
+				//[self.chartView addSmallMarkerAtLocation:newChartLocation];
+			} else {
+				float newEntropy = [self interpolateToEntropyWithTemperature:currentTemp
+																	pressure:newPressure];
+				
+				currentEntropy = newEntropy;
+				currentPressure = newPressure;
+				
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:newEntropy];
+				
+				CGFloat newX = (newEntropy - [self primaryAxisStartingValue])*width/rangeX;
+				CGPoint newChartLocation = CGPointMake(newX, self.chartView.lastLocation.y);
+				[self.chartView addSmallMarkerAtLocation:newChartLocation];
+			}
+		} else if (adjusterView.tag == 3) {
+			// Specific Volume
+		} else if (adjusterView.tag == 4) {
+			// Internal Energy
+		} else if (adjusterView.tag == 5) {
+			// Enthalpy
+		} else if (adjusterView.tag == 6) {
+			// Entropy
+			float ds = dx*S_TOTAL_CHANGE/adjusterView.frame.size.width;
+			float newEntropy = currentEntropy + ds;
+			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:newEntropy
+													secondaryAxisValue:currentTemp]) {
+				currentEntropy = newEntropy;
+				[self calculateNewValuesWithTemperature:currentTemp
+												entropy:newEntropy];
+				
+				CGFloat newX = (newEntropy - [self primaryAxisStartingValue])*width/rangeX;
+				CGPoint newChartLocation = CGPointMake(newX, self.chartView.lastLocation.y);
+				[self.chartView addSmallMarkerAtLocation:newChartLocation];
+			}
+		} else if (adjusterView.tag == 7) {
+			// Quality
+			float dx = (toLocation.x - fromLocation.x)*X_TOTAL_CHANGE/adjusterView.frame.size.width;
+			float newQuality = currentQuality + dx;
+			if (newQuality <= 100.0 && newQuality >= 0.0) {
+				if ([currentRegion isEqualToString:kCurrentRegionSaturated]) {
+					AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+					currentQuality = newQuality;
+					
+					SaturatedPlotPoint *plotPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)currentTemp
+																								 inContext:appDel.managedObjectContext];
+					float s_f = plotPoint.s_f.floatValue;
+					float s_g = plotPoint.s_g.floatValue;
+					
+					currentEntropy = s_f + newQuality*(s_g - s_f);
+					
+					[self calculateNewValuesWithTemperature:currentTemp
+													entropy:currentEntropy];
+					CGFloat newX = (currentEntropy - [self primaryAxisStartingValue])*width/rangeX;
+					CGPoint newChartLocation = CGPointMake(newX, self.chartView.lastLocation.y);
+					[self.chartView addSmallMarkerAtLocation:newChartLocation];
+				}
+			}
+		} else {
+			NSLog(@"Incorrect tag sent");
+		}
+	}
+}
+
+#pragma mark - Private
+
+- (void)showQualityAdjusterView
+{
+	for (RUAAdjusterView *view in self.secondContainerView.subviews) {
+		if ([view isMemberOfClass:[RUAAdjusterView class]] && view.tag == 7) {
+			[view setHidden:NO];
+		}
+	}
+}
+
+- (void)hideQualityAdjusterView
+{
+	for (RUAAdjusterView *view in self.secondContainerView.subviews) {
+		if ([view isMemberOfClass:[RUAAdjusterView class]] && view.tag == 7) {
+			[view setHidden:YES];
+		}
+	}
+}
+
 @end

@@ -37,6 +37,10 @@
 @property (strong, nonatomic) UILabel *entropyUnitsLabel;
 @property (strong, nonatomic) UILabel *qualityUnitsLabel;
 
+@property CGFloat containerViewHeight;
+@property CGFloat containerViewOriginY;
+@property NSUInteger numberOfRows;
+
 @property BOOL qualityIsHidden;
 
 @property id <DisplayViewDataSource> dataSource;
@@ -67,7 +71,11 @@
 
 @protocol DisplayViewDataSource <NSObject>
 
--(NSString *)nameForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView;
--(NSString *)unitsForLabel:(UILabel *)label InDisplayView:(DisplayView *)displayView;
+-(NSString *)nameForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView;
+-(NSString *)unitsForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView;
+
+@optional
+
+-(NSSet *)tagsForAdjusterViewsInDisplayView:(DisplayView *)displayView;
 
 @end

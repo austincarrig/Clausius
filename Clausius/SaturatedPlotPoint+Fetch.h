@@ -10,5 +10,5 @@
 
 @interface SaturatedPlotPoint (Fetch)
 + (SaturatedPlotPoint *)fetchSaturatedPointWithTemperature:(float)temperature inContext:(NSManagedObjectContext *)context;
-+ (SaturatedPlotPoint *)fetchSaturatedTemperatureWithPressure:(float)pressure inContext:(NSManagedObjectContext *)context;
++ (float)fetchTemperatureWithPressure:(float)pressure inContext:(NSManagedObjectContext *)context;
 @end
