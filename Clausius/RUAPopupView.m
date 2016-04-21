@@ -26,7 +26,7 @@
 		
 		self.nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
 		self.nameLabel.text = text;
-		self.nameLabel.font = [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:120.0];
+		self.nameLabel.font = [UIFont fontWithName:@"HelveticaNeue-UltraLight" size:96.0f];
 		self.nameLabel.textColor = [UIColor whiteColor];
 		
 		CGSize size = [self.nameLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
@@ -37,7 +37,7 @@
 		
 		[self addSubview:self.nameLabel];
 		
-		self.layer.cornerRadius = 3.0f;
+		self.layer.cornerRadius = 15.0f;
 		
 		self.alpha = 0.0;
 		self.backgroundColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];

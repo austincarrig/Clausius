@@ -132,7 +132,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 		make.width.equalTo(@(self.popupView.frame.size.width));
 		make.center.equalTo(self.view);
 	}];
-	
+	/*
 	// Add Adjuster Views
 	NSSet *tags = [self tagsForAdjusterViews];
 	
@@ -153,6 +153,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 			make.height.equalTo([NSNumber numberWithFloat:height - 4.0f]);
 		}];
 	}
+	 */
 }
 
 - (NSSet *)tagsForAdjusterViews
@@ -301,7 +302,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 		NSString *letter1 = [type substringToIndex:1];
 		NSString *letter2 = [type substringFromIndex:1];
 		
-		NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1,letter2];
+		NSString *displayName = [NSString stringWithFormat:@"%@-%@",letter1.uppercaseString,letter2];
 		self.popupView.text = displayName;
 		
 		[self.chartView resetImage:[UIImage imageNamed:[NSString stringWithFormat:@"Water_%@_chart.png",type]]];
@@ -327,17 +328,20 @@ const static float X_TOTAL_CHANGE = 0.01;
 		
 		[self.popupView showHideAnimated:YES];
 		
-		if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy
-												secondaryAxisValue:currentTemp]) {
-			if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
-				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
-										  secondaryAxisValue:currentTemp];
-			} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
-				[self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
-										  secondaryAxisValue:currentPressure];
-			} else {
+		if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
+			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEnthalpy secondaryAxisValue:currentPressure]) {
 				[self.chartView moveMarkerToPrimaryAxisValue:currentEnthalpy
 										  secondaryAxisValue:currentPressure];
+			}
+		} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentSpecVolume secondaryAxisValue:currentPressure]) {
+				[self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
+										  secondaryAxisValue:currentPressure];
+			}
+		} else if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy secondaryAxisValue:currentTemp]) {
+				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+										  secondaryAxisValue:currentTemp];
 			}
 		} else {
 			touchHasRegistered = NO;

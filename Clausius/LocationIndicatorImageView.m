@@ -395,13 +395,26 @@ unsigned char *rawData;
 
 #pragma mark - User Movement Methods
 
-- (BOOL)pointIsWithinBoundsForPrimaryAxisValue:(CGFloat)primValue secondaryAxisValue:(CGFloat)secValue
+- (BOOL)pointIsWithinBoundsForPrimaryAxisValue:(CGFloat)primValue
+							secondaryAxisValue:(CGFloat)secValue
 {
-	CGFloat primaryAxisRange = [self.dataSource primaryAxisEndingValue] - [self.dataSource primaryAxisStartingValue];
-	CGFloat secondaryAxisRange = [self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue];
+	CGFloat primaryAxisRange = [self.dataSource primaryAxisEndingValue] - [self.dataSource primaryAxisStartingValue];;
+	CGFloat secondaryAxisRange = [self.dataSource secondaryAxisEndingValue] - [self.dataSource secondaryAxisStartingValue];;
 	
-	CGFloat xValue = ((primValue - [self.dataSource primaryAxisStartingValue])*self.frame.size.width/primaryAxisRange);
-	CGFloat yValue = self.frame.size.height - ((secValue - [self.dataSource secondaryAxisStartingValue])*self.frame.size.height/secondaryAxisRange);
+	CGFloat xValue;
+	CGFloat yValue;
+	
+	if (self.chart.xAxis.scaleType == RUAxisScaleTypeLinear) {
+		xValue = ((primValue - [self.dataSource primaryAxisStartingValue])*self.frame.size.width/primaryAxisRange);
+	} else {
+		xValue = (log10f(primValue) - log10f([self.dataSource primaryAxisStartingValue]))/((log10f([self.dataSource primaryAxisEndingValue]) - log10f([self.dataSource primaryAxisStartingValue]))/self.frame.size.width);
+	}
+	
+	if (self.chart.yAxis.scaleType == RUAxisScaleTypeLinear) {
+		yValue = self.frame.size.height - ((secValue - [self.dataSource secondaryAxisStartingValue])*self.frame.size.height/secondaryAxisRange);
+	} else {
+		yValue = self.frame.size.height - (log10f(secValue) - log10f([self.dataSource secondaryAxisStartingValue]))/((log10f([self.dataSource secondaryAxisEndingValue]) - log10f([self.dataSource secondaryAxisStartingValue]))/self.frame.size.height);
+	}
 	
 	UIColor *color = (UIColor *)[[self getRGBAsFromImage:self.image inImageView:self atX:xValue andY:yValue count:1] lastObject];
 	
