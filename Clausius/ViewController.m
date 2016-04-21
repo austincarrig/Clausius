@@ -328,24 +328,32 @@ const static float X_TOTAL_CHANGE = 0.01;
 		
 		[self.popupView showHideAnimated:YES];
 		
-		if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
-			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEnthalpy secondaryAxisValue:currentPressure]) {
-				[self.chartView moveMarkerToPrimaryAxisValue:currentEnthalpy
-										  secondaryAxisValue:currentPressure];
+		if (touchHasRegistered) {
+			if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
+				if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEnthalpy secondaryAxisValue:currentPressure]) {
+					[self.chartView moveMarkerToPrimaryAxisValue:currentEnthalpy
+											  secondaryAxisValue:currentPressure];
+				} else {
+					[self.chartView removeMarker];
+				}
+			} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+				if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentSpecVolume secondaryAxisValue:currentPressure]) {
+					[self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
+											  secondaryAxisValue:currentPressure];
+				} else {
+					[self.chartView removeMarker];
+				}
+			} else if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+				if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy secondaryAxisValue:currentTemp]) {
+					[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
+											  secondaryAxisValue:currentTemp];
+				} else {
+					[self.chartView removeMarker];
+				}
+			} else {
+				touchHasRegistered = NO;
+				[self.chartView removeMarker];
 			}
-		} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
-			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentSpecVolume secondaryAxisValue:currentPressure]) {
-				[self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
-										  secondaryAxisValue:currentPressure];
-			}
-		} else if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
-			if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy secondaryAxisValue:currentTemp]) {
-				[self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
-										  secondaryAxisValue:currentTemp];
-			}
-		} else {
-			touchHasRegistered = NO;
-			[self.chartView removeMarker];
 		}
 	}
 }
