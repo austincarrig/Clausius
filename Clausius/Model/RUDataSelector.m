@@ -75,7 +75,8 @@
 + (NSArray *)loadSuperheatedKeyValuesWithFileName:(NSString *)fileName
 {
 	// Get the directory, find the specified file
-	NSString *path = [[NSBundle mainBundle] pathForResource:[fileName substringToIndex:14] ofType:@".csv" inDirectory:@"Data Files"];
+	NSRange range = [fileName rangeOfString:@".csv"];
+	NSString *path = [[NSBundle mainBundle] pathForResource:[fileName substringToIndex:range.location] ofType:@".csv" inDirectory:@"Data Files"];
 	NSString *string = [NSString stringWithUTF8String:[[NSData dataWithContentsOfFile:path] bytes]];
 	
 	NSScanner *scanner = [[NSScanner alloc] initWithString:string];

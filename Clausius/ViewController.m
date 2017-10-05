@@ -19,7 +19,6 @@
 #import "H2O_Wagner_Pruss.h"
 
 #import "RUDataSelector.h"
-#import "RUSolver.h"
 
 #import "RUAxis.h"
 
@@ -203,10 +202,21 @@ const static float X_TOTAL_CHANGE = 0.01;
 {
 	if (!_infoView) {
 		_infoView = [[UIImageView alloc] initWithFrame:CGRectZero];
-		[_infoView setImage:[UIImage imageNamed:@"Legend.jpeg"]];
+		[_infoView setImage:[UIImage imageNamed:@"Legend.png"]];
 		[_infoView setHidden:YES];
 		[_infoView setUserInteractionEnabled:NO];
 		[_infoView setBackgroundColor:[UIColor whiteColor]];
+		
+		UIImageView *youtube = [[UIImageView alloc] initWithFrame:CGRectMake(40, 40, 128, 128)];
+		UITapGestureRecognizer *ytTap = [[UITapGestureRecognizer alloc] initWithTarget:self
+																				action:@selector(showYoutubeVideo)];
+		[ytTap setNumberOfTapsRequired:1];
+		
+		[youtube setImage:[UIImage imageNamed:@"youtube.png"]];
+		[youtube setUserInteractionEnabled:YES];
+		[youtube addGestureRecognizer:ytTap];
+		
+		[_infoView addSubview:youtube];
 		
 		UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
 																			  action:@selector(dismissInfo)];
@@ -215,6 +225,13 @@ const static float X_TOTAL_CHANGE = 0.01;
 		[_infoView addGestureRecognizer:tap];
 	}
 	return _infoView;
+}
+
+- (void)showYoutubeVideo
+{
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.youtube.com/watch?v=rJR-6OEw09k"]
+									   options:@{}
+							 completionHandler:nil];
 }
 
 - (H2O_Wagner_Pruss *)wagPruss
@@ -510,7 +527,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	secondaryScale = [self scaleWithScaleType:chart.yAxis.scaleType
 								  inImageView:locationIndicatorImageView];
 	
-	float temperature, pressure, specVol, intEnergy, enthalpy, entropy, quality = -1;
+	float temperature = -1, pressure = -1, specVol = -1, intEnergy = -1, enthalpy = -1, entropy = -1, quality = -1;
 	
 	// Which secondary axis am I dealing with?
 	if (secondaryAxisType == RUAxisValueTypeTemperature) {
@@ -553,7 +570,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 					   withEventType:(NSString *)eventType
 					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	AppDelegate *appDel = [[UIApplication sharedApplication] delegate];
+	AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	// Get scales for both axes in units of [baseUnit/pixel]
 	// If using log10f() the axis is log, converts value to exponent (i.e. b in value = 10^b, therefore b = log10(value))
@@ -744,7 +761,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 					   withEventType:(NSString *)eventType
 					  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+	AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 	
 	CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
 	CGFloat secondaryScale = (log10f([self secondaryAxisEndingValue]) - log10f([self secondaryAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
@@ -752,7 +769,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	float enthalpy = [self primaryAxisStartingValue] + primaryScale*location.x;
 	float pressure = powf(10.0, log10f([self secondaryAxisStartingValue]) + secondaryScale*(locationIndicatorImageView.frame.size.height - location.y));
 	
-	float temp, specVol, intEnergy, entropy, quality = -1;
+	float temp, specVol = -1, intEnergy = -1, entropy = -1, quality = -1;
 	
 	if (pressure < P_CRITICAL) {
 		temp = [self.wagPruss temperatureVapourLiquidWithPressure:pressure];
@@ -947,6 +964,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	if (allCSVs.count) {
 		self.superheatedKeys = [RUDataSelector loadSuperheatedKeyValuesWithFileName:[allCSVs firstObject]];
+		self.superheatedKeys = [RUDataSelector loadSuperheatedKeyValuesWithFileName:[allCSVs firstObject]]; // called a 2nd time because Xcode 8
 		self.superheatedValues = [RUDataSelector loadSuperheatedValuesWithFileName:[allCSVs firstObject]];
 		self.superheatedMappingKeys = [RUDataSelector loadSuperheatedRowMappingValuesWithFileName:[allCSVs firstObject]];
 	}
@@ -1308,6 +1326,23 @@ const static float X_TOTAL_CHANGE = 0.01;
 			[view setHidden:YES];
 		}
 	}
+}
+
+#pragma mark - Cycles
+
+- (void)beginCycle
+{
+	
+}
+
+- (void)moveCycleToPoint:(NSUInteger)point
+{
+	
+}
+
+- (void)endCycle
+{
+	
 }
 
 @end
