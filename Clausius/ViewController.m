@@ -29,7 +29,10 @@ const static float T_TOTAL_CHANGE = 10.0;
 const static float S_TOTAL_CHANGE = 0.1;
 const static float X_TOTAL_CHANGE = 0.01;
 
-@interface ViewController ()
+@interface ViewController () {
+	CGPoint lastTouchLocation;
+	BOOL shouldFineTune;
+}
 @property (strong, nonatomic) UIImageView *infoView;
 @property (weak, nonatomic) IBOutlet UIButton *infoButton;
 
@@ -47,6 +50,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 @property (strong, nonatomic) NSArray *chartValueTypes;
 
 @property (strong, nonatomic) RUAPopupView *popupView;
+
+@property (strong, nonatomic) UIButton *fineTuneButton;
 @end
 
 @implementation ViewController
@@ -68,6 +73,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	touchHasRegistered = NO;
 	allowQualityScrubbing = NO;
+	shouldFineTune = NO;
 	
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	[self.navigationController setNavigationBarHidden:YES];
@@ -124,6 +130,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	
+	[self.view addSubview:self.fineTuneButton];
 	
 	[self.view addSubview:self.popupView];
 	[self.popupView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -274,6 +282,21 @@ const static float X_TOTAL_CHANGE = 0.01;
 	return _popupView;
 }
 
+- (UIButton *)fineTuneButton
+{
+	if (!_fineTuneButton) {
+		_fineTuneButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		[_fineTuneButton setTitle:@"Fine Tune Off" forState:UIControlStateNormal];
+		_fineTuneButton.frame = CGRectMake(300.0, 60.0, 122.0, 44.0);
+		[_fineTuneButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+		[_fineTuneButton addTarget:self
+							action:@selector(toggleFineTuning)
+				  forControlEvents:UIControlEventTouchUpInside];
+	}
+	
+	return _fineTuneButton;
+}
+
 #pragma mark - Gesture Selectors
 
 - (IBAction)displayInfo:(id)sender {
@@ -384,6 +407,15 @@ const static float X_TOTAL_CHANGE = 0.01;
 	}
 }
 
+- (void)toggleFineTuning {
+	if (shouldFineTune) {
+		[_fineTuneButton setTitle:@"Fine Tune Off" forState:UIControlStateNormal];
+	} else {
+		[_fineTuneButton setTitle:@"Fine Tune On" forState:UIControlStateNormal];
+	}
+	shouldFineTune = !shouldFineTune;
+}
+
 #pragma mark - Location Indication Image View Datasource
 
 - (UIColor *)primaryColorForLocationView:(LocationIndicatorImageView *)locationView
@@ -471,6 +503,10 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	[locationIndicatorImageView addLargeMarkerAtLocation:location];
 	
+	if (shouldFineTune) {
+		lastTouchLocation = location;
+	}
+	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
 		[self tsTouchDidRegisterAtLocation:location
 							 withEventType:@"Began"
@@ -489,7 +525,28 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)touchDidMoveToLocation:(CGPoint)location
 				inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	[locationIndicatorImageView moveLargeMarkerToLocation:location];
+	CGPoint newLocation = location;
+	
+	if (shouldFineTune) {
+		CGFloat lastLocationX = locationIndicatorImageView.lastLocation.x;
+		CGFloat lastLocationY = locationIndicatorImageView.lastLocation.y;
+		
+		CGFloat actualDeltaX = location.x - lastTouchLocation.x;
+		CGFloat actualDeltaY = location.y - lastTouchLocation.y;
+		
+		CGFloat deltaX = 0.2*(actualDeltaX);
+		CGFloat deltaY = 0.2*(actualDeltaY);
+		
+		CGFloat newLocationX = lastLocationX + deltaX;
+		CGFloat newLocationY = lastLocationY + deltaY;
+		
+		newLocation.x = newLocationX;
+		newLocation.y = newLocationY;
+		
+		lastTouchLocation = location;
+	}
+	
+	[locationIndicatorImageView moveLargeMarkerToLocation:newLocation];
 	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
 		[self tsTouchDidRegisterAtLocation:location
@@ -509,7 +566,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)touchDidEndAtLocation:(CGPoint)location
 			   inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-	[locationIndicatorImageView addSmallMarkerAtLocation:location];
+#warning Fix .lastLocation to passed location
+	[locationIndicatorImageView addSmallMarkerAtLocation:locationIndicatorImageView.lastLocation];
 }
 
 - (void)touchDidRegisterAtLocation:(CGPoint)location
