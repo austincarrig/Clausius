@@ -19,6 +19,7 @@
 #import "H2O_Wagner_Pruss.h"
 
 #import "RUDataSelector.h"
+#import "RUASpaceController.h"
 
 #import "RUAxis.h"
 
@@ -32,6 +33,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 @interface ViewController () {
 	CGPoint lastTouchLocation;
 	BOOL shouldFineTune;
+	BOOL hasFineTuned;
 }
 @property (strong, nonatomic) UIImageView *infoView;
 @property (weak, nonatomic) IBOutlet UIButton *infoButton;
@@ -40,6 +42,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 @property (strong, nonatomic) IBOutlet UIView *containerView;
 @property (strong, nonatomic) UIView *secondContainerView;
 @property (strong, nonatomic) DisplayView *displayView;
+@property (strong, nonatomic) RUASpaceController *spaceController;
 
 @property (strong, nonatomic) H2O_Wagner_Pruss *wagPruss;
 
@@ -74,6 +77,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	touchHasRegistered = NO;
 	allowQualityScrubbing = NO;
 	shouldFineTune = NO;
+	hasFineTuned = NO;
 	
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	[self.navigationController setNavigationBarHidden:YES];
@@ -297,6 +301,15 @@ const static float X_TOTAL_CHANGE = 0.01;
 	return _fineTuneButton;
 }
 
+- (RUASpaceController *)spaceController
+{
+	if (!_spaceController) {
+		_spaceController = [[RUASpaceController alloc] init];
+	}
+	
+	return _spaceController;
+}
+
 #pragma mark - Gesture Selectors
 
 - (IBAction)displayInfo:(id)sender {
@@ -416,6 +429,10 @@ const static float X_TOTAL_CHANGE = 0.01;
 	shouldFineTune = !shouldFineTune;
 }
 
+- (void)yo {
+	
+}
+
 #pragma mark - Location Indication Image View Datasource
 
 - (UIColor *)primaryColorForLocationView:(LocationIndicatorImageView *)locationView
@@ -503,9 +520,9 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	[locationIndicatorImageView addLargeMarkerAtLocation:location];
 	
-	if (shouldFineTune) {
-		lastTouchLocation = location;
-	}
+	[self.spaceController succeedsWithLatestPoint:location];
+	hasFineTuned = NO;
+	lastTouchLocation = location;
 	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
 		[self tsTouchDidRegisterAtLocation:location
@@ -527,7 +544,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 {
 	CGPoint newLocation = location;
 	
-	if (shouldFineTune) {
+	if (![self.spaceController succeedsWithLatestPoint:location] || hasFineTuned) {
 		CGFloat lastLocationX = locationIndicatorImageView.lastLocation.x;
 		CGFloat lastLocationY = locationIndicatorImageView.lastLocation.y;
 		
@@ -542,9 +559,10 @@ const static float X_TOTAL_CHANGE = 0.01;
 		
 		newLocation.x = newLocationX;
 		newLocation.y = newLocationY;
-		
-		lastTouchLocation = location;
+		hasFineTuned = YES;
 	}
+	
+	lastTouchLocation = location;
 	
 	[locationIndicatorImageView moveLargeMarkerToLocation:newLocation];
 	

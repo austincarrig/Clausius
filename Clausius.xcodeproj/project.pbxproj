@@ -59,6 +59,7 @@
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
 		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; };
 		49A57F331C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */; };
+		49DCB2871FA6689A00F7D608 /* RUASpaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49DCB2861FA6689A00F7D608 /* RUASpaceController.m */; };
 		49F51F7C1CC69DCA00138EA1 /* Water_ph_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 49F51F7B1CC69DCA00138EA1 /* Water_ph_chart.png */; };
 /* End PBXBuildFile section */
 
@@ -167,6 +168,8 @@
 		49A056511BC9AC820032F280 /* RUDataSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUDataSelector.h; path = Model/RUDataSelector.h; sourceTree = "<group>"; };
 		49A056521BC9AC820032F280 /* RUDataSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RUDataSelector.m; path = Model/RUDataSelector.m; sourceTree = "<group>"; };
 		49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadProApp@2x.png"; sourceTree = "<group>"; };
+		49DCB2851FA6689A00F7D608 /* RUASpaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RUASpaceController.h; sourceTree = "<group>"; };
+		49DCB2861FA6689A00F7D608 /* RUASpaceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RUASpaceController.m; sourceTree = "<group>"; };
 		49F51F7B1CC69DCA00138EA1 /* Water_ph_chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Water_ph_chart.png; path = Images/Water_ph_chart.png; sourceTree = "<group>"; };
 		F15A8140971EB808610BEB52 /* libPods-Clausius.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clausius.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -273,6 +276,8 @@
 				492A98731B574BEA00F061E8 /* DisplayView.m */,
 				499813791B6015400044987E /* RUAAdjusterView.h */,
 				4998137A1B6015400044987E /* RUAAdjusterView.m */,
+				49DCB2851FA6689A00F7D608 /* RUASpaceController.h */,
+				49DCB2861FA6689A00F7D608 /* RUASpaceController.m */,
 			);
 			name = "Custom Views";
 			sourceTree = "<group>";
@@ -544,6 +549,7 @@
 				492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */,
 				492A98CA1B574D5600F061E8 /* ImportedFile+Fetch.m in Sources */,
 				492A98DD1B574DD900F061E8 /* H2O_Wagner_Pruss.m in Sources */,
+				49DCB2871FA6689A00F7D608 /* RUASpaceController.m in Sources */,
 				4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */,
 				4941C5031B6075BA00E163C8 /* NSArray+MASAdditions.m in Sources */,
 				492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */,
