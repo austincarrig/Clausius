@@ -8,9 +8,6 @@
 
 #import "RUASpaceController.h"
 
-static const int size = 7;
-static const int maxDiff = 20.0;
-
 @interface RUASpaceController ()
 
 @property (strong, nonatomic) NSMutableArray *points;
@@ -19,11 +16,13 @@ static const int maxDiff = 20.0;
 
 @implementation RUASpaceController
 
-- (instancetype)initWithAllowableDistance
+- (instancetype)init
 {
 	self = [super init];
 	if (self) {
-		self.points = [[NSMutableArray alloc] initWithCapacity:size];
+		self.numPoints = 5;
+		self.maxDiff = 30.0;
+		self.points = [[NSMutableArray alloc] initWithCapacity:self.numPoints];
 	}
 	
 	return self;
@@ -32,17 +31,17 @@ static const int maxDiff = 20.0;
 - (NSMutableArray *)points
 {
 	if (!_points) {
-		_points = [[NSMutableArray alloc] initWithCapacity:size];
+		_points = [[NSMutableArray alloc] initWithCapacity:_numPoints];
 	}
 	
 	return _points;
 }
 
-- (BOOL)succeedsWithLatestPoint:(CGPoint)point
+- (BOOL)addLatestPoint:(CGPoint)point
 {
-	if (self.points.count >= size) {
-		if (self.points.count > size) {
-			return YES;
+	if (self.points.count >= _numPoints) {
+		if (self.points.count > _numPoints) {
+			return NO;
 		}
 		[self.points removeObjectAtIndex:0];
 	}
@@ -50,19 +49,23 @@ static const int maxDiff = 20.0;
 								  objCType:@encode(CGPoint)];
 	[self.points addObject:val];
 	
-	if (!self.points) {
-		NSLog(@"SHIT");
-	}
-	
-	NSLog(@"%f, %f, %d", point.x, point.y, self.points.count);
-	
-	if ([self calculateRunningAverage] < maxDiff && self.points.count == 5) {
-		return NO;
-	}
 	return YES;
 }
 
-- (float)calculateRunningAverage
+- (BOOL)withinMarginWithLatestPoint:(CGPoint)point
+{
+	if (![self addLatestPoint:point]) {
+		return NO;
+	}
+	
+	if ([self calculateLargestDistance] < _maxDiff && self.points.count == _numPoints) {
+		return YES;
+	}
+	
+	return NO;
+}
+
+- (float)calculateLargestDistance
 {
 	float highestDiff = 0;
 	
@@ -88,6 +91,11 @@ static const int maxDiff = 20.0;
 - (float)distanceFrom:(CGPoint)p1 to:(CGPoint)p2
 {
 	return sqrtf(powf(p1.x - p2.x, 2.0) + powf(p1.y - p2.y, 2.0));
+}
+
+- (void)reset
+{
+	self.points = [[NSMutableArray alloc] initWithCapacity:self.numPoints];
 }
 
 @end

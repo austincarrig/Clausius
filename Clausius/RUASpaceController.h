@@ -11,6 +11,13 @@
 
 @interface RUASpaceController : NSObject
 
-- (BOOL)succeedsWithLatestPoint:(CGPoint)point;
+@property (nonatomic) NSUInteger numPoints;
+@property (nonatomic) CGFloat maxDiff;
+
+- (instancetype)init;
+
+- (BOOL)addLatestPoint:(CGPoint)point;
+- (BOOL)withinMarginWithLatestPoint:(CGPoint)point;
+- (void)reset;
 
 @end

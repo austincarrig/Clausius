@@ -32,7 +32,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 @interface ViewController () {
 	CGPoint lastTouchLocation;
-	BOOL shouldFineTune;
+	int shouldFineTune;
 	BOOL hasFineTuned;
 }
 @property (strong, nonatomic) UIImageView *infoView;
@@ -76,7 +76,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	touchHasRegistered = NO;
 	allowQualityScrubbing = NO;
-	shouldFineTune = NO;
+	shouldFineTune = 0;
 	hasFineTuned = NO;
 	
 	[[UIApplication sharedApplication] setStatusBarHidden:YES];
@@ -290,7 +290,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 {
 	if (!_fineTuneButton) {
 		_fineTuneButton = [UIButton buttonWithType:UIButtonTypeCustom];
-		[_fineTuneButton setTitle:@"Fine Tune Off" forState:UIControlStateNormal];
+		[_fineTuneButton setTitle:@"Fine Tune 0" forState:UIControlStateNormal];
 		_fineTuneButton.frame = CGRectMake(300.0, 60.0, 122.0, 44.0);
 		[_fineTuneButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
 		[_fineTuneButton addTarget:self
@@ -420,17 +420,34 @@ const static float X_TOTAL_CHANGE = 0.01;
 	}
 }
 
+// NOTE: Seems like (10/8.0 and 10/9.0) and 20/30.0 felt best of ones I tried. Could use some refining.
 - (void)toggleFineTuning {
-	if (shouldFineTune) {
-		[_fineTuneButton setTitle:@"Fine Tune Off" forState:UIControlStateNormal];
-	} else {
-		[_fineTuneButton setTitle:@"Fine Tune On" forState:UIControlStateNormal];
+	if (shouldFineTune == 0) {
+		[_fineTuneButton setTitle:@"Fine Tune 0" forState:UIControlStateNormal];
+		shouldFineTune = 1;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 5.0;
+	} else if (shouldFineTune == 1) {
+		[_fineTuneButton setTitle:@"Fine Tune 1" forState:UIControlStateNormal];
+		shouldFineTune = 2;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 6.0;
+	} else if (shouldFineTune == 2) {
+		[_fineTuneButton setTitle:@"Fine Tune 2" forState:UIControlStateNormal];
+		shouldFineTune = 3;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 7.0;
+	} else if (shouldFineTune == 3) {
+		[_fineTuneButton setTitle:@"Fine Tune 3" forState:UIControlStateNormal];
+		shouldFineTune = 4;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 8.0;
+	} else if (shouldFineTune == 4) {
+		[_fineTuneButton setTitle:@"Fine Tune 4" forState:UIControlStateNormal];
+		shouldFineTune = 0;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 9.0;
 	}
-	shouldFineTune = !shouldFineTune;
-}
-
-- (void)yo {
-	
 }
 
 #pragma mark - Location Indication Image View Datasource
@@ -520,7 +537,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	
 	[locationIndicatorImageView addLargeMarkerAtLocation:location];
 	
-	[self.spaceController succeedsWithLatestPoint:location];
+	[self.spaceController addLatestPoint:location];
 	hasFineTuned = NO;
 	lastTouchLocation = location;
 	
@@ -544,7 +561,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 {
 	CGPoint newLocation = location;
 	
-	if (![self.spaceController succeedsWithLatestPoint:location] || hasFineTuned) {
+	if ([self.spaceController withinMarginWithLatestPoint:location] || hasFineTuned) {
 		CGFloat lastLocationX = locationIndicatorImageView.lastLocation.x;
 		CGFloat lastLocationY = locationIndicatorImageView.lastLocation.y;
 		
@@ -584,8 +601,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)touchDidEndAtLocation:(CGPoint)location
 			   inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-#warning Fix .lastLocation to passed location
 	[locationIndicatorImageView addSmallMarkerAtLocation:locationIndicatorImageView.lastLocation];
+	[self.spaceController reset];
 }
 
 - (void)touchDidRegisterAtLocation:(CGPoint)location
