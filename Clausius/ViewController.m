@@ -219,16 +219,41 @@ const static float X_TOTAL_CHANGE = 0.01;
 		[_infoView setUserInteractionEnabled:NO];
 		[_infoView setBackgroundColor:[UIColor whiteColor]];
 		
-		UIImageView *youtube = [[UIImageView alloc] initWithFrame:CGRectMake(40, 40, 128, 128)];
+		UIView *container = [[UIView alloc] initWithFrame:CGRectMake(30, 30, 310, 310)];
 		UITapGestureRecognizer *ytTap = [[UITapGestureRecognizer alloc] initWithTarget:self
 																				action:@selector(showYoutubeVideo)];
 		[ytTap setNumberOfTapsRequired:1];
+		[container setUserInteractionEnabled:YES];
+		[container addGestureRecognizer:ytTap];
 		
+		[_infoView addSubview:container];
+		
+		UIImageView *youtube = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
 		[youtube setImage:[UIImage imageNamed:@"youtube.png"]];
-		[youtube setUserInteractionEnabled:YES];
-		[youtube addGestureRecognizer:ytTap];
 		
-		[_infoView addSubview:youtube];
+		UITextView *textView1 = [[UITextView alloc] initWithFrame:CGRectMake(youtube.frame.origin.x + youtube.frame.size.width,
+																			 youtube.frame.origin.y,
+																			 250,
+																			 youtube.frame.size.height/2.0)];
+		UITextView *textView2 = [[UITextView alloc] initWithFrame:CGRectMake(youtube.frame.origin.x + youtube.frame.size.width,
+																			 youtube.frame.origin.y + youtube.frame.size.height/2.0,
+																			 250,
+																			 youtube.frame.size.height/2.0)];
+		UIFont *font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+		
+		[textView1 setText:@"Learn about Thermodynamic"];
+		[textView1 setFont:font];
+		[textView1 setTextContainerInset:UIEdgeInsetsMake(11.0, 4.0, 4.0, 0.0)];
+		[textView1 setUserInteractionEnabled:NO];
+		
+		[textView2 setText:@"Properties of Water"];
+		[textView2 setFont:font];
+		[textView2 setTextContainerInset:UIEdgeInsetsMake(0.0, 4.0, 0.0, 0.0)];
+		[textView2 setUserInteractionEnabled:NO];
+		
+		[container addSubview:youtube];
+		[container addSubview:textView1];
+		[container addSubview:textView2];
 		
 		UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
 																			  action:@selector(dismissInfo)];
