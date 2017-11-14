@@ -54,7 +54,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 @property (strong, nonatomic) RUAPopupView *popupView;
 
-@property (strong, nonatomic) UIButton *fineTuneButton;
 @end
 
 @implementation ViewController
@@ -134,8 +133,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	
-	[self.view addSubview:self.fineTuneButton];
 	
 	[self.view addSubview:self.popupView];
 	[self.popupView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -311,25 +308,13 @@ const static float X_TOTAL_CHANGE = 0.01;
 	return _popupView;
 }
 
-- (UIButton *)fineTuneButton
-{
-	if (!_fineTuneButton) {
-		_fineTuneButton = [UIButton buttonWithType:UIButtonTypeCustom];
-		[_fineTuneButton setTitle:@"Fine Tune 0" forState:UIControlStateNormal];
-		_fineTuneButton.frame = CGRectMake(300.0, 60.0, 122.0, 44.0);
-		[_fineTuneButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-		[_fineTuneButton addTarget:self
-							action:@selector(toggleFineTuning)
-				  forControlEvents:UIControlEventTouchUpInside];
-	}
-	
-	return _fineTuneButton;
-}
-
 - (RUASpaceController *)spaceController
 {
 	if (!_spaceController) {
 		_spaceController = [[RUASpaceController alloc] init];
+		// NOTE: Seems like (10/8.0 and 10/9.0) and 20/30.0 felt best of ones I tried. Could use some refining.
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 9.0;
 	}
 	
 	return _spaceController;
@@ -442,36 +427,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 		[self.infoButton setHidden:NO];
 	} else if (![type isEqualToString:@"ts"] && !self.infoButton.isHidden) {
 		[self.infoButton setHidden:YES];
-	}
-}
-
-// NOTE: Seems like (10/8.0 and 10/9.0) and 20/30.0 felt best of ones I tried. Could use some refining.
-- (void)toggleFineTuning {
-	if (shouldFineTune == 0) {
-		[_fineTuneButton setTitle:@"Fine Tune 0" forState:UIControlStateNormal];
-		shouldFineTune = 1;
-		_spaceController.numPoints = 10;
-		_spaceController.maxDiff = 5.0;
-	} else if (shouldFineTune == 1) {
-		[_fineTuneButton setTitle:@"Fine Tune 1" forState:UIControlStateNormal];
-		shouldFineTune = 2;
-		_spaceController.numPoints = 10;
-		_spaceController.maxDiff = 6.0;
-	} else if (shouldFineTune == 2) {
-		[_fineTuneButton setTitle:@"Fine Tune 2" forState:UIControlStateNormal];
-		shouldFineTune = 3;
-		_spaceController.numPoints = 10;
-		_spaceController.maxDiff = 7.0;
-	} else if (shouldFineTune == 3) {
-		[_fineTuneButton setTitle:@"Fine Tune 3" forState:UIControlStateNormal];
-		shouldFineTune = 4;
-		_spaceController.numPoints = 10;
-		_spaceController.maxDiff = 8.0;
-	} else if (shouldFineTune == 4) {
-		[_fineTuneButton setTitle:@"Fine Tune 4" forState:UIControlStateNormal];
-		shouldFineTune = 0;
-		_spaceController.numPoints = 10;
-		_spaceController.maxDiff = 9.0;
 	}
 }
 
@@ -609,15 +564,15 @@ const static float X_TOTAL_CHANGE = 0.01;
 	[locationIndicatorImageView moveLargeMarkerToLocation:newLocation];
 	
 	if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
-		[self tsTouchDidRegisterAtLocation:location
+		[self tsTouchDidRegisterAtLocation:newLocation
 							 withEventType:@"Moved"
 							inLocationView:locationIndicatorImageView];
 	} else if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
-		[self phTouchDidRegisterAtLocation:location
+		[self phTouchDidRegisterAtLocation:newLocation
 							 withEventType:@"Moved"
 							inLocationView:locationIndicatorImageView];
 	} else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
-		[self pvTouchDidRegisterAtLocation:location
+		[self pvTouchDidRegisterAtLocation:newLocation
 							 withEventType:@"Moved"
 							inLocationView:locationIndicatorImageView];
 	}
