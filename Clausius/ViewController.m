@@ -313,7 +313,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 	if (!_spaceController) {
 		_spaceController = [[RUASpaceController alloc] init];
 		// NOTE: Seems like (10/8.0 and 10/9.0) and 20/30.0 felt best of ones I tried. Could use some refining.
-		_spaceController.numPoints = 10;
+		_spaceController.numPoints = 14;
 		_spaceController.maxDiff = 9.0;
 	}
 	
