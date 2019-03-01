@@ -313,8 +313,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 	if (!_spaceController) {
 		_spaceController = [[RUASpaceController alloc] init];
 		// NOTE: Seems like (10/8.0 and 10/9.0) and 20/30.0 felt best of ones I tried. Could use some refining.
-		_spaceController.numPoints = 14;
-		_spaceController.maxDiff = 9.0;
+		_spaceController.numPoints = 10;
+		_spaceController.maxDiff = 7.0;
 	}
 	
 	return _spaceController;
@@ -710,7 +710,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 			}
 			
 			if (lowArrayLoc != lowArray.count - 1 && locationReached) {
-				NSLog(@"1");
 				float lowSpecVol = [(NSNumber *)lowArray[lowArrayLoc] floatValue];
 				float highSpecVol = [(NSNumber *)lowArray[lowArrayLoc + 1] floatValue];
 				
@@ -721,7 +720,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 				
 				temp = lowTemp + weight*(highTemp - lowTemp);
 			} else {
-				NSLog(@"2");
 				temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
 			}
 			
@@ -1155,11 +1153,9 @@ const static float X_TOTAL_CHANGE = 0.01;
 	double kTemperature = temperature + 273.15;
 	double mPressure = pressure/1000;
 	
-	NSLog(@"density1");
 	double density = [self.wagPruss rhoWithTemperature:kTemperature
 										   andPressure:mPressure];
 	specVolume = 1/density;
-	NSLog(@"density2");
 	
 	intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
 														   andDensity:density]/1000.0;
