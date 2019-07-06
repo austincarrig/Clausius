@@ -15,7 +15,7 @@
 	// Override point for customization after application launch.
 	
 	NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-	NSString *zpath = [bundleRoot stringByAppendingString:@"/Data Files"];
+	NSString *zpath = [bundleRoot stringByAppendingString:@"/Contents/Resources/Data Files"];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSArray *dirContents = [fm contentsOfDirectoryAtPath:zpath error:nil];
 	NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self ENDSWITH '.csv'"];
@@ -143,7 +143,7 @@
     if (!coordinator) {
         return nil;
     }
-    _managedObjectContext = [[NSManagedObjectContext alloc] init];
+	_managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     return _managedObjectContext;
 }

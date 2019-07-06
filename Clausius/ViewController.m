@@ -78,7 +78,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 	shouldFineTune = 0;
 	hasFineTuned = NO;
 	
-	[[UIApplication sharedApplication] setStatusBarHidden:YES];
 	[self.navigationController setNavigationBarHidden:YES];
 	
 	[self.containerView addSubview:self.chartView];
@@ -1027,7 +1026,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)chooseNewFileWithChartType:(NSString *)chartType valueType:(NSString *)valueType
 {
 	NSString *bundleRoot = [[NSBundle mainBundle] bundlePath];
-	NSString *path = [bundleRoot stringByAppendingString:@"/Data Files"];
+	NSString *path = [bundleRoot stringByAppendingString:@"/Contents/Resources/Data Files"];
 	NSFileManager *fm = [NSFileManager defaultManager];
 	NSArray *dirContents = [fm contentsOfDirectoryAtPath:path error:nil];
 	NSPredicate *fltr = [NSPredicate predicateWithFormat:[NSString stringWithFormat:@"self ENDSWITH '.csv' AND self BEGINSWITH '%@_Super_%@'",chartType,valueType]];
