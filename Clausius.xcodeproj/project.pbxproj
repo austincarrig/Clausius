@@ -23,18 +23,11 @@
 		492A988A1B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */; };
 		492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 492A98821B574CAC00F061E8 /* Legend.jpeg */; };
 		492A988E1B574CB400F061E8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 492A988D1B574CB400F061E8 /* Images.xcassets */; };
-		492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 492A98B51B574D5600F061E8 /* Clausius.xcdatamodel */; };
-		492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */; };
-		492A98CA1B574D5600F061E8 /* ImportedFile+Fetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98BA1B574D5600F061E8 /* ImportedFile+Fetch.m */; };
-		492A98CB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */; };
-		492A98CC1B574D5600F061E8 /* ImportedFile+Create.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98BD1B574D5600F061E8 /* ImportedFile+Create.m */; };
-		492A98CD1B574D5600F061E8 /* ImportedFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98BF1B574D5600F061E8 /* ImportedFile.m */; };
-		492A98D01B574D5600F061E8 /* SaturatedPlotPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98C51B574D5600F061E8 /* SaturatedPlotPoint.m */; };
 		492A98D81B574DC700F061E8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98D41B574DC700F061E8 /* AppDelegate.m */; };
 		492A98D91B574DC700F061E8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98D61B574DC700F061E8 /* ViewController.m */; };
 		492A98DA1B574DC700F061E8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 492A98D71B574DC700F061E8 /* Main.storyboard */; };
 		492A98DD1B574DD900F061E8 /* H2O_Wagner_Pruss.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98DC1B574DD900F061E8 /* H2O_Wagner_Pruss.m */; };
-		492A98E11B574DF100F061E8 /* UIColor+Mvuke.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */; };
+		492A98E11B574DF100F061E8 /* UIColor+Clausius.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98DF1B574DF100F061E8 /* UIColor+Clausius.m */; };
 		492A98E21B574DF100F061E8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 492A98E01B574DF100F061E8 /* LaunchScreen.xib */; };
 		4932C0471C9B54EB009B45F5 /* RUAPopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4932C0461C9B54EB009B45F5 /* RUAPopupView.m */; };
 		4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 4941C4E51B6075BA00E163C8 /* MASCompositeConstraint.m */; };
@@ -97,20 +90,6 @@
 		492A98811B574CAC00F061E8 /* ClausiusiPadSpotlight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadSpotlight@2x.png"; sourceTree = "<group>"; };
 		492A98821B574CAC00F061E8 /* Legend.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Legend.jpeg; sourceTree = "<group>"; };
 		492A988D1B574CB400F061E8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		492A98B51B574D5600F061E8 /* Clausius.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Clausius.xcdatamodel; sourceTree = "<group>"; };
-		492A98B61B574D5600F061E8 /* CoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreData.h; sourceTree = "<group>"; };
-		492A98B71B574D5600F061E8 /* SaturatedPlotPoint+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SaturatedPlotPoint+Create.h"; sourceTree = "<group>"; };
-		492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SaturatedPlotPoint+Create.m"; sourceTree = "<group>"; };
-		492A98B91B574D5600F061E8 /* ImportedFile+Fetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ImportedFile+Fetch.h"; sourceTree = "<group>"; };
-		492A98BA1B574D5600F061E8 /* ImportedFile+Fetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ImportedFile+Fetch.m"; sourceTree = "<group>"; };
-		492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SaturatedPlotPoint+Fetch.m"; sourceTree = "<group>"; };
-		492A98BC1B574D5600F061E8 /* ImportedFile+Create.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ImportedFile+Create.h"; sourceTree = "<group>"; };
-		492A98BD1B574D5600F061E8 /* ImportedFile+Create.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ImportedFile+Create.m"; sourceTree = "<group>"; };
-		492A98BE1B574D5600F061E8 /* ImportedFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportedFile.h; sourceTree = "<group>"; };
-		492A98BF1B574D5600F061E8 /* ImportedFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportedFile.m; sourceTree = "<group>"; };
-		492A98C41B574D5600F061E8 /* SaturatedPlotPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedPlotPoint.h; sourceTree = "<group>"; };
-		492A98C51B574D5600F061E8 /* SaturatedPlotPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SaturatedPlotPoint.m; sourceTree = "<group>"; };
-		492A98C61B574D5600F061E8 /* SaturatedPlotPoint+Fetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SaturatedPlotPoint+Fetch.h"; sourceTree = "<group>"; };
 		492A98D31B574DC700F061E8 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		492A98D41B574DC700F061E8 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		492A98D51B574DC700F061E8 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -118,8 +97,8 @@
 		492A98D71B574DC700F061E8 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		492A98DB1B574DD900F061E8 /* H2O_Wagner_Pruss.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H2O_Wagner_Pruss.h; sourceTree = "<group>"; };
 		492A98DC1B574DD900F061E8 /* H2O_Wagner_Pruss.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H2O_Wagner_Pruss.m; sourceTree = "<group>"; };
-		492A98DE1B574DF100F061E8 /* UIColor+Mvuke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Mvuke.h"; sourceTree = "<group>"; };
-		492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Mvuke.m"; sourceTree = "<group>"; };
+		492A98DE1B574DF100F061E8 /* UIColor+Clausius.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Clausius.h"; sourceTree = "<group>"; };
+		492A98DF1B574DF100F061E8 /* UIColor+Clausius.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Clausius.m"; sourceTree = "<group>"; };
 		492A98E01B574DF100F061E8 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		4932C0451C9B54EB009B45F5 /* RUAPopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAPopupView.h; sourceTree = "<group>"; };
 		4932C0461C9B54EB009B45F5 /* RUAPopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUAPopupView.m; sourceTree = "<group>"; };
@@ -228,7 +207,6 @@
 				4941C4E31B60752C00E163C8 /* Masonry */,
 				492A98911B574CE100F061E8 /* H2O_Wagner_Pruss */,
 				492A987A1B574C4C00F061E8 /* Images */,
-				492A988F1B574CDB00F061E8 /* Core Data */,
 				EAED30AD26C8093D00595731 /* DataFiles */,
 				492A984A1B574BCC00F061E8 /* Supporting Files */,
 			);
@@ -238,8 +216,8 @@
 		492A984A1B574BCC00F061E8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				492A98DE1B574DF100F061E8 /* UIColor+Mvuke.h */,
-				492A98DF1B574DF100F061E8 /* UIColor+Mvuke.m */,
+				492A98DE1B574DF100F061E8 /* UIColor+Clausius.h */,
+				492A98DF1B574DF100F061E8 /* UIColor+Clausius.m */,
 				4962DDF11BCB39F600034E48 /* Constants.h */,
 				4962DDEF1BCB39E500034E48 /* Constants.m */,
 				492A98E01B574DF100F061E8 /* LaunchScreen.xib */,
@@ -310,17 +288,6 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
-		492A988F1B574CDB00F061E8 /* Core Data */ = {
-			isa = PBXGroup;
-			children = (
-				492A98B51B574D5600F061E8 /* Clausius.xcdatamodel */,
-				492A98B61B574D5600F061E8 /* CoreData.h */,
-				492A98D11B574D6A00F061E8 /* ImportedFile */,
-				492A98D21B574D7700F061E8 /* SaturatedPlotPoint */,
-			);
-			name = "Core Data";
-			sourceTree = "<group>";
-		};
 		492A98911B574CE100F061E8 /* H2O_Wagner_Pruss */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,32 +295,6 @@
 				492A98DC1B574DD900F061E8 /* H2O_Wagner_Pruss.m */,
 			);
 			name = H2O_Wagner_Pruss;
-			sourceTree = "<group>";
-		};
-		492A98D11B574D6A00F061E8 /* ImportedFile */ = {
-			isa = PBXGroup;
-			children = (
-				492A98B91B574D5600F061E8 /* ImportedFile+Fetch.h */,
-				492A98BA1B574D5600F061E8 /* ImportedFile+Fetch.m */,
-				492A98BC1B574D5600F061E8 /* ImportedFile+Create.h */,
-				492A98BD1B574D5600F061E8 /* ImportedFile+Create.m */,
-				492A98BE1B574D5600F061E8 /* ImportedFile.h */,
-				492A98BF1B574D5600F061E8 /* ImportedFile.m */,
-			);
-			name = ImportedFile;
-			sourceTree = "<group>";
-		};
-		492A98D21B574D7700F061E8 /* SaturatedPlotPoint */ = {
-			isa = PBXGroup;
-			children = (
-				492A98B71B574D5600F061E8 /* SaturatedPlotPoint+Create.h */,
-				492A98B81B574D5600F061E8 /* SaturatedPlotPoint+Create.m */,
-				492A98C61B574D5600F061E8 /* SaturatedPlotPoint+Fetch.h */,
-				492A98BB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m */,
-				492A98C41B574D5600F061E8 /* SaturatedPlotPoint.h */,
-				492A98C51B574D5600F061E8 /* SaturatedPlotPoint.m */,
-			);
-			name = SaturatedPlotPoint;
 			sourceTree = "<group>";
 		};
 		4941C4E31B60752C00E163C8 /* Masonry */ = {
@@ -535,11 +476,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				492A98D91B574DC700F061E8 /* ViewController.m in Sources */,
-				492A98CB1B574D5600F061E8 /* SaturatedPlotPoint+Fetch.m in Sources */,
 				4962DDF01BCB39E500034E48 /* Constants.m in Sources */,
-				492A98CD1B574D5600F061E8 /* ImportedFile.m in Sources */,
 				4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */,
-				492A98E11B574DF100F061E8 /* UIColor+Mvuke.m in Sources */,
+				492A98E11B574DF100F061E8 /* UIColor+Clausius.m in Sources */,
 				4941C5011B6075BA00E163C8 /* MASViewAttribute.m in Sources */,
 				4932C0471C9B54EB009B45F5 /* RUAPopupView.m in Sources */,
 				498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */,
@@ -553,21 +492,16 @@
 				492A984D1B574BCC00F061E8 /* main.m in Sources */,
 				4941C5061B6075BA00E163C8 /* ViewController+MASAdditions.m in Sources */,
 				492A98751B574BEA00F061E8 /* LocationIndicatorImageView.m in Sources */,
-				492A98D01B574D5600F061E8 /* SaturatedPlotPoint.m in Sources */,
-				492A98C91B574D5600F061E8 /* SaturatedPlotPoint+Create.m in Sources */,
-				492A98CA1B574D5600F061E8 /* ImportedFile+Fetch.m in Sources */,
 				492A98DD1B574DD900F061E8 /* H2O_Wagner_Pruss.m in Sources */,
 				49DCB2871FA6689A00F7D608 /* RUASpaceController.m in Sources */,
 				4941C4FD1B6075BA00E163C8 /* MASCompositeConstraint.m in Sources */,
 				4941C5031B6075BA00E163C8 /* NSArray+MASAdditions.m in Sources */,
-				492A98C81B574D5600F061E8 /* Clausius.xcdatamodel in Sources */,
 				492A98761B574BEA00F061E8 /* DisplayView.m in Sources */,
 				4941C5051B6075BA00E163C8 /* View+MASAdditions.m in Sources */,
 				4941C5021B6075BA00E163C8 /* MASViewConstraint.m in Sources */,
 				4962DDF41BCB73F700034E48 /* RUChart.m in Sources */,
 				49643C501BCD64660050B686 /* RUGraph.m in Sources */,
 				4941C4FE1B6075BA00E163C8 /* MASConstraint.m in Sources */,
-				492A98CC1B574D5600F061E8 /* ImportedFile+Create.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

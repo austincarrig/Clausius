@@ -1663,17 +1663,14 @@
     NSAssert(!(pressure > maxP), @"Pressure too large");
 
     if ((int)pressure == (int)minP) {
-        NSLog(@"%d",count);
         return min;
     }
 
     if ((int)pressure == (int)maxP) {
-        NSLog(@"%d",count);
         return max;
     }
 
     if ((int)pressure == (int)middleP) {
-        NSLog(@"%d",count);
         return middle;
     }
 

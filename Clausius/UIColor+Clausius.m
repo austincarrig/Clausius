@@ -1,14 +1,14 @@
 //
-//  UIColor+Mvuke.m
-//  Mvuke
+//  UIColor+Clausius.m
+//  Clausius
 //
 //  Created by Austin Carrig on 6/5/15.
 //  Copyright (c) 2015 Austin. All rights reserved.
 //
 
-#import "UIColor+Mvuke.h"
+#import "UIColor+Clausius.h"
 
-@implementation UIColor (Mvuke)
+@implementation UIColor (Clausius)
 
 + (UIColor *)primaryColor
 {

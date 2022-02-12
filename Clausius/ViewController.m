@@ -1,4 +1,12 @@
-
+/*
+ * FILE : ViewController.m
+ *
+ * Created by Austin Carrig in 2015
+ * Getting a scrubbing in 2022
+ *
+ * Has way too much code in it...
+ *
+ */
 
 #import "AppDelegate.h"
 #import "ViewController.h"
@@ -8,8 +16,7 @@
 #import "Constants.h"
 
 #import "Masonry.h"
-#import "UIColor+Mvuke.h"
-#import "CoreData.h"
+#import "UIColor+Clausius.h"
 #import "H2O_Wagner_Pruss.h"
 
 #import "RUDataSelector.h"
@@ -96,7 +103,6 @@ const static float X_TOTAL_CHANGE = 0.01;
         make.edges.equalTo(self.containerView);
     }];
 
-    //    self.secondContainerView.backgroundColor = UIColor.greenColor;
     if (self.secondContainerView.superview != nil && self.chartView.image != nil) {
         [self.secondContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.containerView).with.offset(20.0);
@@ -107,7 +113,7 @@ const static float X_TOTAL_CHANGE = 0.01;
     }
 
     [self.secondContainerView addSubview:self.displayView];
-/*
+
     [self.secondContainerView addSubview:self.buttonView_0];
 
     [self.buttonView_0 mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -155,7 +161,7 @@ const static float X_TOTAL_CHANGE = 0.01;
             make.left.equalTo(self.secondContainerView).with.offset(100.0f);
         }
     }];
-*/
+
     [self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:@"ts"];
 
     [_buttonView_0 setBackgroundImage:[UIImage imageNamed:@"SelectButton"] forState:UIControlStateNormal];
@@ -332,10 +338,8 @@ const static float X_TOTAL_CHANGE = 0.01;
     [_buttonView_1 setTitleColor:UIColor.darkGrayColor forState:UIControlStateNormal];
 
     if([UIDevice currentDevice].userInterfaceIdiom==UIUserInterfaceIdiomPad) {
-        NSLog(@"IPAD");
         _buttonView_1.titleLabel.font = [UIFont systemFontOfSize:20];
     }else{
-        NSLog(@"IPHONE");
         _buttonView_1.titleLabel.font = [UIFont systemFontOfSize:12];
     }
 
@@ -352,11 +356,9 @@ const static float X_TOTAL_CHANGE = 0.01;
     [_buttonView_2 setTitle:@"P-v" forState:UIControlStateNormal];
 
     [_buttonView_2 setTitleColor:UIColor.darkGrayColor forState:UIControlStateNormal];
-    if([UIDevice currentDevice].userInterfaceIdiom==UIUserInterfaceIdiomPad) {
-        NSLog(@"IPAD");
+    if([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         _buttonView_2.titleLabel.font = [UIFont systemFontOfSize:20];
     }else{
-        NSLog(@"IPHONE");
         _buttonView_2.titleLabel.font = [UIFont systemFontOfSize:12];
     }
 
@@ -403,7 +405,7 @@ const static float X_TOTAL_CHANGE = 0.01;
     }
     else
     {
-        NSLog(@"Something wrong with title");
+        NSLog(@"%s:%d - Something wrong with title", (strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1, __LINE__);
     }
 }
 
@@ -634,13 +636,13 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 }
 
+// TODO: This function is used anymore, but we should check it against Aarav's work to make sure he did everything okay...
 /*
 - (void)resetChart:(UIScreenEdgePanGestureRecognizer *)recog
 {
     [self.popupView.layer removeAllAnimations];
     if (recog.state == UIGestureRecognizerStateEnded) {
         NSInteger index = [self.chartValueTypes indexOfObject:self.chartView.chart.valueType];
-        NSLog(@"%@, %@", self.chartValueTypes[((index+1)+3)%3], self.chartValueTypes[((index-1)+3)%3]);
 
         NSString *type;
 
@@ -903,7 +905,7 @@ const static float X_TOTAL_CHANGE = 0.01;
                        withEventType:(NSString *)eventType
                       inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-    AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    // AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
     // Get scales for both axes in units of [baseUnit/pixel]
     // If using log10f() the axis is log, converts value to exponent (i.e. b in value = 10^b, therefore b = log10(value))
@@ -918,26 +920,24 @@ const static float X_TOTAL_CHANGE = 0.01;
 
     if (pressure < P_CRITICAL) {
         temp = ((NSNumber *)[self.wagPruss accurateTemperatureVapourLiquidWithPressure:pressure/1000.0].firstObject).floatValue;
-        SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
-                                                                                          inContext:appDel.managedObjectContext];
 
-        if (specVol < saturatedPoint.v_f.floatValue) {
+        // Load saturated data for temperature from csv...
+
+        if (NO) { //specVol < saturatedPoint.v_f.floatValue) {
             // Compressed Liquid Region
-            intEnergy = saturatedPoint.u_f.floatValue;
-            enthalpy = saturatedPoint.h_f.floatValue;
-            entropy = saturatedPoint.s_f.floatValue;
-        } else if (specVol >= saturatedPoint.v_f.floatValue && specVol <= saturatedPoint.v_g.floatValue) {
+            // intEnergy = saturatedPoint.u_f.floatValue;
+            // enthalpy = saturatedPoint.h_f.floatValue;
+            // entropy = saturatedPoint.s_f.floatValue;
+        } else if (NO) { //(specVol >= saturatedPoint.v_f.floatValue && specVol <= saturatedPoint.v_g.floatValue) {
             // Saturated Vapor (Mixture) Region
-            quality = (specVol - [saturatedPoint.v_f floatValue])/([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
-            intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
-            enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
-            entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
+            // quality = (specVol - [saturatedPoint.v_f floatValue])/([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
+            // intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
+            // enthalpy = [saturatedPoint.h_f floatValue] + quality*([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+            // entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
         } else {
             // Superheated Region below P_CRITICAL
 
             NSArray *pressureKeys = [self.superheatedMappingKeys copy];
-
-            NSLog(@"array: %@",pressureKeys);
 
             int loc = 0;
             BOOL locationReached = NO;
@@ -985,8 +985,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 
             double kTemperature = temp + 273.15;
 
-            NSLog(@"%f",temp);
-
             intEnergy = [self.wagPruss calculateInternalEnergyWithTemperature:kTemperature
                                                                    andDensity:density]/1000.0;
             enthalpy = [self.wagPruss calculateEnthalpyWithTemperature:kTemperature
@@ -1016,6 +1014,7 @@ const static float X_TOTAL_CHANGE = 0.01;
         return;
     }
 
+    // BELOW IS FOR SUPERHEATED, ABOVE P_CRITICAL
     NSArray *pressureKeys = [self.superheatedMappingKeys copy];
 
     int loc = 0;
@@ -1092,7 +1091,7 @@ const static float X_TOTAL_CHANGE = 0.01;
                        withEventType:(NSString *)eventType
                       inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    // AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
     CGFloat primaryScale = ([self primaryAxisEndingValue] - [self primaryAxisStartingValue])/locationIndicatorImageView.frame.size.width;
     CGFloat secondaryScale = (log10f([self secondaryAxisEndingValue]) - log10f([self secondaryAxisStartingValue]))/locationIndicatorImageView.frame.size.height;
@@ -1105,21 +1104,21 @@ const static float X_TOTAL_CHANGE = 0.01;
     @try {
         if (pressure < P_CRITICAL) {
             temp = [self.wagPruss temperatureVapourLiquidWithPressure:pressure];
-            SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)(temp - 273.15)
-                                                                                              inContext:appDelegate.managedObjectContext];
 
-            if (enthalpy < saturatedPoint.h_f.floatValue) {
+            // Load saturated data for temperature from csv...
+
+            if (NO) {//(enthalpy < saturatedPoint.h_f.floatValue) {
                 // Compressed Liquid Region
-                specVol = saturatedPoint.v_f.floatValue;
-                intEnergy = enthalpy - pressure*specVol;
-                entropy = saturatedPoint.s_f.floatValue;
-            } else if (enthalpy >= saturatedPoint.h_f.floatValue && enthalpy <= saturatedPoint.h_g.floatValue) {
+                // specVol = saturatedPoint.v_f.floatValue;
+                // intEnergy = enthalpy - pressure*specVol;
+                // entropy = saturatedPoint.s_f.floatValue;
+            } else if (NO) {//(enthalpy >= saturatedPoint.h_f.floatValue && enthalpy <= saturatedPoint.h_g.floatValue) {
                 // Saturated Vapor (Mixture) Region
-                quality = (enthalpy - [saturatedPoint.h_f floatValue])/([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
-                specVol = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
-                intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
-                entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
-            } else if (enthalpy > saturatedPoint.h_g.floatValue) {
+                // quality = (enthalpy - [saturatedPoint.h_f floatValue])/([saturatedPoint.h_g floatValue] - [saturatedPoint.h_f floatValue]);
+                // specVol = [saturatedPoint.v_f floatValue] + quality*([saturatedPoint.v_g floatValue] - [saturatedPoint.v_f floatValue]);
+                // intEnergy = [saturatedPoint.u_f floatValue] + quality*([saturatedPoint.u_g floatValue] - [saturatedPoint.u_f floatValue]);
+                // entropy = [saturatedPoint.s_f floatValue] + quality*([saturatedPoint.s_g floatValue] - [saturatedPoint.s_f floatValue]);
+            } else if (enthalpy > 0.0) {//saturatedPoint.h_g.floatValue) {
                 // Superheated Vapor Region
 
                 NSArray *pressureKeys = [self.superheatedMappingKeys copy];
@@ -1205,7 +1204,7 @@ const static float X_TOTAL_CHANGE = 0.01;
                 lowArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc];
             }
             @catch(NSException* e) {
-                NSLog(@"self.superheatedValues attempted to be accessed with invalid loc %d", loc);
+                NSLog(@"%s:%d - self.superheatedValues attempted to be accessed with invalid loc %d", (strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1, __LINE__, loc);
                 @throw e;
             }
             //NSArray *highArray = (NSArray *)[self.superheatedValues objectAtIndex:(NSUInteger)loc+1];
@@ -1262,7 +1261,6 @@ const static float X_TOTAL_CHANGE = 0.01;
                     temp = lowTemp + weight*(highTemp - lowTemp);
                 }
                 @catch(NSException* e) {
-                    NSLog(@"HERE?");
                     @throw e;
                 }
 
@@ -1271,7 +1269,6 @@ const static float X_TOTAL_CHANGE = 0.01;
                     temp = ((NSNumber *)[self.superheatedKeys objectAtIndex:lowArrayLoc]).floatValue;
                 }
                 @catch(NSException* e) {
-                    NSLog(@"HERE!?!");
                     @throw e;
                 }
             }
@@ -1292,7 +1289,7 @@ const static float X_TOTAL_CHANGE = 0.01;
         }
     }
     @catch(NSException* e) {
-        NSLog(@"Exception caught. Details:");
+        NSLog(@"%s:%d - Exception caught. Details:", (strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1, __LINE__);
         NSLog(@"%@: %@", e.name, e.reason);
     }
 
@@ -1361,7 +1358,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)calculateNewValuesWithTemperature:(float)temperature
                                   entropy:(float)entropy
 {
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    // AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
     // Check if finger is above or below critical temperature (379.3 C)
     if (temperature > T_CRITICAL) {
@@ -1371,27 +1368,33 @@ const static float X_TOTAL_CHANGE = 0.01;
     } else if (temperature <= T_CRITICAL) {
         if ([[NSString stringWithFormat:@"%.1f",temperature] floatValue] == T_CRITICAL) {
             // Saturated at 379.3 C
-            SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:[[NSString stringWithFormat:@"%.1f",temperature] floatValue]
-                                                                                              inContext:appDelegate.managedObjectContext];
+            // Critical point...
 
+            // Get CSV values for temperature...
 
-            [self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
-                                               temperature:temperature
-                                                   entropy:entropy];
+            // Use values, temperature, and entropy to get other values...
+            //[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
+            //                                   temperature:temperature
+            //                                       entropy:entropy];
         } else {
-            SaturatedPlotPoint *saturatedPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:temperature
-                                                                                              inContext:appDelegate.managedObjectContext];
-            if (entropy < [saturatedPoint.s_f floatValue]) {
+            // Get CSV values for temperature...
+
+            if (entropy < 0.0) {//[saturatedPoint.s_f floatValue]) {
                 // Compressed Liquid
-                [self calculateCompressedLiquidWithSaturatedPlotPoint:saturatedPoint
-                                                          temperature:temperature
-                                                              entropy:entropy];
-            } else if (entropy > [saturatedPoint.s_f floatValue] && entropy < [saturatedPoint.s_g floatValue]) {
+
+                // Use values, temperature, and entropy to get other values...
+                // [self calculateCompressedLiquidWithSaturatedPlotPoint:saturatedPoint
+                //                                           temperature:temperature
+                //                                               entropy:entropy];
+            } else if (entropy > 0.0 && entropy < 0.0) {
+            // } else if (entropy > [saturatedPoint.s_f floatValue] && entropy < [saturatedPoint.s_g floatValue]) {
                 // Saturated
-                [self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
-                                                   temperature:temperature
-                                                       entropy:entropy];
-            } else if (entropy > [saturatedPoint.s_g floatValue]) {
+
+                // Use values, temperature, and entropy to get other values...
+                //[self calculateSaturatedWithSaturatedPlotPoint:saturatedPoint
+                //                                   temperature:temperature
+                //                                       entropy:entropy];
+            } else if (entropy > 0.0) {//[saturatedPoint.s_g floatValue]) {
                 // Superheated below 379.3 C
                 [self calculateSuperheatedWithTemperature:temperature
                                                   entropy:entropy];
@@ -1399,7 +1402,7 @@ const static float X_TOTAL_CHANGE = 0.01;
         }
     }
 }
-
+/*
 - (void)calculateCompressedLiquidWithSaturatedPlotPoint:(SaturatedPlotPoint *)saturatedPoint
                                             temperature:(float)temperature
                                                 entropy:(float)entropy
@@ -1424,7 +1427,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 
     currentRegion = kCurrentRegionCompressedLiquid;
 }
-
+*/
+/*
 - (void)calculateSaturatedWithSaturatedPlotPoint:(SaturatedPlotPoint *)saturatedPoint
                                      temperature:(float)temperature
                                          entropy:(float)entropy
@@ -1457,7 +1461,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 
     currentRegion = kCurrentRegionSaturated;
 }
-
+*/
 - (void)calculateSuperheatedWithTemperature:(float)temperature
                                     entropy:(float)entropy
 {
@@ -1598,10 +1602,11 @@ const static float X_TOTAL_CHANGE = 0.01;
             float newPressure = currentPressure + dP;
 
             if ([currentRegion isEqualToString:kCurrentRegionSaturated]) {
-                AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                // AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
 
-                currentTemp = [SaturatedPlotPoint fetchTemperatureWithPressure:newPressure
-                                                                     inContext:appDel.managedObjectContext];
+                // get temp from CSV using pressure
+                // currentTemp = [SaturatedPlotPoint fetchTemperatureWithPressure:newPressure
+                //                                                      inContext:appDel.managedObjectContext];
 
                 [self calculateNewValuesWithTemperature:currentTemp
                                                 entropy:currentEntropy];
@@ -1646,13 +1651,16 @@ const static float X_TOTAL_CHANGE = 0.01;
             float newQuality = currentQuality + dx;
             if (newQuality <= 100.0 && newQuality >= 0.0) {
                 if ([currentRegion isEqualToString:kCurrentRegionSaturated]) {
-                    AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                    // AppDelegate *appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                     currentQuality = newQuality;
 
-                    SaturatedPlotPoint *plotPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)currentTemp
-                                                                                                 inContext:appDel.managedObjectContext];
-                    float s_f = plotPoint.s_f.floatValue;
-                    float s_g = plotPoint.s_g.floatValue;
+                    // SaturatedPlotPoint *plotPoint = [SaturatedPlotPoint fetchSaturatedPointWithTemperature:(int)currentTemp
+                    //                                                                              inContext:appDel.managedObjectContext];
+                    // float s_f = plotPoint.s_f.floatValue;
+                    // float s_g = plotPoint.s_g.floatValue;
+
+                    float s_f = 0.0;
+                    float s_g = 1.0;
 
                     currentEntropy = s_f + newQuality*(s_g - s_f);
 

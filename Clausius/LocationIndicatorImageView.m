@@ -7,7 +7,7 @@
 //
 
 #import "LocationIndicatorImageView.h"
-#import "UIColor+Mvuke.h"
+#import "UIColor+Clausius.h"
 
 static const CGFloat smallOuterRadius = 9.0f;
 static const CGFloat innerRadius = 6.5f;
@@ -335,7 +335,7 @@ unsigned char *rawData;
     } else if (middleAlpha > 0.0) {
         return (CGFloat)[self checkMiddleAlphaWithSetOfColors:alphas withFirstIndex:first withLastIndex:middleIndex];
     } else {
-        NSLog(@"Alg. ERROR: No alpha value found");
+        NSLog(@"%s:%d - Alg. ERROR: No alpha value found", (strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1, __LINE__);
         return 0.0;
     }
 }
