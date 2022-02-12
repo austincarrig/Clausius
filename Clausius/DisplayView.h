@@ -51,12 +51,12 @@
  *  Used to update all the number fields in the display
  */
 -(void)updateTextFieldsWithTemperature:(NSNumber *)temperature
-							  pressure:(NSNumber *)pressure
-						specificVolume:(NSNumber *)specificVolume
-						internalEnergy:(NSNumber *)internalEnergy
-							  enthalpy:(NSNumber *)enthalpy
-							   entropy:(NSNumber *)entropy
-							   quality:(NSNumber *)quality;
+    	    	    	      pressure:(NSNumber *)pressure
+	    	    	    specificVolume:(NSNumber *)specificVolume
+	    	    	    internalEnergy:(NSNumber *)internalEnergy
+    	    	    	      enthalpy:(NSNumber *)enthalpy
+    	    	    	       entropy:(NSNumber *)entropy
+    	    	    	       quality:(NSNumber *)quality;
 
 /**
  *  Used to update the title if the graph type chanegs

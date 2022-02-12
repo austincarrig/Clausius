@@ -10,5 +10,5 @@
 
 @interface SaturatedPlotPoint (Create)
 + (SaturatedPlotPoint *)createSatPlotPointWithType:(NSString *)type
-										 inContext:(NSManagedObjectContext *)context;
+	    	    	    	    	     inContext:(NSManagedObjectContext *)context;
 @end

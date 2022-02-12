@@ -12,12 +12,12 @@
 
 + (UIColor *)primaryColor
 {
-	return [UIColor colorWithRed:255.0/255.0 green:127.0/255.0 blue:0.0 alpha:1.0];
+    return [UIColor colorWithRed:255.0/255.0 green:127.0/255.0 blue:0.0 alpha:1.0];
 }
 
 + (UIColor *)titleColor
 {
-	return [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5];
+    return [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.5];
 }
 
 @end

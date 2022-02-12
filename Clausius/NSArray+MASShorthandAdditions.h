@@ -11,7 +11,7 @@
 #ifdef MAS_SHORTHAND
 
 /**
- *	Shorthand array additions without the 'mas_' prefixes,
+ *    Shorthand array additions without the 'mas_' prefixes,
  *  only enabled if MAS_SHORTHAND is defined
  */
 @interface NSArray (MASShorthandAdditions)

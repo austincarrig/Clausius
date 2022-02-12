@@ -18,21 +18,21 @@
 @interface MASViewConstraint : MASConstraint <NSCopying>
 
 /**
- *	First item/view and first attribute of the NSLayoutConstraint
+ *    First item/view and first attribute of the NSLayoutConstraint
  */
 @property (nonatomic, strong, readonly) MASViewAttribute *firstViewAttribute;
 
 /**
- *	Second item/view and second attribute of the NSLayoutConstraint
+ *    Second item/view and second attribute of the NSLayoutConstraint
  */
 @property (nonatomic, strong, readonly) MASViewAttribute *secondViewAttribute;
 
 /**
- *	initialises the MASViewConstraint with the first part of the equation
+ *    initialises the MASViewConstraint with the first part of the equation
  *
- *	@param	firstViewAttribute	view.mas_left, view.mas_width etc.
+ *    @param    firstViewAttribute    view.mas_left, view.mas_width etc.
  *
- *	@return	a new view constraint
+ *    @return    a new view constraint
  */
 - (id)initWithFirstViewAttribute:(MASViewAttribute *)firstViewAttribute;
 

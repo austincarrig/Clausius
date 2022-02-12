@@ -11,13 +11,13 @@
 #import "MASViewAttribute.h"
 
 /**
- *	Provides constraint maker block
+ *    Provides constraint maker block
  *  and convience methods for creating MASViewAttribute which are view + NSLayoutAttribute pairs
  */
 @interface MAS_VIEW (MASAdditions)
 
 /**
- *	following properties return a new MASViewAttribute with current view and appropriate NSLayoutAttribute
+ *    following properties return a new MASViewAttribute with current view and appropriate NSLayoutAttribute
  */
 @property (nonatomic, strong, readonly) MASViewAttribute *mas_left;
 @property (nonatomic, strong, readonly) MASViewAttribute *mas_top;
@@ -46,16 +46,16 @@
 #endif
 
 /**
- *	a key to associate with this view
+ *    a key to associate with this view
  */
 @property (nonatomic, strong) id mas_key;
 
 /**
- *	Finds the closest common superview between this view and another view
+ *    Finds the closest common superview between this view and another view
  *
- *	@param	view	other view
+ *    @param    view    other view
  *
- *	@return	returns nil if common superview could not be found
+ *    @return    returns nil if common superview could not be found
  */
 - (instancetype)mas_closestCommonSuperview:(MAS_VIEW *)view;
 

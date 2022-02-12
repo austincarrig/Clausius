@@ -9,8 +9,8 @@
 #import "RUGraph.h"
 
 typedef NS_ENUM(int, RUChartDisplayPosition) {
-	RUChartDisplayPositionLeft = 0,
-	RUChartDisplayPositionRight
+    RUChartDisplayPositionLeft = 0,
+    RUChartDisplayPositionRight
 };
 
 @interface RUChart : RUGraph

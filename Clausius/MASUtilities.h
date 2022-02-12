@@ -41,7 +41,7 @@
 #endif
 
 /**
- *	Allows you to attach keys to objects matching the variable names passed.
+ *    Allows you to attach keys to objects matching the variable names passed.
  *
  *  view1.mas_key = @"view1", view2.mas_key = @"view2";
  *

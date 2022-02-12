@@ -10,16 +10,16 @@
 #import "MASUtilities.h"
 
 /**
- *	A group of MASConstraint objects
+ *    A group of MASConstraint objects
  */
 @interface MASCompositeConstraint : MASConstraint
 
 /**
- *	Creates a composite with a predefined array of children
+ *    Creates a composite with a predefined array of children
  *
- *	@param	children	child MASConstraints
+ *    @param    children    child MASConstraints
  *
- *	@return	a composite constraint
+ *    @return    a composite constraint
  */
 - (id)initWithChildren:(NSArray *)children;
 

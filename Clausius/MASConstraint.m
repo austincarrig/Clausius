@@ -18,8 +18,8 @@
 #pragma mark - Init
 
 - (id)init {
-	NSAssert(![self isMemberOfClass:[MASConstraint class]], @"MASConstraint is an abstract class, you should not instantiate it directly.");
-	return [super init];
+    NSAssert(![self isMemberOfClass:[MASConstraint class]], @"MASConstraint is an abstract class, you should not instantiate it directly.");
+    return [super init];
 }
 
 #pragma mark - NSLayoutRelation proxies
