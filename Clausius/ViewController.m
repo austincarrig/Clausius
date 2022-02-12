@@ -158,21 +158,6 @@ const static float X_TOTAL_CHANGE = 0.01;
 */
     [self chooseNewFileWithChartType:self.chartView.chart.substanceType valueType:@"ts"];
 
-    UIScreenEdgePanGestureRecognizer *rightRecog = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self
-                                                                                                     action:@selector(resetChart:)];
-    [rightRecog setEdges:UIRectEdgeRight];
-    [rightRecog setCancelsTouchesInView:YES];
-
-    [self.chartView addGestureRecognizer:rightRecog];
-
-    UIScreenEdgePanGestureRecognizer *leftRecog = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self
-                                                                                                    action:@selector(resetChart:)];
-
-    [leftRecog setEdges:UIRectEdgeLeft];
-    [leftRecog setCancelsTouchesInView:YES];
-
-    [self.chartView addGestureRecognizer:leftRecog];
-
     [_buttonView_0 setBackgroundImage:[UIImage imageNamed:@"SelectButton"] forState:UIControlStateNormal];
     [_buttonView_1 setBackgroundImage:[UIImage imageNamed:@"Unselect"] forState:UIControlStateNormal];
     [_buttonView_2 setBackgroundImage:[UIImage imageNamed:@"Unselect"] forState:UIControlStateNormal];
