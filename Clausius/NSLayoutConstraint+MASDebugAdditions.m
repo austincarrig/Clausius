@@ -43,7 +43,7 @@
             @(NSLayoutAttributeCenterX)  : @"centerX",
             @(NSLayoutAttributeCenterY)  : @"centerY",
             @(NSLayoutAttributeBaseline) : @"baseline",
-            
+
 #if TARGET_OS_IPHONE
             @(NSLayoutAttributeLeftMargin)           : @"leftMargin",
             @(NSLayoutAttributeRightMargin)          : @"rightMargin",
@@ -54,9 +54,9 @@
             @(NSLayoutAttributeCenterXWithinMargins) : @"centerXWithinMargins",
             @(NSLayoutAttributeCenterYWithinMargins) : @"centerYWithinMargins",
 #endif
-            
+
         };
-    
+
     });
     return descriptionMap;
 }
@@ -117,11 +117,11 @@
     if (self.secondAttribute != NSLayoutAttributeNotAnAttribute) {
         [description appendFormat:@".%@", [self.class.layoutAttributeDescriptionsByValue objectForKey:@(self.secondAttribute)]];
     }
-    
+
     if (self.multiplier != 1) {
         [description appendFormat:@" * %g", self.multiplier];
     }
-    
+
     if (self.secondAttribute == NSLayoutAttributeNotAnAttribute) {
         [description appendFormat:@" %g", self.constant];
     } else {

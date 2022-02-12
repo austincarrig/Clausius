@@ -55,11 +55,11 @@ static char kInstalledConstraintsKey;
 - (id)initWithFirstViewAttribute:(MASViewAttribute *)firstViewAttribute {
     self = [super init];
     if (!self) return nil;
-    
+
     _firstViewAttribute = firstViewAttribute;
     self.layoutPriority = MASLayoutPriorityRequired;
     self.layoutMultiplier = 1;
-    
+
     return self;
 }
 
@@ -137,7 +137,7 @@ static char kInstalledConstraintsKey;
     return ^id(CGFloat multiplier) {
         NSAssert(!self.hasBeenInstalled,
                  @"Cannot modify constraint multiplier after it has been installed");
-        
+
         self.layoutMultiplier = multiplier;
         return self;
     };
@@ -160,7 +160,7 @@ static char kInstalledConstraintsKey;
     return ^id(MASLayoutPriority priority) {
         NSAssert(!self.hasBeenInstalled,
                  @"Cannot modify constraint priority after it has been installed");
-        
+
         self.layoutPriority = priority;
         return self;
     };
@@ -312,7 +312,7 @@ static char kInstalledConstraintsKey;
     if (self.hasBeenInstalled) {
         return;
     }
-    
+
     MAS_VIEW *firstLayoutItem = self.firstViewAttribute.item;
     NSLayoutAttribute firstLayoutAttribute = self.firstViewAttribute.layoutAttribute;
     MAS_VIEW *secondLayoutItem = self.secondViewAttribute.item;
@@ -325,7 +325,7 @@ static char kInstalledConstraintsKey;
         secondLayoutItem = self.firstViewAttribute.view.superview;
         secondLayoutAttribute = firstLayoutAttribute;
     }
-    
+
     MASLayoutConstraint *layoutConstraint
         = [MASLayoutConstraint constraintWithItem:firstLayoutItem
                                         attribute:firstLayoutAttribute
@@ -334,10 +334,10 @@ static char kInstalledConstraintsKey;
                                         attribute:secondLayoutAttribute
                                        multiplier:self.layoutMultiplier
                                          constant:self.layoutConstant];
-    
+
     layoutConstraint.priority = self.layoutPriority;
     layoutConstraint.mas_key = self.mas_key;
-    
+
     if (self.secondViewAttribute.view) {
         MAS_VIEW *closestCommonSuperview = [self.firstViewAttribute.view mas_closestCommonSuperview:self.secondViewAttribute.view];
         NSAssert(closestCommonSuperview,
@@ -390,7 +390,7 @@ static char kInstalledConstraintsKey;
     [self.installedView removeConstraint:self.layoutConstraint];
     self.layoutConstraint = nil;
     self.installedView = nil;
-    
+
     [self.firstViewAttribute.view.mas_installedConstraints removeObject:self];
 }
 

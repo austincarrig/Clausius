@@ -12,7 +12,7 @@
 @property (strong, nonatomic) NSString *text;
 
 - (instancetype)initWithFrame:(CGRect)frame
-	    	    	     text:(NSString *)text;
+                         text:(NSString *)text;
 
 - (void)showAnimated:(BOOL)animated;
 - (void)hideAnimated:(BOOL)animated;

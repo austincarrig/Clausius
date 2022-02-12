@@ -25,10 +25,10 @@
 - (id)initWithView:(MAS_VIEW *)view {
     self = [super init];
     if (!self) return nil;
-    
+
     self.view = view;
     self.constraints = NSMutableArray.new;
-    
+
     return self;
 }
 
@@ -84,11 +84,11 @@
                                           | MASAttributeCenterYWithinMargins
 #endif
                                           );
-    
+
     NSAssert((attrs & anyAttribute) != 0, @"You didn't pass any attribute to make.attributes(...)");
-    
+
     NSMutableArray *attributes = [NSMutableArray array];
-    
+
     if (attrs & MASAttributeLeft) [attributes addObject:self.view.mas_left];
     if (attrs & MASAttributeRight) [attributes addObject:self.view.mas_right];
     if (attrs & MASAttributeTop) [attributes addObject:self.view.mas_top];
@@ -100,9 +100,9 @@
     if (attrs & MASAttributeCenterX) [attributes addObject:self.view.mas_centerX];
     if (attrs & MASAttributeCenterY) [attributes addObject:self.view.mas_centerY];
     if (attrs & MASAttributeBaseline) [attributes addObject:self.view.mas_baseline];
-    
+
 #if TARGET_OS_IPHONE
-    
+
     if (attrs & MASAttributeLeftMargin) [attributes addObject:self.view.mas_leftMargin];
     if (attrs & MASAttributeRightMargin) [attributes addObject:self.view.mas_rightMargin];
     if (attrs & MASAttributeTopMargin) [attributes addObject:self.view.mas_topMargin];
@@ -111,15 +111,15 @@
     if (attrs & MASAttributeTrailingMargin) [attributes addObject:self.view.mas_trailingMargin];
     if (attrs & MASAttributeCenterXWithinMargins) [attributes addObject:self.view.mas_centerXWithinMargins];
     if (attrs & MASAttributeCenterYWithinMargins) [attributes addObject:self.view.mas_centerYWithinMargins];
-    
+
 #endif
-    
+
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:attributes.count];
-    
+
     for (MASViewAttribute *a in attributes) {
         [children addObject:[[MASViewConstraint alloc] initWithFirstViewAttribute:a]];
     }
-    
+
     MASCompositeConstraint *constraint = [[MASCompositeConstraint alloc] initWithChildren:children];
     constraint.delegate = self;
     [self.constraints addObject:constraint];

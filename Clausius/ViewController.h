@@ -1,10 +1,3 @@
-//
-//  ViewController.h
-//  Mvuke
-//
-//  Created by Austin Carrig on 5/10/15.
-//  Copyright (c) 2015 Austin. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 #import "RUAAdjusterView.h"
@@ -25,5 +18,9 @@
     BOOL allowQualityScrubbing;
     NSString *currentRegion;
 }
+
+@property (strong, nonatomic) UIButton *buttonView_0;
+@property (strong, nonatomic) UIButton *buttonView_1;
+@property (strong, nonatomic) UIButton *buttonView_2;
 
 @end

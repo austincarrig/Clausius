@@ -36,10 +36,10 @@ typedef NS_ENUM(int, RUAxisScaleType) {
 @property RUAxisValueType valueType;
 
 + (RUAxis *)createAxisForDirection:(RUAxisDirection)direction
-	    	    	     valueType:(RUAxisValueType)valueType
-	    	    	     scaleType:(RUAxisScaleType)scaleType
-    	    	    	       min:(NSNumber *)min
-    	    	    	       max:(NSNumber *)max;
+                         valueType:(RUAxisValueType)valueType
+                         scaleType:(RUAxisScaleType)scaleType
+                               min:(NSNumber *)min
+                               max:(NSNumber *)max;
 
 + (NSString *)decodeForValueWithValueType:(RUAxisValueType)valueType;
 + (RUAxisValueType)encodeForValueTypeWithValue:(NSString *)value;

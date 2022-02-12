@@ -21,7 +21,7 @@
 /**
  *  Function to set an axis of the graph. The function will determine which axis it is based on RUAxis's direction property.
  *
- *  @param axis An instance of RUAxis 
+ *  @param axis An instance of RUAxis
  */
 
 - (void)setAxis:(RUAxis *)axis;
