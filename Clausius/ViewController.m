@@ -634,6 +634,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 }
 
+/*
 - (void)resetChart:(UIScreenEdgePanGestureRecognizer *)recog
 {
     [self.popupView.layer removeAllAnimations];
@@ -651,6 +652,7 @@ const static float X_TOTAL_CHANGE = 0.01;
         [self resetChartWithType:type];
     }
 }
+*/
 
 - (void)inspectInfoButtonWithChartValueType:(NSString *)type
 {
