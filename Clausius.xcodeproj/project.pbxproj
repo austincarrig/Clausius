@@ -463,7 +463,8 @@
 				TargetAttributes = {
 					492A98461B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 362H45Q9HF;
+						ProvisioningStyle = Automatic;
 					};
 					492A985F1B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
@@ -704,16 +705,16 @@
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CODE_SIGN_ENTITLEMENTS = Clausius/Clausius.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 362H45Q9HF;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 2.1.1;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.austincarrig.Clausius-Mac-Test";
+				PRODUCT_BUNDLE_IDENTIFIER = com.RowanApps.Clausius;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -732,9 +733,9 @@
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CODE_SIGN_ENTITLEMENTS = Clausius/Clausius.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 362H45Q9HF;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
