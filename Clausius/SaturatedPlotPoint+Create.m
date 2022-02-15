@@ -11,11 +11,11 @@
 @implementation SaturatedPlotPoint (Create)
 + (SaturatedPlotPoint *)createSatPlotPointWithType:(NSString *)type inContext:(NSManagedObjectContext *)context
 {
-	SaturatedPlotPoint *point = [NSEntityDescription insertNewObjectForEntityForName:@"SaturatedPlotPoint"
-															  inManagedObjectContext:context];
-	
-	[point setType:type];
-	
-	return point;
+    SaturatedPlotPoint *point = [NSEntityDescription insertNewObjectForEntityForName:@"SaturatedPlotPoint"
+                                                              inManagedObjectContext:context];
+
+    [point setType:type];
+
+    return point;
 }
 @end

@@ -42,6 +42,7 @@
 @property NSUInteger numberOfRows;
 
 @property BOOL qualityIsHidden;
+@property BOOL isSegmentControlOpen;
 
 @property id <DisplayViewDataSource> dataSource;
 
@@ -50,17 +51,20 @@
 /**
  *  Used to update all the number fields in the display
  */
+
 -(void)updateTextFieldsWithTemperature:(NSNumber *)temperature
-							  pressure:(NSNumber *)pressure
-						specificVolume:(NSNumber *)specificVolume
-						internalEnergy:(NSNumber *)internalEnergy
-							  enthalpy:(NSNumber *)enthalpy
-							   entropy:(NSNumber *)entropy
-							   quality:(NSNumber *)quality;
+                              pressure:(NSNumber *)pressure
+                        specificVolume:(NSNumber *)specificVolume
+                        internalEnergy:(NSNumber *)internalEnergy
+                              enthalpy:(NSNumber *)enthalpy
+                               entropy:(NSNumber *)entropy
+                               quality:(NSNumber *)quality;
 
 /**
  *  Used to update the title if the graph type chanegs
  */
+
+-(void)updateButtonTitle;
 -(void)updateTitle:(NSString *)title;
 
 -(void)showQuality;
@@ -71,6 +75,7 @@
 
 @protocol DisplayViewDataSource <NSObject>
 
+-(NSString *)nameForButtonTitle:(DisplayView *)displayView;
 -(NSString *)nameForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView;
 -(NSString *)unitsForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView;
 

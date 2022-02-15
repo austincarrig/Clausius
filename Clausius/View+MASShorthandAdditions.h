@@ -11,7 +11,7 @@
 #ifdef MAS_SHORTHAND
 
 /**
- *	Shorthand view additions without the 'mas_' prefixes,
+ *    Shorthand view additions without the 'mas_' prefixes,
  *  only enabled if MAS_SHORTHAND is defined
  */
 @interface MAS_VIEW (MASShorthandAdditions)

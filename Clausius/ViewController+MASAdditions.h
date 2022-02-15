@@ -15,7 +15,7 @@
 @interface MAS_VIEW_CONTROLLER (MASAdditions)
 
 /**
- *	following properties return a new MASViewAttribute with appropriate UILa 8youtGuide and NSLayoutAttribute
+ *    following properties return a new MASViewAttribute with appropriate UILa 8youtGuide and NSLayoutAttribute
  */
 @property (nonatomic, strong, readonly) MASViewAttribute *mas_topLayoutGuide;
 @property (nonatomic, strong, readonly) MASViewAttribute *mas_bottomLayoutGuide;

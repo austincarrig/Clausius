@@ -40,9 +40,9 @@
 - (id)initWithView:(MAS_VIEW *)view item:(id)item layoutAttribute:(NSLayoutAttribute)layoutAttribute;
 
 /**
- *	Determine whether the layoutAttribute is a size attribute
+ *    Determine whether the layoutAttribute is a size attribute
  *
- *	@return	YES if layoutAttribute is equal to NSLayoutAttributeWidth or NSLayoutAttributeHeight
+ *    @return    YES if layoutAttribute is equal to NSLayoutAttributeWidth or NSLayoutAttributeHeight
  */
 - (BOOL)isSizeAttribute;
 

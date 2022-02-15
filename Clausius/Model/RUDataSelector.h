@@ -27,7 +27,7 @@
  *
  *  @param chartType The type for the chart as described by the value types (i.e. ts).
  *
- *	@see [RUDataSelector dataLoadingKeys]
+ *    @see [RUDataSelector dataLoadingKeys]
  *
  *  @return A dictionary of all the pertinent information regrading the chart of the type specified. The keys for the dictorary can be obtained from [RUDataSelector dataLoadingKeys].
  */

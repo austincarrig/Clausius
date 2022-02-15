@@ -46,7 +46,7 @@
     return newConstraint;
 }
 
-#pragma mark - NSLayoutConstraint multiplier proxies 
+#pragma mark - NSLayoutConstraint multiplier proxies
 
 - (MASConstraint * (^)(CGFloat))multipliedBy {
     return ^id(CGFloat multiplier) {

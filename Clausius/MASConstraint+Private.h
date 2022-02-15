@@ -19,7 +19,7 @@
 @property (nonatomic, assign) BOOL updateExisting;
 
 /**
- *	Usually MASConstraintMaker but could be a parent MASConstraint
+ *    Usually MASConstraintMaker but could be a parent MASConstraint
  */
 @property (nonatomic, weak) id<MASConstraintDelegate> delegate;
 
@@ -38,7 +38,7 @@
 @interface MASConstraint (Abstract)
 
 /**
- *	Sets the constraint relation to given NSLayoutRelation
+ *    Sets the constraint relation to given NSLayoutRelation
  *  returns a block which accepts one of the following:
  *    MASViewAttribute, UIView, NSValue, NSArray
  *  see readme for more details.
@@ -46,7 +46,7 @@
 - (MASConstraint * (^)(id, NSLayoutRelation))equalToWithRelation;
 
 /**
- *	Override to set a custom chaining behaviour
+ *    Override to set a custom chaining behaviour
  */
 - (MASConstraint *)addConstraintWithLayoutAttribute:(NSLayoutAttribute)layoutAttribute;
 
@@ -56,7 +56,7 @@
 @protocol MASConstraintDelegate <NSObject>
 
 /**
- *	Notifies the delegate when the constraint needs to be replaced with another constraint. For example
+ *    Notifies the delegate when the constraint needs to be replaced with another constraint. For example
  *  A MASViewConstraint may turn into a MASCompositeConstraint when an array is passed to one of the equality blocks
  */
 - (void)constraint:(MASConstraint *)constraint shouldBeReplacedWithConstraint:(MASConstraint *)replacementConstraint;

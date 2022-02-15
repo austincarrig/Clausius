@@ -14,7 +14,6 @@
 		492A98671B574BCC00F061E8 /* ClausiusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98661B574BCC00F061E8 /* ClausiusTests.m */; };
 		492A98751B574BEA00F061E8 /* LocationIndicatorImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */; };
 		492A98761B574BEA00F061E8 /* DisplayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 492A98731B574BEA00F061E8 /* DisplayView.m */; };
-		492A98771B574BEA00F061E8 /* Data Files in Resources */ = {isa = PBXBuildFile; fileRef = 492A98741B574BEA00F061E8 /* Data Files */; };
 		492A98841B574CAC00F061E8 /* ClausiusIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A987B1B574CAC00F061E8 /* ClausiusIcon.png */; };
 		492A98851B574CAC00F061E8 /* ClausiusiPadApp@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A987C1B574CAC00F061E8 /* ClausiusiPadApp@1x.png */; };
 		492A98861B574CAC00F061E8 /* ClausiusiPadApp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 492A987D1B574CAC00F061E8 /* ClausiusiPadApp@2x.png */; };
@@ -57,10 +56,12 @@
 		498435441BD15B5F00190C9C /* Water_ts_chart_old.png in Resources */ = {isa = PBXBuildFile; fileRef = 498435431BD15B5F00190C9C /* Water_ts_chart_old.png */; };
 		498C46F91BD06A6C00FBF7DA /* RUSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 498C46F81BD06A6C00FBF7DA /* RUSolver.m */; };
 		4998137B1B6015400044987E /* RUAAdjusterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4998137A1B6015400044987E /* RUAAdjusterView.m */; };
+		499D60CB27B84D1C006DCF54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 499D60CA27B84D1B006DCF54 /* Assets.xcassets */; };
 		49A056531BC9AC820032F280 /* RUDataSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 49A056521BC9AC820032F280 /* RUDataSelector.m */; };
 		49A57F331C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 49A57F321C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png */; };
 		49DCB2871FA6689A00F7D608 /* RUASpaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49DCB2861FA6689A00F7D608 /* RUASpaceController.m */; };
 		49F51F7C1CC69DCA00138EA1 /* Water_ph_chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 49F51F7B1CC69DCA00138EA1 /* Water_ph_chart.png */; };
+		EAED30AE26C8093D00595731 /* DataFiles in Resources */ = {isa = PBXBuildFile; fileRef = EAED30AD26C8093D00595731 /* DataFiles */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,7 +88,6 @@
 		492A98711B574BEA00F061E8 /* LocationIndicatorImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationIndicatorImageView.m; sourceTree = "<group>"; };
 		492A98721B574BEA00F061E8 /* DisplayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayView.h; sourceTree = "<group>"; };
 		492A98731B574BEA00F061E8 /* DisplayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayView.m; sourceTree = "<group>"; };
-		492A98741B574BEA00F061E8 /* Data Files */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Data Files"; sourceTree = "<group>"; };
 		492A987B1B574CAC00F061E8 /* ClausiusIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClausiusIcon.png; sourceTree = "<group>"; };
 		492A987C1B574CAC00F061E8 /* ClausiusiPadApp@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadApp@1x.png"; sourceTree = "<group>"; };
 		492A987D1B574CAC00F061E8 /* ClausiusiPadApp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClausiusiPadApp@2x.png"; sourceTree = "<group>"; };
@@ -164,6 +164,7 @@
 		498C46F81BD06A6C00FBF7DA /* RUSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUSolver.m; sourceTree = "<group>"; };
 		499813791B6015400044987E /* RUAAdjusterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RUAAdjusterView.h; sourceTree = "<group>"; };
 		4998137A1B6015400044987E /* RUAAdjusterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RUAAdjusterView.m; sourceTree = "<group>"; };
+		499D60CA27B84D1B006DCF54 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = AppIcons/Assets.xcassets; sourceTree = "<group>"; };
 		49A056471BC98D240032F280 /* Clausius-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clausius-Bridging-Header.h"; sourceTree = "<group>"; };
 		49A056511BC9AC820032F280 /* RUDataSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUDataSelector.h; path = Model/RUDataSelector.h; sourceTree = "<group>"; };
 		49A056521BC9AC820032F280 /* RUDataSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RUDataSelector.m; path = Model/RUDataSelector.m; sourceTree = "<group>"; };
@@ -171,6 +172,8 @@
 		49DCB2851FA6689A00F7D608 /* RUASpaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RUASpaceController.h; sourceTree = "<group>"; };
 		49DCB2861FA6689A00F7D608 /* RUASpaceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RUASpaceController.m; sourceTree = "<group>"; };
 		49F51F7B1CC69DCA00138EA1 /* Water_ph_chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Water_ph_chart.png; path = Images/Water_ph_chart.png; sourceTree = "<group>"; };
+		D1AF839425CC1E09001340A4 /* Clausius.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clausius.entitlements; sourceTree = "<group>"; };
+		EAED30AD26C8093D00595731 /* DataFiles */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DataFiles; sourceTree = "<group>"; };
 		F15A8140971EB808610BEB52 /* libPods-Clausius.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Clausius.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -214,6 +217,7 @@
 		492A98491B574BCC00F061E8 /* Clausius */ = {
 			isa = PBXGroup;
 			children = (
+				D1AF839425CC1E09001340A4 /* Clausius.entitlements */,
 				492A98D31B574DC700F061E8 /* AppDelegate.h */,
 				492A98D41B574DC700F061E8 /* AppDelegate.m */,
 				492A98D51B574DC700F061E8 /* ViewController.h */,
@@ -225,7 +229,7 @@
 				492A98911B574CE100F061E8 /* H2O_Wagner_Pruss */,
 				492A987A1B574C4C00F061E8 /* Images */,
 				492A988F1B574CDB00F061E8 /* Core Data */,
-				492A98741B574BEA00F061E8 /* Data Files */,
+				EAED30AD26C8093D00595731 /* DataFiles */,
 				492A984A1B574BCC00F061E8 /* Supporting Files */,
 			);
 			path = Clausius;
@@ -285,6 +289,7 @@
 		492A987A1B574C4C00F061E8 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				499D60CA27B84D1B006DCF54 /* Assets.xcassets */,
 				4902C03B1F865D72004680CD /* youtube.png */,
 				4902C0391F865C96004680CD /* Legend.png */,
 				492A988D1B574CB400F061E8 /* Images.xcassets */,
@@ -453,12 +458,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = RowanApps;
 				TargetAttributes = {
 					492A98461B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = XS9UK84A6B;
+						DevelopmentTeam = 362H45Q9HF;
+						ProvisioningStyle = Automatic;
 					};
 					492A985F1B574BCC00F061E8 = {
 						CreatedOnToolsVersion = 6.4;
@@ -471,6 +477,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -504,9 +511,10 @@
 				492A5EC01C9DCA71007527AD /* Water_ts_chart.png in Resources */,
 				492A98E21B574DF100F061E8 /* LaunchScreen.xib in Resources */,
 				4962DDE81BCB0AA000034E48 /* Water_pv_chart.png in Resources */,
+				499D60CB27B84D1C006DCF54 /* Assets.xcassets in Resources */,
 				492A988E1B574CB400F061E8 /* Images.xcassets in Resources */,
+				EAED30AE26C8093D00595731 /* DataFiles in Resources */,
 				492A988B1B574CAC00F061E8 /* Legend.jpeg in Resources */,
-				492A98771B574BEA00F061E8 /* Data Files in Resources */,
 				498435441BD15B5F00190C9C /* Water_ts_chart_old.png in Resources */,
 				49A57F331C1BCBEA00136D2B /* ClausiusiPadProApp@2x.png in Resources */,
 			);
@@ -586,6 +594,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -604,6 +613,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -629,7 +639,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -641,6 +651,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -659,6 +670,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -677,7 +689,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -691,17 +703,25 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XS9UK84A6B;
+				CODE_SIGN_ENTITLEMENTS = Clausius/Clausius.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 362H45Q9HF;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.1;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.CarrigApps.Clausius;
+				PRODUCT_BUNDLE_IDENTIFIER = com.RowanApps.Clausius;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Clausius/Clausius-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -711,16 +731,24 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XS9UK84A6B;
+				CODE_SIGN_ENTITLEMENTS = Clausius/Clausius.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 362H45Q9HF;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Clausius/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.1.1;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.CarrigApps.Clausius;
+				PRODUCT_BUNDLE_IDENTIFIER = com.RowanApps.Clausius;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Clausius/Clausius-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

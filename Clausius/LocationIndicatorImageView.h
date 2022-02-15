@@ -85,7 +85,7 @@
 /**
  *  Calls when a touch begins in the location indicator view.
  *
- *  @param location					  The touch location returned as a CGPoint (xy coords).
+ *  @param location                      The touch location returned as a CGPoint (xy coords).
  *  @param locationIndicatorImageView The location indicator image view in which the touch occurred.
  */
 - (void)touchDidBeginAtLocation:(CGPoint)location inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView;

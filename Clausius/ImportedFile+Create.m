@@ -11,12 +11,12 @@
 @implementation ImportedFile (Create)
 + (ImportedFile *)createImportedFileWithName:(NSString *)name type:(NSString *)type inContext:(NSManagedObjectContext *)context
 {
-	ImportedFile *file = [NSEntityDescription insertNewObjectForEntityForName:@"ImportedFile"
-													   inManagedObjectContext:context];
-	
-	[file setName:name];
-	[file setType:type];
-	
-	return file;
+    ImportedFile *file = [NSEntityDescription insertNewObjectForEntityForName:@"ImportedFile"
+                                                       inManagedObjectContext:context];
+
+    [file setName:name];
+    [file setType:type];
+
+    return file;
 }
 @end

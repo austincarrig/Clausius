@@ -9,22 +9,22 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(int, RUAxisDirection) {
-	RUAxisDirectionX = 0,
-	RUAxisDirectionY
+    RUAxisDirectionX = 0,
+    RUAxisDirectionY
 };
 
 typedef NS_ENUM(int, RUAxisValueType) {
-	RUAxisValueTypeTemperature = 0,
-	RUAxisValueTypePressure,
-	RUAxisValueTypeSpecVol,
-	RUAxisValueTypeIntEnergy,
-	RUAxisValueTypeEnthalpy,
-	RUAxisValueTypeEntropy
+    RUAxisValueTypeTemperature = 0,
+    RUAxisValueTypePressure,
+    RUAxisValueTypeSpecVol,
+    RUAxisValueTypeIntEnergy,
+    RUAxisValueTypeEnthalpy,
+    RUAxisValueTypeEntropy
 };
 
 typedef NS_ENUM(int, RUAxisScaleType) {
-	RUAxisScaleTypeLinear = 0,
-	RUAxisScaleTypeLog
+    RUAxisScaleTypeLinear = 0,
+    RUAxisScaleTypeLog
 };
 
 @interface RUAxis : NSObject
@@ -36,10 +36,10 @@ typedef NS_ENUM(int, RUAxisScaleType) {
 @property RUAxisValueType valueType;
 
 + (RUAxis *)createAxisForDirection:(RUAxisDirection)direction
-						 valueType:(RUAxisValueType)valueType
-						 scaleType:(RUAxisScaleType)scaleType
-							   min:(NSNumber *)min
-							   max:(NSNumber *)max;
+                         valueType:(RUAxisValueType)valueType
+                         scaleType:(RUAxisScaleType)scaleType
+                               min:(NSNumber *)min
+                               max:(NSNumber *)max;
 
 + (NSString *)decodeForValueWithValueType:(RUAxisValueType)valueType;
 + (RUAxisValueType)encodeForValueTypeWithValue:(NSString *)value;
