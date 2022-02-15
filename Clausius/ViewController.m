@@ -80,7 +80,8 @@ const static float X_TOTAL_CHANGE = 0.01;
     shouldFineTune = 0;
     hasFineTuned = NO;
 
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    [self prefersStatusBarHidden];
+    //[[UIApplication sharedApplication] setStatusBarHidden:YES];
     [self.navigationController setNavigationBarHidden:YES];
 
     [self.containerView addSubview:self.chartView];

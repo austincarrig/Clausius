@@ -64,7 +64,6 @@
  *  Used to update the title if the graph type chanegs
  */
 
--(void)updateButtonTitle;
 -(void)updateTitle:(NSString *)title;
 
 -(void)showQuality;

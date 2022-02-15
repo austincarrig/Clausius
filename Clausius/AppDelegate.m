@@ -14,6 +14,7 @@
     // Override point for customization after application launch.
 
     // Get the bundle root (should just be able to use the bundle, but whatever...)
+    /*
     NSString *bundleRoot = [[NSBundle mainBundle] resourcePath];
     // Drill down to the DataFiles directory
     NSString *zpath = [bundleRoot stringByAppendingString:@"/DataFiles"];
@@ -25,13 +26,14 @@
     NSPredicate *fltr = [NSPredicate predicateWithFormat:@"self ENDSWITH '.csv'"];
     // Use the filter on the directory's contents to get the .csv files
     NSArray *allCSVs = [dirContents filteredArrayUsingPredicate:fltr];
+     */
 
-    BOOL newfiles = NO;
+    //BOOL newfiles = NO;
 
-    NSLog(@"%@",allCSVs);
+    //NSLog(@"%@",allCSVs);
 
     // Iterate through the files...
-    for (NSString* fileName in allCSVs) {
+    //for (NSString* fileName in allCSVs) {
         // if they can't be found in the CoreData DB...
         /*
         if (![ImportedFile fetchImportedFileWithName:fileName
@@ -63,7 +65,7 @@
             }
         }
          */
-    }
+    //}
 
     // If we loaded new files into the CoreData context...
     /*
