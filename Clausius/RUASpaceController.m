@@ -22,7 +22,6 @@
     if (self) {
         self.numPoints = 5;
         self.maxDiff = 30.0;
-        self.points = [[NSMutableArray alloc] initWithCapacity:self.numPoints];
     }
 
     return self;
@@ -39,10 +38,13 @@
 
 - (BOOL)addLatestPoint:(CGPoint)point
 {
-    if (self.points.count >= _numPoints) {
-        if (self.points.count > _numPoints) {
+    if (self.points.count >= _numPoints)
+    {
+        if (self.points.count > _numPoints)
+        {
             return NO;
         }
+        
         [self.points removeObjectAtIndex:0];
     }
     NSValue *val = [NSValue valueWithBytes:&point
@@ -54,12 +56,13 @@
 
 - (BOOL)withinMarginWithLatestPoint:(CGPoint)point
 {
-    if (![self addLatestPoint:point]) {
-        return NO;
-    }
-
-    if ([self calculateLargestDistance] < _maxDiff && self.points.count == _numPoints) {
-        return YES;
+    if (![self addLatestPoint:point])
+    {
+        if ([self calculateLargestDistance] < self.maxDiff &&
+            self.points.count == _numPoints)
+        {
+            return YES;
+        }
     }
 
     return NO;

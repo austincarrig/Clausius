@@ -49,7 +49,7 @@
 -(instancetype)initWithFrame:(CGRect)frame;
 
 /**
- *  Used to update all the number fields in the display
+ * Used to update all the number fields in the display
  */
 
 -(void)updateTextFieldsWithTemperature:(NSNumber *)temperature
@@ -61,7 +61,7 @@
                                quality:(NSNumber *)quality;
 
 /**
- *  Used to update the title if the graph type chanegs
+ * Used to update the title if the graph type changes
  */
 
 -(void)updateTitle:(NSString *)title;

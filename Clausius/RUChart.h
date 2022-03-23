@@ -15,8 +15,8 @@ typedef NS_ENUM(int, RUChartDisplayPosition) {
 
 @interface RUChart : RUGraph
 
-@property (strong, nonatomic) NSString *substanceType;
-@property (strong, nonatomic) NSString *valueType;
+@property (strong, nonatomic) NSString *substanceType; // This should be an enum
+@property (strong, nonatomic) NSString *valueType; // This should be an enum
 
 @property RUChartDisplayPosition displayPosition;
 

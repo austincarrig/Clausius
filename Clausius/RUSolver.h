@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Looks like this is just 1 equation I may have used at some point, but right now it's unused...
+ * Can prob delete...
+ */
+
 @interface RUSolver : NSObject
 + (float)temperatureForSpecificVolume:(float)specVol andPressure:(float)pressure;
 @end

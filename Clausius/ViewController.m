@@ -74,7 +74,6 @@ const static float X_TOTAL_CHANGE = 0.01;
      [self.view addGestureRecognizer:tap];
      */
 
-
     touchHasRegistered = NO;
     allowQualityScrubbing = NO;
     shouldFineTune = 0;
@@ -637,7 +636,7 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 }
 
-// TODO: This function is used anymore, but we should check it against Aarav's work to make sure he did everything okay...
+// TODO: This function is not used anymore, but we should check it against Aarav's work to make sure he did everything okay...
 /*
 - (void)resetChart:(UIScreenEdgePanGestureRecognizer *)recog
 {
@@ -723,12 +722,12 @@ const static float X_TOTAL_CHANGE = 0.01;
     {
         return @"";
     }
-
-
 }
 
 -(NSString *)nameForLabel:(UILabel *)label inDisplayView:(DisplayView *)displayView
 {
+    // I feel like we shouldn't do this with tags...
+    // There's got to be a better way to do this...
     if (label.tag == 1) {
         return @"T";
     } else if (label.tag == 2) {

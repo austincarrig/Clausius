@@ -19,7 +19,7 @@
             @throw exception;
         }
     } @catch (NSException *exception) {
-        // TODO: Catch the exception
+        NSLog(@"%s:%d - Invalid axis direction provided %d", (strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1, __LINE__, axis.direction);
     } @finally {
         if (axis.direction == RUAxisDirectionX) {
             self.xAxis = axis;

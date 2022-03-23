@@ -27,6 +27,10 @@ typedef NS_ENUM(int, RUAxisScaleType) {
     RUAxisScaleTypeLog
 };
 
+/**
+ * The purpose of RUAxis is to represent the values for a given chart along a single axis
+ */
+
 @interface RUAxis : NSObject
 @property (strong, nonatomic) NSNumber *min;
 @property (strong, nonatomic) NSNumber *max;
