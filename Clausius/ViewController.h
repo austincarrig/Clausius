@@ -14,7 +14,11 @@
     float currentEnthalpy;
     float currentEntropy;
     float currentQuality;
+
+    // Signifies that a touch has been registered AT ANY POINT in the past
+    // It will not reset to false when switching charts
     BOOL touchHasRegistered;
+
     BOOL allowQualityScrubbing;
     NSString *currentRegion;
 }

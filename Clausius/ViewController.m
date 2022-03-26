@@ -563,7 +563,8 @@ const static float X_TOTAL_CHANGE = 0.01;
 
 -(void)resetChartWithType:(NSString *)type
 {
-
+    // TODO: There's probably a better way to do this...
+    // I just think having them swap like this is a bit confusing
     //update buttton layout
     if([type isEqual:@"ts"]) {
         [self layoutButton:@"row"];
@@ -607,28 +608,48 @@ const static float X_TOTAL_CHANGE = 0.01;
     //    [self updateButtonTitle];
 
     if (touchHasRegistered) {
-        if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
-            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEnthalpy secondaryAxisValue:currentPressure]) {
+        if ([self.chartView.chart.valueType isEqualToString:@"ph"])
+        {
+            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEnthalpy
+                                                    secondaryAxisValue:currentPressure])
+            {
                 [self.chartView moveMarkerToPrimaryAxisValue:currentEnthalpy
                                           secondaryAxisValue:currentPressure];
-            } else {
+            }
+            else
+            {
                 [self.chartView removeMarker];
             }
-        } else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
-            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentSpecVolume secondaryAxisValue:currentPressure]) {
+        }
+        else if ([self.chartView.chart.valueType isEqualToString:@"pv"])
+        {
+            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentSpecVolume
+                                                    secondaryAxisValue:currentPressure])
+            {
                 [self.chartView moveMarkerToPrimaryAxisValue:currentSpecVolume
                                           secondaryAxisValue:currentPressure];
-            } else {
+            }
+            else
+            {
                 [self.chartView removeMarker];
             }
-        } else if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
-            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy secondaryAxisValue:currentTemp]) {
+        }
+        else if ([self.chartView.chart.valueType isEqualToString:@"ts"])
+        {
+            // TODO: It looks like maybe sometimes this doesn't work?
+            if ([self.chartView pointIsWithinBoundsForPrimaryAxisValue:currentEntropy
+                                                    secondaryAxisValue:currentTemp])
+            {
                 [self.chartView moveMarkerToPrimaryAxisValue:currentEntropy
                                           secondaryAxisValue:currentTemp];
-            } else {
+            }
+            else
+            {
                 [self.chartView removeMarker];
             }
-        } else {
+        }
+        else
+        {
             touchHasRegistered = NO;
             [self.chartView removeMarker];
         }
@@ -773,25 +794,34 @@ const static float X_TOTAL_CHANGE = 0.01;
 - (void)touchDidBeginAtLocation:(CGPoint)location
                  inLocationView:(LocationIndicatorImageView *)locationIndicatorImageView
 {
-    if (!touchHasRegistered) {
-        touchHasRegistered = YES;
-    }
+    // set this to true because we now have a touch on the screen, within the bounds of the view
+    touchHasRegistered = YES;
 
+    // add the marker to the screen
     [locationIndicatorImageView addLargeMarkerAtLocation:location];
 
+    // Add this point to the space controller, so we can stat determining when to enable "fine-tuning"
     [self.spaceController addLatestPoint:location];
+
+    // We have not started fine-tuning set, so reset this...
     hasFineTuned = NO;
+
     lastTouchLocation = location;
 
-    if ([self.chartView.chart.valueType isEqualToString:@"ts"]) {
+    if ([self.chartView.chart.valueType isEqualToString:@"ts"])
+    {
         [self tsTouchDidRegisterAtLocation:location
                              withEventType:@"Began"
                             inLocationView:locationIndicatorImageView];
-    } else if ([self.chartView.chart.valueType isEqualToString:@"ph"]) {
+    }
+    else if ([self.chartView.chart.valueType isEqualToString:@"ph"])
+    {
         [self phTouchDidRegisterAtLocation:location
                              withEventType:@"Began"
                             inLocationView:locationIndicatorImageView];
-    } else if ([self.chartView.chart.valueType isEqualToString:@"pv"]) {
+    }
+    else if ([self.chartView.chart.valueType isEqualToString:@"pv"])
+    {
         [self pvTouchDidRegisterAtLocation:location
                              withEventType:@"Began"
                             inLocationView:locationIndicatorImageView];

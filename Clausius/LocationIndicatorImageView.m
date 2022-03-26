@@ -112,6 +112,7 @@ unsigned char *rawData;
             alphaOfPixel = 0.0;
         }
 
+        // Could get rid of first check here if we make it required in the protocol definition
         if ([self.delegate respondsToSelector:@selector(touchDidBeginAtLocation:inLocationView:)] && alphaOfPixel != 0.0) {
             [self.delegate touchDidBeginAtLocation:touchLocation inLocationView:self];
         }
@@ -358,6 +359,7 @@ unsigned char *rawData;
     NSUInteger byteIndex = (bytesPerRow * imagey) + imagex * bytesPerPixel;
 
     if (rawData) {
+        // TODO: This can still fail in a bunch of cases. There needs to be protective code here
         for (int i = 0 ; i < count ; ++i) {
             CGFloat red   = (rawData[byteIndex]     * 1.0) / 255.0;
             CGFloat green = (rawData[byteIndex + 1] * 1.0) / 255.0;
